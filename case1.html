@@ -3,80 +3,109 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Operation BLACK IRIS - Case File 001</title>
+<title>IRIS - Case File 001</title>
 
 <style>
 
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
 body{
-    margin:0;
-    background:#08111d;
-    color:#e8eef8;
-    font-family:Arial,Helvetica,sans-serif;
+background:#08111d;
+font-family:Arial,Helvetica,sans-serif;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+padding:30px;
 }
 
 .container{
-    max-width:900px;
-    margin:40px auto;
-    background:#121d2c;
-    border:1px solid #2d5b93;
-    border-radius:12px;
-    padding:40px;
-    box-shadow:0 0 25px rgba(0,0,0,.5);
+width:900px;
+max-width:100%;
+background:#121c2b;
+border:2px solid #4da3ff;
+border-radius:12px;
+padding:40px;
+box-shadow:0 0 30px rgba(0,0,0,.6);
 }
 
 .logo{
-    text-align:center;
-    font-size:34px;
-    color:#6cb7ff;
-    font-weight:bold;
+text-align:center;
+font-size:34px;
+font-weight:bold;
+color:#67b8ff;
+margin-bottom:10px;
 }
 
 .division{
-    text-align:center;
-    color:#9bb4cf;
-    margin-bottom:35px;
+text-align:center;
+color:#b8c7d9;
+margin-bottom:35px;
+letter-spacing:2px;
 }
 
 #boot{
-    font-family:Courier New, monospace;
-    color:#80ffb0;
-    line-height:1.8;
-    min-height:220px;
+font-family:Courier New,monospace;
+color:#74ff9d;
+font-size:18px;
+line-height:2;
+min-height:220px;
 }
 
-.mission{
-    display:none;
-    margin-top:30px;
-    border-top:1px solid #355b8c;
-    padding-top:25px;
+#mission{
+display:none;
+margin-top:35px;
+border-top:1px solid #2f4f78;
+padding-top:30px;
+animation:fade .8s;
+}
+
+@keyframes fade{
+from{opacity:0;}
+to{opacity:1;}
 }
 
 h2{
-    color:#6cb7ff;
+color:#67b8ff;
+margin-bottom:20px;
 }
 
 .status{
-    color:#ffd65a;
-    font-weight:bold;
+color:#ffd34d;
+font-weight:bold;
+margin-bottom:20px;
+}
+
+p{
+margin-bottom:18px;
+line-height:1.7;
+color:#d6e1ef;
 }
 
 button{
-    width:100%;
-    margin-top:30px;
-    padding:16px;
-    font-size:18px;
-    background:#4da3ff;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
+width:100%;
+padding:16px;
+font-size:18px;
+background:#4da3ff;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+margin-top:20px;
+transition:.3s;
 }
 
 button:hover{
-    background:#2f86e6;
+background:#2f86e6;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -93,33 +122,96 @@ BLACK IRIS DIVISION
 
 <div id="boot"></div>
 
-<div class="mission" id="mission">
+<div id="mission">
 
-<h2>CASE FILE 001</h2>
+<h2 id="agent"></h2>
 
-<p class="status">
-STATUS: ACTIVE
+<div class="status">
+CASE FILE 001 • CLEARANCE LEVEL: OMEGA
+</div>
+
+<p>
+Congratulations.
 </p>
 
 <p>
-Congratulations, Agent Helen.
-</p>
-
-<p>
-Following an international intelligence selection process,
-you have been chosen as the <b>only investigator</b>
-assigned to Operation BLACK IRIS.
+After an extensive international selection process,
+you have been identified as the only investigator
+authorized to access Operation BLACK IRIS.
 </p>
 
 <p>
 The reason for your selection remains classified.
-Only the Director has access to the complete file.
+Only the Director has permission to view the complete report.
 </p>
 
 <p>
-Your first objective is to investigate
-<b>Subject B-01</b>.
+Your first assignment is to investigate
+<strong>Subject B-01</strong>.
 </p>
 
 <p>
-Subject B-01
+Subject B-01 has been removed from all official records.
+Every clue has been intentionally hidden.
+Nothing in this investigation is accidental.
+</p>
+
+<p>
+Trust the evidence.
+Question every assumption.
+The truth is waiting to be uncovered.
+</p>
+
+<button onclick="window.location.href='dashboard.html'">
+BEGIN INVESTIGATION
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const agentName = localStorage.getItem("agentName") || "Investigator";
+
+document.getElementById("agent").innerHTML =
+"Welcome, Agent " + agentName + ".";
+
+const messages = [
+"Initializing secure connection...",
+"Connecting to IRIS Intelligence Network...",
+"Scanning biometric profile...",
+"Searching investigator database...",
+"Identity located.",
+"Identity confirmed.",
+"Clearance Level: OMEGA.",
+"Decrypting classified files...",
+"Loading Operation BLACK IRIS..."
+];
+
+let index = 0;
+
+function bootSequence(){
+
+if(index < messages.length){
+
+document.getElementById("boot").innerHTML += messages[index] + "<br>";
+
+index++;
+
+setTimeout(bootSequence,800);
+
+}else{
+
+document.getElementById("mission").style.display="block";
+
+}
+
+}
+
+window.onload = bootSequence;
+
+</script>
+
+</body>
+</html>
