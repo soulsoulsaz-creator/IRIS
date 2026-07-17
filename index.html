@@ -1,83 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BLACK IRIS DATABASE</title>
+<title>IRIS Terminal</title>
 
 <style>
 body{
-background:#050505;
-color:#00ff66;
-font-family:Courier New, monospace;
+margin:0;
+background:#08111d;
 display:flex;
 justify-content:center;
 align-items:center;
 height:100vh;
-margin:0;
+font-family:Arial,sans-serif;
+color:white;
 }
 
 .box{
-border:2px solid #00ff66;
-padding:30px;
-width:320px;
+width:420px;
+background:#111c2d;
+padding:40px;
+border-radius:12px;
 text-align:center;
-box-shadow:0 0 20px #00ff66;
+box-shadow:0 0 30px rgba(0,0,0,.6);
+}
+
+h1{
+color:#67b8ff;
 }
 
 input{
 width:100%;
-padding:10px;
-background:black;
-border:1px solid #00ff66;
-color:#00ff66;
-margin-top:15px;
+padding:14px;
+margin-top:20px;
+background:#1b2940;
+border:none;
+border-radius:8px;
+color:white;
+font-size:18px;
+box-sizing:border-box;
 }
 
 button{
-margin-top:15px;
-padding:10px 20px;
-background:#00ff66;
+width:100%;
+padding:14px;
+margin-top:25px;
+background:#4da3ff;
 border:none;
-font-weight:bold;
+color:white;
+font-size:18px;
+border-radius:8px;
 cursor:pointer;
 }
 
-#msg{
+#error{
 margin-top:15px;
+color:#ff6666;
 }
 </style>
 
 </head>
+
 <body>
 
 <div class="box">
 
-<h1>BLACK IRIS</h1>
+<h1>IRIS INTELLIGENCE AGENCY</h1>
 
-<p>Restricted Access</p>
+<p>Enter Access Code</p>
 
-<input id="pass" placeholder="Enter Password">
+<input
+id="code"
+placeholder="Access Code">
 
-<button onclick="login()">ACCESS</button>
+<button onclick="verify()">
 
-<p id="msg"></p>
+VERIFY
+
+</button>
+
+<p id="error"></p>
 
 </div>
 
 <script>
 
-function login(){
+function verify(){
 
-let p=document.getElementById("pass").value;
+let code=document.getElementById("code").value;
 
-if(p==="APRIL2026"){
+if(code==="APRIL2026"){
 
-window.location="case1.html";
+window.location.href="login.html";
 
 }else{
 
-document.getElementById("msg").innerHTML="ACCESS DENIED";
+document.getElementById("error").innerHTML="ACCESS DENIED";
 
 }
 
