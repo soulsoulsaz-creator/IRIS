@@ -8,63 +8,59 @@
 <style>
 
 body{
-    margin:0;
-    background:#08111d;
-    color:white;
-    font-family:Arial,sans-serif;
+margin:0;
+background:#08111d;
+color:white;
+font-family:Arial,sans-serif;
 }
 
 .header{
-    background:#111c2d;
-    padding:20px;
-    border-bottom:2px solid #4da3ff;
-    text-align:center;
+background:#111c2d;
+padding:20px;
+border-bottom:2px solid #4da3ff;
+text-align:center;
 }
 
 .header h1{
-    color:#67b8ff;
-    margin:0;
+margin:0;
+color:#67b8ff;
 }
 
 .container{
-    max-width:900px;
-    margin:30px auto;
-    padding:20px;
+max-width:900px;
+margin:auto;
+padding:20px;
+}
+
+.card,.folder{
+background:#121c2b;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
 }
 
 .card{
-    background:#121c2b;
-    padding:20px;
-    border-radius:10px;
-    margin-bottom:20px;
-    border-left:5px solid #4da3ff;
-}
-
-.folder{
-    background:#121c2b;
-    padding:20px;
-    margin-top:15px;
-    border-radius:10px;
+border-left:5px solid #4da3ff;
 }
 
 button{
-    width:100%;
-    padding:14px;
-    margin-top:10px;
-    background:#4da3ff;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    font-size:16px;
+width:100%;
+padding:14px;
+margin-top:15px;
+background:#4da3ff;
+color:white;
+border:none;
+border-radius:8px;
+font-size:16px;
+cursor:pointer;
 }
 
 button:hover{
-    background:#2f86e6;
+background:#2f86e6;
 }
 
 .locked{
-    opacity:.5;
+opacity:.5;
 }
 
 </style>
@@ -97,7 +93,7 @@ button:hover{
 
 <div class="folder">
 
-<h2>📁 Subject B-01</h2>
+<h2>📁 Subject B-001</h2>
 
 <p>Open the first investigation file.</p>
 
@@ -107,11 +103,13 @@ OPEN FILE
 
 </div>
 
-<div class="folder locked">
+<div class="folder locked" id="evidenceFolder">
 
-<h2>🔒 Evidence Locker</h2>
+<h2 id="evidenceTitle">🔒 Evidence Locker 001</h2>
 
-<p>Locked</p>
+<p id="evidenceText">Locked</p>
+
+<div id="evidenceButton"></div>
 
 </div>
 
@@ -140,17 +138,19 @@ const agent = localStorage.getItem("agentName") || "Investigator";
 document.getElementById("agent").innerHTML =
 "Welcome back, Agent " + agent;
 
-// Unlock Evidence Locker 001
-if(localStorage.getItem("evidence001Unlocked")==="true"){
+const unlocked = localStorage.getItem("evidence001Unlocked");
 
-const folders = document.querySelectorAll(".folder");
+if(unlocked === "true"){
 
-folders[1].classList.remove("locked");
+document.getElementById("evidenceFolder").classList.remove("locked");
 
-folders[1].innerHTML = `
-<h2>📂 Evidence Locker 001</h2>
-<p>Recovered Personal Letter</p>
+document.getElementById("evidenceTitle").innerHTML =
+"📂 Evidence Locker 001";
 
+document.getElementById("evidenceText").innerHTML =
+"Recovered Personal Letter";
+
+document.getElementById("evidenceButton").innerHTML = `
 <button onclick="window.location.href='evidence001.html'">
 OPEN EVIDENCE
 </button>
@@ -159,5 +159,6 @@ OPEN EVIDENCE
 }
 
 </script>
+
 </body>
 </html>
