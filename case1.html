@@ -3,66 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IRIS - Case File 001</title>
+<title>CASE FILE 001</title>
 
 <style>
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
 body{
+margin:0;
 background:#08111d;
+color:#ffffff;
 font-family:Arial,Helvetica,sans-serif;
-color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
-padding:30px;
 }
 
 .container{
-width:900px;
-max-width:100%;
+max-width:900px;
+margin:40px auto;
+padding:30px;
 background:#121c2b;
 border:2px solid #4da3ff;
 border-radius:12px;
-padding:40px;
-box-shadow:0 0 30px rgba(0,0,0,.6);
+box-shadow:0 0 25px rgba(0,0,0,.5);
 }
 
-.logo{
+h1{
 text-align:center;
-font-size:34px;
-font-weight:bold;
 color:#67b8ff;
-margin-bottom:10px;
 }
 
-.division{
-text-align:center;
-color:#b8c7d9;
-margin-bottom:35px;
-letter-spacing:2px;
-}
-
-#boot{
+#loading{
 font-family:Courier New,monospace;
-color:#74ff9d;
-font-size:18px;
+color:#7dff9b;
 line-height:2;
+font-size:18px;
 min-height:220px;
 }
 
 #mission{
 display:none;
-margin-top:35px;
-border-top:1px solid #2f4f78;
-padding-top:30px;
-animation:fade .8s;
+animation:fade 1s;
 }
 
 @keyframes fade{
@@ -70,101 +47,140 @@ from{opacity:0;}
 to{opacity:1;}
 }
 
-h2{
+.box{
+background:#1a2940;
+padding:25px;
+border-radius:10px;
+margin-top:20px;
+}
+
+.numbers{
+font-size:42px;
+text-align:center;
+letter-spacing:18px;
+margin:30px 0;
 color:#67b8ff;
-margin-bottom:20px;
-}
-
-.status{
-color:#ffd34d;
 font-weight:bold;
-margin-bottom:20px;
 }
 
-p{
-margin-bottom:18px;
-line-height:1.7;
-color:#d6e1ef;
+input{
+width:260px;
+padding:14px;
+font-size:18px;
+background:#0e1624;
+color:white;
+border:1px solid #4da3ff;
+border-radius:6px;
+text-align:center;
 }
 
 button{
-width:100%;
-padding:16px;
-font-size:18px;
+margin-top:20px;
+padding:14px 30px;
 background:#4da3ff;
 color:white;
 border:none;
 border-radius:8px;
 cursor:pointer;
-margin-top:20px;
-transition:.3s;
+font-size:17px;
 }
 
 button:hover{
 background:#2f86e6;
 }
 
-</style>
+#result{
+margin-top:20px;
+font-size:18px;
+font-weight:bold;
+}
 
+#continue{
+display:none;
+width:100%;
+margin-top:30px;
+}
+
+</style>
 </head>
 
 <body>
 
 <div class="container">
 
-<div class="logo">
-IRIS INTELLIGENCE AGENCY
-</div>
+<h1>IRIS INTELLIGENCE AGENCY</h1>
 
-<div class="division">
-BLACK IRIS DIVISION
-</div>
-
-<div id="boot"></div>
+<div id="loading"></div>
 
 <div id="mission">
 
 <h2 id="agent"></h2>
 
-<div class="status">
-CASE FILE 001 • CLEARANCE LEVEL: OMEGA
+<div class="box">
+
+<p><b>CASE FILE 001</b></p>
+
+<p>Clearance Level: <b>OMEGA</b></p>
+
+<hr>
+
+<p>
+Your identity has been successfully verified.
+</p>
+
+<p>
+Welcome to <b>Operation BLACK IRIS</b>.
+</p>
+
+<p>
+Before classified information can be released,
+every investigator must complete the Agency Qualification Test.
+</p>
+
+<p>
+Read every detail carefully.
+</p>
+
+<p>
+Not every clue is hidden.
+Sometimes the answer is right in front of you.
+</p>
+
+<p>
+Recover the first access key.
+</p>
+
+<div class="numbers">
+7&nbsp;&nbsp;18&nbsp;&nbsp;9&nbsp;&nbsp;19
 </div>
 
-<p>
-Congratulations.
-</p>
+<center>
 
-<p>
-After an extensive international selection process,
-you have been identified as the only investigator
-authorized to access Operation BLACK IRIS.
-</p>
+<input
+id="answer"
+placeholder="Access Key">
 
-<p>
-The reason for your selection remains classified.
-Only the Director has permission to view the complete report.
-</p>
+<br>
 
-<p>
-Your first assignment is to investigate
-<strong>Subject B-01</strong>.
-</p>
+<button onclick="checkAnswer()">
 
-<p>
-Subject B-01 has been removed from all official records.
-Every clue has been intentionally hidden.
-Nothing in this investigation is accidental.
-</p>
+VERIFY
 
-<p>
-Trust the evidence.
-Question every assumption.
-The truth is waiting to be uncovered.
-</p>
-
-<button onclick="window.location.href='dashboard.html'">
-BEGIN INVESTIGATION
 </button>
+
+<div id="result"></div>
+
+<button
+id="continue"
+onclick="window.location.href='dashboard.html'">
+
+CONTINUE TO HEADQUARTERS
+
+</button>
+
+</center>
+
+</div>
 
 </div>
 
@@ -172,34 +188,38 @@ BEGIN INVESTIGATION
 
 <script>
 
-const agentName = localStorage.getItem("agentName") || "Investigator";
+const agent=localStorage.getItem("agentName")||"Investigator";
 
-document.getElementById("agent").innerHTML =
-"Welcome, Agent " + agentName + ".";
+document.getElementById("agent").innerHTML=
+"Welcome, Agent "+agent+".";
 
-const messages = [
-"Initializing secure connection...",
-"Connecting to IRIS Intelligence Network...",
-"Scanning biometric profile...",
-"Searching investigator database...",
-"Identity located.",
+const boot=[
+
+"Retrieving classified file...",
+
+"Decrypting archive...",
+
+"Verifying OMEGA clearance...",
+
+"Scanning investigator profile...",
+
 "Identity confirmed.",
-"Clearance Level: OMEGA.",
-"Decrypting classified files...",
-"Loading Operation BLACK IRIS..."
+
+"Opening Case File 001..."
+
 ];
 
-let index = 0;
+let i=0;
 
-function bootSequence(){
+function loadMission(){
 
-if(index < messages.length){
+if(i<boot.length){
 
-document.getElementById("boot").innerHTML += messages[index] + "<br>";
+document.getElementById("loading").innerHTML+=boot[i]+"<br>";
 
-index++;
+i++;
 
-setTimeout(bootSequence,800);
+setTimeout(loadMission,800);
 
 }else{
 
@@ -209,7 +229,33 @@ document.getElementById("mission").style.display="block";
 
 }
 
-window.onload = bootSequence;
+window.onload=loadMission;
+
+function checkAnswer(){
+
+let ans=document.getElementById("answer").value.trim().toUpperCase();
+
+if(ans==="GRIS"){
+
+document.getElementById("result").style.color="#7dff9b";
+
+document.getElementById("result").innerHTML=
+
+"ACCESS GRANTED<br><br>Excellent work, Agent.<br>Analytical ability confirmed.";
+
+document.getElementById("continue").style.display="block";
+
+}else{
+
+document.getElementById("result").style.color="red";
+
+document.getElementById("result").innerHTML=
+
+"ACCESS DENIED<br>Review the evidence and try again.";
+
+}
+
+}
 
 </script>
 
