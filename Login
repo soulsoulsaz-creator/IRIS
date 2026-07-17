@@ -1,1 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Identity Verification</title>
 
+<style>
+body{
+margin:0;
+background:#08111d;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+font-family:Arial,sans-serif;
+color:white;
+}
+
+.box{
+width:420px;
+background:#111c2d;
+padding:40px;
+border-radius:12px;
+text-align:center;
+box-shadow:0 0 30px rgba(0,0,0,.6);
+}
+
+h1{
+color:#67b8ff;
+}
+
+p{
+color:#c7d5e8;
+}
+
+input{
+width:100%;
+padding:14px;
+margin-top:20px;
+background:#1b2940;
+border:none;
+border-radius:8px;
+color:white;
+font-size:18px;
+box-sizing:border-box;
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:25px;
+background:#4da3ff;
+border:none;
+color:white;
+font-size:18px;
+border-radius:8px;
+cursor:pointer;
+}
+
+button:hover{
+background:#2f86e6;
+}
+
+#error{
+margin-top:15px;
+color:#ff6666;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>IDENTITY VERIFICATION</h1>
+
+<p>Please identify yourself to access Operation BLACK IRIS.</p>
+
+<input
+id="name"
+placeholder="Investigator Name">
+
+<button onclick="continueMission()">
+CONTINUE
+</button>
+
+<p id="error"></p>
+
+</div>
+
+<script>
+
+function continueMission(){
+
+let name=document.getElementById("name").value.trim();
+
+if(name===""){
+document.getElementById("error").innerHTML="Please enter your name.";
+return;
+}
+
+localStorage.setItem("agentName",name);
+
+window.location.href="case1.html";
+
+}
+
+</script>
+
+</body>
+</html>
