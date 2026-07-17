@@ -140,7 +140,24 @@ const agent = localStorage.getItem("agentName") || "Investigator";
 document.getElementById("agent").innerHTML =
 "Welcome back, Agent " + agent;
 
-</script>
+// Unlock Evidence Locker 001
+if(localStorage.getItem("evidence001Unlocked")==="true"){
 
+const folders = document.querySelectorAll(".folder");
+
+folders[1].classList.remove("locked");
+
+folders[1].innerHTML = `
+<h2>📂 Evidence Locker 001</h2>
+<p>Recovered Personal Letter</p>
+
+<button onclick="window.location.href='evidence001.html'">
+OPEN EVIDENCE
+</button>
+`;
+
+}
+
+</script>
 </body>
 </html>
