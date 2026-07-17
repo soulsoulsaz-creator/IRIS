@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SUBJECT B-001</title>
+
+<style>
+
+body{
+background:#08111d;
+color:white;
+font-family:Arial,sans-serif;
+margin:0;
+padding:40px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+background:#121c2b;
+padding:35px;
+border-radius:12px;
+border:2px solid #4da3ff;
+box-shadow:0 0 25px black;
+}
+
+h1{
+text-align:center;
+color:#67b8ff;
+}
+
+h2{
+color:#67b8ff;
+}
+
+.file{
+background:#1a2940;
+padding:25px;
+border-radius:10px;
+margin-top:20px;
+line-height:1.8;
+}
+
+.redacted{
+background:black;
+color:black;
+padding:3px 8px;
+}
+
+input{
+padding:12px;
+width:250px;
+background:#0d1625;
+border:1px solid #4da3ff;
+border-radius:6px;
+color:white;
+font-size:18px;
+text-align:center;
+}
+
+button{
+margin-top:20px;
+padding:14px 30px;
+background:#4da3ff;
+border:none;
+color:white;
+border-radius:8px;
+cursor:pointer;
+font-size:17px;
+}
+
+button:hover{
+background:#2f86e6;
+}
+
+#result{
+margin-top:20px;
+font-weight:bold;
+}
+
+#next{
+display:none;
+width:100%;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>IRIS INTELLIGENCE AGENCY</h1>
+
+<div class="file">
+
+<h2>CLASSIFIED DOSSIER</h2>
+
+<p><b>SUBJECT FILE:</b> B-001</p>
+
+<p><b>CLASSIFICATION:</b> OMEGA</p>
+
+<p><b>STATUS:</b> ACTIVE</p>
+
+<p><b>IDENTITY:</b> UNKNOWN</p>
+
+
+<hr>
+
+
+<h2>SUBJECT PROFILE</h2>
+
+<p>
+Name:
+<span class="redacted">████████████</span>
+</p>
+
+<p>
+Alias: B-001
+</p>
+
+<p>
+Age:
+<span class="redacted">████████████</span>
+</p>
+
+<p>
+Location: UNKNOWN
+</p>
+
+<p>
+Threat Level: NOT DETERMINED
+</p>
+
+<p>
+Last Contact: CLASSIFIED
+</p>
+
+
+<hr>
+
+
+<h2>OBSERVATION REPORT</h2>
+
+<p>
+Subject B-001 is not considered a threat.
+</p>
+
+<p>
+The subject has demonstrated unusual characteristics:
+</p>
+
+<ul>
+<li>Strong emotional intelligence.</li>
+<li>High level of curiosity.</li>
+<li>Ability to adapt quickly.</li>
+<li>Leaves meaningful clues behind.</li>
+<li>Protects people close to them.</li>
+</ul>
+
+<p>
+The subject appears ordinary at first.
+Further investigation is required.
+</p>
+
+
+<hr>
+
+
+<h2>RECOVERED CLUES</h2>
+
+<p>
+<b>CLUE 001</b><br>
+"The subject's story begins with a month."
+</p>
+
+<p>
+<b>CLUE 002</b><br>
+"The first key was not a random choice."
+</p>
+
+<p>
+<b>CLUE 003</b><br>
+"Find the connection between the access code and the subject."
+</p>
+
+
+<hr>
+
+
+<h2>MISSION OBJECTIVE</h2>
+
+<p>
+Identify the hidden connection.
+</p>
+
+<p>
+Recover the next access key.
+</p>
+
+
+<center>
+
+<input id="answer" placeholder="Access Key">
+
+<br>
+
+<button onclick="verify()">
+VERIFY
+</button>
+
+<div id="result"></div>
+
+<button id="next" onclick="window.location.href='dashboard.html'">
+RETURN TO DASHBOARD
+</button>
+
+</center>
+
+
+</div>
+
+</div>
+
+
+<script>
+
+function verify(){
+
+let answer=document.getElementById("answer").value.trim().toUpperCase();
+
+if(answer==="APRIL"){
+
+document.getElementById("result").style.color="#7CFC00";
+
+document.getElementById("result").innerHTML=
+"ACCESS GRANTED<br><br>Subject connection verified.";
+
+document.getElementById("next").style.display="block";
+
+}
+
+else{
+
+document.getElementById("result").style.color="red";
+
+document.getElementById("result").innerHTML=
+"ACCESS DENIED<br>Evidence mismatch.";
+
+}
+
+}
+
+</script>
+
+
+</body>
+</html>
