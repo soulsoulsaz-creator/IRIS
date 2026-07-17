@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Evidence Locker 001</title>
+
+<style>
+
+body{
+background:#08111d;
+color:white;
+font-family:Arial,sans-serif;
+padding:30px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+background:#121c2b;
+padding:35px;
+border:2px solid #4da3ff;
+border-radius:12px;
+}
+
+h1,h2{
+color:#67b8ff;
+text-align:center;
+}
+
+.file{
+background:#1a2940;
+padding:25px;
+border-radius:10px;
+line-height:1.8;
+margin-top:20px;
+}
+
+input{
+padding:12px;
+width:250px;
+background:#08111d;
+color:white;
+border:1px solid #4da3ff;
+text-align:center;
+}
+
+button{
+margin-top:20px;
+padding:14px 25px;
+background:#4da3ff;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+#result{
+margin-top:20px;
+font-weight:bold;
+}
+
+#next{
+display:none;
+width:100%;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<h1>
+IRIS INTELLIGENCE AGENCY
+</h1>
+
+
+<div class="file">
+
+
+<h2>
+EVIDENCE LOCKER 001
+</h2>
+
+
+<p>
+<b>Status:</b> CLASSIFIED
+</p>
+
+
+<p>
+<b>Linked Subject:</b> B-001
+</p>
+
+
+<hr>
+
+
+<p>
+Recovered item:
+</p>
+
+
+<p>
+A fragment of a personal record was found inside the subject's file.
+</p>
+
+
+<p>
+"The subject left behind a message:"
+</p>
+
+
+<p>
+<i>
+"Some people are found by searching.
+Others are found by understanding."
+</i>
+</p>
+
+
+<hr>
+
+
+<h2>
+RECOVERED CLUE
+</h2>
+
+
+<p>
+The first connection is hidden inside the access code.
+</p>
+
+
+<p>
+Access Code:
+<b>APRIL2026</b>
+</p>
+
+
+<p>
+Question:
+</p>
+
+
+<p>
+What month is connected to Subject B-001?
+</p>
+
+
+<center>
+
+<input id="answer" placeholder="Enter month">
+
+
+<br>
+
+<button onclick="verify()">
+VERIFY
+</button>
+
+
+<div id="result"></div>
+
+
+<button id="next" onclick="window.location.href='subjectB001.html'">
+RETURN TO SUBJECT FILE
+</button>
+
+
+</center>
+
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+function verify(){
+
+let answer=document
+.getElementById("answer")
+.value
+.trim()
+.toUpperCase();
+
+
+if(answer==="APRIL"){
+
+document.getElementById("result").style.color="#7CFC00";
+
+document.getElementById("result").innerHTML=
+"ACCESS GRANTED<br><br>Evidence confirmed.";
+
+document.getElementById("next").style.display="block";
+
+}
+
+else{
+
+document.getElementById("result").style.color="red";
+
+document.getElementById("result").innerHTML=
+"ACCESS DENIED<br>Clue analysis failed.";
+
+}
+
+}
+
+</script>
+
+
+</body>
+
+</html>
