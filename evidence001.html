@@ -24,6 +24,7 @@ background:#121c2b;
 padding:35px;
 border:2px solid #4da3ff;
 border-radius:12px;
+box-shadow:0 0 30px black;
 }
 
 h1,h2{
@@ -35,27 +36,42 @@ text-align:center;
 background:#1a2940;
 padding:25px;
 border-radius:10px;
+margin-top:25px;
 line-height:1.8;
+}
+
+.letter{
+background:#111;
+padding:25px;
+border-left:4px solid #67b8ff;
+font-style:italic;
 margin-top:20px;
 }
 
 input{
-padding:12px;
-width:250px;
+padding:14px;
+width:260px;
+font-size:18px;
 background:#08111d;
 color:white;
 border:1px solid #4da3ff;
+border-radius:6px;
 text-align:center;
 }
 
 button{
 margin-top:20px;
-padding:14px 25px;
+padding:14px 30px;
 background:#4da3ff;
 color:white;
 border:none;
 border-radius:8px;
+font-size:17px;
 cursor:pointer;
+}
+
+button:hover{
+background:#2f86e6;
 }
 
 #result{
@@ -79,90 +95,104 @@ width:100%;
 <div class="container">
 
 
-<h1>
-IRIS INTELLIGENCE AGENCY
-</h1>
+<h1>IRIS INTELLIGENCE AGENCY</h1>
 
 
 <div class="file">
 
 
-<h2>
-EVIDENCE LOCKER 001
-</h2>
-
-
-<p>
-<b>Status:</b> CLASSIFIED
-</p>
+<h2>EVIDENCE LOCKER 001</h2>
 
 
 <p>
 <b>Linked Subject:</b> B-001
 </p>
 
-
-<hr>
-
-
 <p>
-Recovered item:
+<b>Evidence Type:</b> Personal Letter
 </p>
 
-
 <p>
-A fragment of a personal record was found inside the subject's file.
-</p>
-
-
-<p>
-"The subject left behind a message:"
-</p>
-
-
-<p>
-<i>
-"Some people are found by searching.
-Others are found by understanding."
-</i>
+<b>Status:</b> RECOVERED
 </p>
 
 
 <hr>
 
 
-<h2>
-RECOVERED CLUE
-</h2>
+<h2>RECOVERED DOCUMENT</h2>
 
 
 <p>
-The first connection is hidden inside the access code.
+A handwritten letter was discovered hidden inside
+the subject's archived materials.
 </p>
 
 
 <p>
-Access Code:
-<b>APRIL2026</b>
+The author did not write names directly.
+Instead, a poem was used to protect the identities
+of two important people connected to Subject B-001.
+</p>
+
+
+
+<div class="letter">
+
+
+"Two little stars that brighten the night,<br>
+Two quiet flames that give me light.<br><br>
+
+One carries dreams with curious eyes,<br>
+One brings laughter beneath the skies.<br><br>
+
+Different paths, but a single thread,<br>
+Two precious names inside my head.<br><br>
+
+I never needed treasure or gold,<br>
+For their stories are worth more than anything told.<br><br>
+
+If you seek the key that I concealed,<br>
+Look for the names my heart revealed."
+
+
+
+</div>
+
+
+<hr>
+
+
+<h2>RECOVERED CLUE</h2>
+
+
+<p>
+The password is not a date.
+</p>
+
+<p>
+It is not a location.
+</p>
+
+<p>
+It is hidden in the two people
+the letter was written for.
 </p>
 
 
 <p>
-Question:
-</p>
-
-
-<p>
-What month is connected to Subject B-001?
+<b>Password format:</b> Combine both names together.
 </p>
 
 
 <center>
 
-<input id="answer" placeholder="Enter month">
+
+<input id="answer" placeholder="Enter password">
 
 
 <br>
+
 
 <button onclick="verify()">
 VERIFY
@@ -173,7 +203,9 @@ VERIFY
 
 
 <button id="next" onclick="window.location.href='subjectB001.html'">
+
 RETURN TO SUBJECT FILE
+
 </button>
 
 
@@ -189,36 +221,50 @@ RETURN TO SUBJECT FILE
 
 <script>
 
+
 function verify(){
+
 
 let answer=document
 .getElementById("answer")
 .value
 .trim()
-.toUpperCase();
+.toUpperCase()
+.replace(/\s/g,'');
 
 
-if(answer==="APRIL"){
+
+if(answer==="DIYONMATTEO"){
+
 
 document.getElementById("result").style.color="#7CFC00";
 
+
 document.getElementById("result").innerHTML=
-"ACCESS GRANTED<br><br>Evidence confirmed.";
+
+"ACCESS GRANTED<br><br>Letter authenticated.<br>Two identities confirmed.<br>New evidence unlocked.";
+
 
 document.getElementById("next").style.display="block";
+
 
 }
 
 else{
 
+
 document.getElementById("result").style.color="red";
 
+
 document.getElementById("result").innerHTML=
-"ACCESS DENIED<br>Clue analysis failed.";
+
+"ACCESS DENIED<br>The hidden identities do not match.";
 
 }
 
+
 }
+
 
 </script>
 
