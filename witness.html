@@ -1,1 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Witness Files</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Consolas,monospace;
+}
+
+body{
+background:#04070d;
+color:#8fd8ff;
+overflow:hidden;
+}
+
+#loading{
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:100%;
+
+background:#04070d;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+flex-direction:column;
+
+font-size:22px;
+
+}
+
+#warning{
+
+display:none;
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:100%;
+
+background:#2b0000;
+
+color:#ff4d4d;
+
+justify-content:center;
+
+align-items:center;
+
+flex-direction:column;
+
+font-size:36px;
+
+text-align:center;
+
+animation:flash .5s infinite;
+
+}
+
+@keyframes flash{
+
+0%{background:#2b0000;}
+
+50%{background:#660000;}
+
+100%{background:#2b0000;}
+
+}
+
+.container{
+
+display:none;
+
+max-width:950px;
+
+margin:40px auto;
+
+background:#08111d;
+
+padding:35px;
+
+border:2px solid #3ca7ff;
+
+}
+
+.report{
+
+background:#101c2d;
+
+padding:20px;
+
+margin:25px 0;
+
+border-left:4px solid #3ca7ff;
+
+line-height:1.8;
+
+}
+
+input{
+
+width:100%;
+
+padding:15px;
+
+margin-top:20px;
+
+background:#07111b;
+
+border:1px solid #3ca7ff;
+
+color:white;
+
+font-size:18px;
+
+text-align:center;
+
+}
+
+button{
+
+width:100%;
+
+padding:15px;
+
+margin-top:15px;
+
+background:#3ca7ff;
+
+border:none;
+
+color:white;
+
+font-size:17px;
+
+cursor:pointer;
+
+}
+
+#result{
+
+margin-top:20px;
+
+font-weight:bold;
+
+}
+
+#next{
+
+display:none;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="loading">
+
+<p>THE EYE</p>
+
+<br>
+
+<p>Loading Witness Database...</p>
+
+<br>
+
+<p>██████████ 100%</p>
+
+<br>
+
+<p>Recovering testimonies...</p>
+
+</div>
+
+<div id="warning">
+
+<p>⚠ SYSTEM INTERRUPTION ⚠</p>
+
+<br>
+
+<p>Unknown process detected...</p>
+
+<br>
+
+<h2>He is watching.</h2>
+
+</div>
+
+<div class="container" id="content">
+
+<h1>WITNESS FILES</h1>
+
+<div class="report">
+
+<h2>Witness Report 001</h2>
+
+<p><b>Witness ID:</b> W-01</p>
+
+<p><b>Identity:</b> REDACTED</p>
+
+<p><b>Relationship:</b> Unknown</p>
+
+<hr><br>
+
+<p>
+
+"The subject displayed remarkable emotional control throughout every observation.
+
+No indication of fear.
+
+No hesitation.
+
+No visible signs of distress.
+
+However, one recurring anomaly was documented.
+
+Whenever an unidentified trigger appeared, the subject's demeanor changed immediately.
+
+The subject became silent, distant, and unusually focused.
+
+The cause of this behavioral shift remains unknown."
+
+</p>
+
+</div>
+
+<div class="report">
+
+<h2>Witness Report 002</h2>
+
+<p>
+
+"I entered believing the subject was alone.
+
+Yet the subject repeatedly looked toward the empty doorway.
+
+When questioned, the subject answered...
+
+'He's still here.'
+
+No one else was present."
+
+</p>
+
+</div>
+
+<div class="report">
+
+<h2>Witness Report 003</h2>
+
+<p>
+
+"Every interview ended the same way.
+
+Before leaving,
+
+the subject looked directly toward the security camera...
+
+and smiled."
+
+</p>
+
+</div>
+
+<hr><br>
+
+<h2>SURVEILLANCE ARCHIVE</h2>
+
+<p>ACCESS DENIED</p>
+
+<br>
+
+<p>
+
+I never blink.<br>
+
+I never sleep.<br>
+
+I remember everything.<br><br>
+
+What am I?
+
+</p>
+
+<input id="answer" placeholder="ENTER ANSWER">
+
+<button onclick="verify()">
+
+VERIFY
+
+</button>
+
+<div id="result"></div>
+
+<button id="next">
+
+RETURN TO THE EYE
+
+</button>
+
+<script>
+// ---------- LOADING SEQUENCE ----------
+
+setTimeout(function(){
+
+document.getElementById("loading").style.display="none";
+
+document.getElementById("warning").style.display="flex";
+
+},3000);
+
+
+// ---------- RED WARNING ----------
+
+setTimeout(function(){
+
+document.getElementById("warning").style.display="none";
+
+document.getElementById("content").style.display="block";
+
+document.body.style.overflow="auto";
+
+},7000);
+
+
+// ---------- PASSWORD ----------
+
+function verify(){
+
+let answer=document
+.getElementById("answer")
+.value
+.trim()
+.toUpperCase()
+.replace(/\s/g,'');
+
+if(answer==="THEEYE"){
+
+document.getElementById("result").style.color="#7CFC00";
+
+document.getElementById("result").innerHTML=
+
+`
+Authentication Accepted.<br><br>
+
+Recovering Surveillance Archive...<br><br>
+
+██████████ 100%<br><br>
+
+Surveillance Report Unlocked.
+`;
+
+localStorage.setItem("surveillanceUnlocked","true");
+
+document.getElementById("next").style.display="block";
+
+}
+
+else{
+
+document.getElementById("result").style.color="red";
+
+document.getElementById("result").innerHTML=
+
+`
+ACCESS DENIED<br><br>
+
+Incorrect authentication.
+`;
+
+}
+
+}
+
+
+// ---------- RETURN ----------
+
+document.getElementById("next").onclick=function(){
+
+window.location.href="dashboard.html";
+
+};
+
+</script>
+
+</body>
+
+</html>
