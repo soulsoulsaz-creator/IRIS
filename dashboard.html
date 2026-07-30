@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>IRIS Dashboard</title>
+<title>IRIS Intelligence Agency</title>
 
 <style>
 
@@ -20,8 +20,8 @@ font-family:Arial,sans-serif;
 .header{
 background:#111c2d;
 padding:25px;
-border-bottom:2px solid #4da3ff;
 text-align:center;
+border-bottom:2px solid #4da3ff;
 }
 
 .header h1{
@@ -29,61 +29,85 @@ margin:0;
 color:#67b8ff;
 }
 
-.container{
-max-width:900px;
-margin:30px auto;
-padding:20px;
+.header p{
+margin-top:10px;
+color:#c7e6ff;
 }
 
-.card{
-background:#121c2b;
+.container{
+max-width:900px;
+margin:40px auto;
 padding:20px;
-border-radius:10px;
-margin-bottom:20px;
-border-left:5px solid #4da3ff;
 }
 
 .folder{
+
 background:#121c2b;
-padding:20px;
-margin-top:18px;
-border-radius:10px;
+
+padding:25px;
+
+margin-bottom:20px;
+
+border-radius:12px;
+
+border-left:5px solid #4da3ff;
+
+box-shadow:0 0 20px rgba(0,0,0,.4);
+
 }
 
-.locked{
-opacity:.45;
+.folder h2{
+
+margin-top:0;
+
+color:#67b8ff;
+
+}
+
+.folder p{
+
+line-height:1.6;
+
 }
 
 button{
-width:100%;
+
+margin-top:15px;
+
 padding:14px;
-margin-top:12px;
+
+width:100%;
+
 background:#4da3ff;
+
 color:white;
+
 border:none;
+
 border-radius:8px;
-cursor:pointer;
+
 font-size:16px;
+
+cursor:pointer;
+
 }
 
 button:hover{
+
 background:#2f86e6;
+
 }
 
-.progressBar{
-width:100%;
-height:16px;
-background:#09131f;
-border-radius:20px;
-overflow:hidden;
-margin-top:15px;
-}
+.footer{
 
-.progressFill{
-height:100%;
-width:12%;
-background:#4da3ff;
-transition:.6s;
+text-align:center;
+
+margin:40px;
+
+opacity:.5;
+
+font-size:13px;
+
 }
 
 </style>
@@ -102,37 +126,11 @@ transition:.6s;
 
 <div class="container">
 
-<div class="card">
-
-<h2>MISSION STATUS</h2>
-
-<p>Operation: <b>BLACK IRIS</b></p>
-
-<p>Clearance: <b>OMEGA</b></p>
-
-<p>Progress:
-<b id="progressText">12%</b>
-</p>
-
-<div class="progressBar">
-
-<div
-id="progressBar"
-class="progressFill">
-</div>
-
-</div>
-
-</div>
-
-
-<!-- SUBJECT -->
-
 <div class="folder">
 
 <h2>📁 Subject B-001</h2>
 
-<p>Primary investigation file.</p>
+<p>Primary investigation dossier concerning Subject B-001.</p>
 
 <button onclick="location.href='subjectB001.html'">
 
@@ -142,241 +140,93 @@ OPEN FILE
 
 </div>
 
+<div class="folder">
 
-<!-- EVIDENCE -->
+<h2>📂 Evidence Locker 001</h2>
 
-<div
-class="folder locked"
-id="evidenceFolder">
+<p>Recovered evidence connected to Subject B-001.</p>
 
-<h2 id="evidenceTitle">
+<button onclick="location.href='evidence001.html'">
 
-🔒 Evidence Locker 001
+OPEN FILE
 
-</h2>
-
-<p id="evidenceText">
-
-Locked
-
-</p>
-
-<div id="evidenceButton"></div>
+</button>
 
 </div>
 
+<div class="folder">
 
-<!-- WITNESS -->
+<h2>📂 Witness Files</h2>
 
-<div
-class="folder locked"
-id="witnessFolder">
+<p>Recovered witness testimonies and classified statements.</p>
 
-<h2 id="witnessTitle">
+<button onclick="location.href='witness.html'">
 
-🔒 Witness Files
+OPEN FILE
 
-</h2>
-
-<p id="witnessText">
-
-Locked
-
-</p>
-
-<div id="witnessButton"></div>
+</button>
 
 </div>
 
+<div class="folder">
 
-<!-- SURVEILLANCE -->
+<h2>📂 Surveillance Report</h2>
 
-<div
-class="folder locked"
-id="surveillanceFolder">
+<p>Archived surveillance recordings and camera logs.</p>
 
-<h2 id="surveillanceTitle">
+<button onclick="location.href='surveillance.html'">
 
-🔒 Surveillance Report
+OPEN FILE
 
-</h2>
-
-<p id="surveillanceText">
-
-Locked
-
-</p>
-
-<div id="surveillanceButton"></div>
+</button>
 
 </div>
 
+<div class="folder">
 
-<!-- PSYCHOLOGY -->
+<h2>📂 Psychological Profile</h2>
 
-<div
-class="folder locked"
-id="psyFolder">
+<p>Behavioral analysis and assessment of Subject B-001.</p>
 
-<h2 id="psyTitle">
+<button onclick="location.href='psychology.html'">
 
-🔒 Psychological Profile
+OPEN FILE
 
-</h2>
-
-<p id="psyText">
-
-Locked
-
-</p>
-
-<div id="psyButton"></div>
+</button>
 
 </div>
 
+<div class="folder">
 
-<!-- FINAL -->
+<h2>📂 Final Archive</h2>
 
-<div
-class="folder locked"
-id="finalFolder">
+<p>Highest classified records related to Operation BLACK IRIS.</p>
 
-<h2 id="finalTitle">
+<button onclick="location.href='final.html'">
 
-🔒 Final Archive
+OPEN FILE
 
-</h2>
+</button>
 
-<p id="finalText">
+</div>
 
-Locked
+</div>
 
-</p>
+<div class="footer">
 
-<div id="finalButton"></div>
+IRIS Intelligence Agency • OMEGA Clearance Required
 
 </div>
 
 <script>
+
 const agent = localStorage.getItem("agentName") || "Investigator";
 
 document.getElementById("agent").innerHTML =
 "Welcome back, Agent " + agent;
 
-let progress = 12;
+</script>
 
-// ----------------------
-// EVIDENCE LOCKER
-// ----------------------
+</body>
 
-if(localStorage.getItem("subjectSolved")==="true"){
-
-progress = 28;
-
-document.getElementById("evidenceFolder").classList.remove("locked");
-
-document.getElementById("evidenceTitle").innerHTML =
-"📂 Evidence Locker 001";
-
-document.getElementById("evidenceText").innerHTML =
-"Recovered Personal Letter";
-
-document.getElementById("evidenceButton").innerHTML = `
-<button onclick="location.href='evidence001.html'">
-OPEN EVIDENCE
-</button>
-`;
-
-}
-
-// ----------------------
-// WITNESS FILES
-// ----------------------
-
-if(localStorage.getItem("witnessUnlocked")==="true"){
-
-progress = 45;
-
-document.getElementById("witnessFolder").classList.remove("locked");
-
-document.getElementById("witnessTitle").innerHTML =
-"📂 Witness Files";
-
-document.getElementById("witnessText").innerHTML =
-"Recovered witness testimonies.";
-
-document.getElementById("witnessButton").innerHTML = `
-<button onclick="location.href='witness.html'">
-OPEN FILES
-</button>
-`;
-
-}
-
-// ----------------------
-// SURVEILLANCE REPORT
-// ----------------------
-
-if(localStorage.getItem("surveillanceUnlocked")==="true"){
-
-progress = 65;
-
-document.getElementById("surveillanceFolder").classList.remove("locked");
-
-document.getElementById("surveillanceTitle").innerHTML =
-"📂 Surveillance Report";
-
-document.getElementById("surveillanceText").innerHTML =
-"Recovered surveillance recordings.";
-
-document.getElementById("surveillanceButton").innerHTML = `
-<button onclick="location.href='surveillance.html'">
-OPEN REPORT
-</button>
-`;
-
-}
-
-// ----------------------
-// PSYCHOLOGICAL PROFILE
-// ----------------------
-
-if(localStorage.getItem("psyUnlocked")==="true"){
-
-progress = 82;
-
-document.getElementById("psyFolder").classList.remove("locked");
-
-document.getElementById("psyTitle").innerHTML =
-"📂 Psychological Profile";
-
-document.getElementById("psyText").innerHTML =
-"Behavioral assessment recovered.";
-
-document.getElementById("psyButton").innerHTML = `
-<button onclick="location.href='psychology.html'">
-OPEN PROFILE
-</button>
-`;
-
-}
-
-// ----------------------
-// FINAL ARCHIVE
-// ----------------------
-
-if(localStorage.getItem("finalUnlocked")==="true"){
-
-progress = 100;
-
-document.getElementById("finalFolder").classList.remove("locked");
-
-document.getElementById("finalTitle").innerHTML =
-"📂 Final Archive";
-
-document.getElementById("finalText").innerHTML =
-"Clearance granted.";
-
-document.getElementById("finalButton").innerHTML = `
-<button onclick="location.href='final.html'">
-OPEN
+</html>
