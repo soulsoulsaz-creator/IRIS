@@ -322,26 +322,32 @@ OPEN EVIDENCE LOCKER 001
 
 function verify(){
 
-let answer=document.getElementById("answer").value.trim().toUpperCase();
-
+let answer = document
+.getElementById("answer")
+.value
+.trim()
+.toUpperCase()
+.replace(/\s/g,'');
 
 if(answer==="APRIL"){
 
-document.getElementById("result").style.color="#7CFC00";
+    // Save progress
+    localStorage.setItem("subjectSolved","true");
 
-document.getElementById("result").innerHTML=
-"ACCESS GRANTED<br><br>Subject connection verified.<br>New evidence unlocked.";
+    document.getElementById("result").style.color="#7CFC00";
 
-document.getElementById("next").style.display="block";
+    document.getElementById("result").innerHTML=
+    "ACCESS GRANTED<br><br>Subject connection verified.<br>Evidence Locker 001 unlocked.";
+
+    document.getElementById("next").style.display="block";
 
 }
-
 else{
 
-document.getElementById("result").style.color="red";
+    document.getElementById("result").style.color="red";
 
-document.getElementById("result").innerHTML=
-"ACCESS DENIED<br>Evidence mismatch.";
+    document.getElementById("result").innerHTML=
+    "ACCESS DENIED<br>Evidence mismatch.";
 
 }
 
