@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Psychological Profile - B-001</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+
+margin:0;
+
+background:#050000;
+
+color:#f2f2f2;
+
+font-family:Arial,sans-serif;
+
+min-height:100vh;
+
+transition:background 1s;
+
+}
+
+body.alarm{
+
+background:
+radial-gradient(circle at center,#5b0000 0%,#1a0000 45%,#050000 100%);
+
+}
+
+.container{
+
+max-width:950px;
+
+margin:auto;
+
+padding:30px 20px 60px;
+
+}
+
+.header{
+
+text-align:center;
+
+padding:25px;
+
+border:2px solid #7d0000;
+
+background:#090000;
+
+box-shadow:
+0 0 20px rgba(255,0,0,.25);
+
+}
+
+.header h1{
+
+color:#ff2020;
+
+letter-spacing:3px;
+
+margin:0;
+
+}
+
+.header p{
+
+color:#bdbdbd;
+
+margin-bottom:0;
+
+}
+
+.warning{
+
+margin-top:25px;
+
+padding:20px;
+
+background:#100000;
+
+border:1px solid #9c0000;
+
+border-left:6px solid #ff1717;
+
+}
+
+.warning h2{
+
+color:#ff2020;
+
+margin-top:0;
+
+}
+
+.warning p{
+
+line-height:1.7;
+
+}
+
+.question-box{
+
+margin-top:25px;
+
+background:#0b0000;
+
+border:1px solid #650000;
+
+padding:25px;
+
+}
+
+.question-number{
+
+color:#ff2929;
+
+font-size:14px;
+
+letter-spacing:2px;
+
+}
+
+.question{
+
+font-size:21px;
+
+margin:12px 0 25px;
+
+line-height:1.5;
+
+}
+
+.answers{
+
+display:flex;
+
+gap:15px;
+
+}
+
+.answer{
+
+flex:1;
+
+padding:16px;
+
+background:#160000;
+
+border:2px solid #720000;
+
+color:white;
+
+font-size:17px;
+
+border-radius:5px;
+
+cursor:pointer;
+
+transition:.2s;
+
+}
+
+.answer:hover{
+
+background:#390000;
+
+border-color:#ff2020;
+
+}
+
+.no-answer:hover{
+
+background:#160000;
+
+}
+
+.status{
+
+margin-top:25px;
+
+padding:15px;
+
+background:#080000;
+
+border:1px solid #450000;
+
+color:#aaa;
+
+text-align:center;
+
+}
+
+#profile{
+
+display:none;
+
+margin-top:30px;
+
+}
+
+.profile-section{
+
+background:#0b0000;
+
+border:1px solid #650000;
+
+border-left:5px solid #b00000;
+
+padding:25px;
+
+margin-top:20px;
+
+line-height:1.8;
+
+}
+
+.profile-section h2{
+
+color:#ff2929;
+
+margin-top:0;
+
+}
+
+.classification{
+
+display:inline-block;
+
+padding:7px 12px;
+
+border:1px solid #ff2020;
+
+color:#ff2020;
+
+font-size:13px;
+
+letter-spacing:1px;
+
+margin-bottom:15px;
+
+}
+
+.conclusion{
+
+border:2px solid #a00000;
+
+background:#140000;
+
+padding:25px;
+
+margin-top:25px;
+
+}
+
+.conclusion h2{
+
+color:#ff2020;
+
+}
+
+.back{
+
+margin-top:30px;
+
+width:100%;
+
+padding:15px;
+
+background:#680000;
+
+border:none;
+
+color:white;
+
+font-size:16px;
+
+border-radius:5px;
+
+cursor:pointer;
+
+}
+
+.back:hover{
+
+background:#900000;
+
+}
+
+.hidden{
+
+display:none;
+
+}
+
+.blink{
+
+animation:blink 1s infinite;
+
+}
+
+@keyframes blink{
+
+0%,100%{
+
+opacity:1;
+
+}
+
+50%{
+
+opacity:.45;
+
+}
+
+}
+
+</style>
+
+</head>
+
+
+<body class="alarm">
+
+
+<div class="container">
+
+
+<div class="header">
+
+<h1>IRIS INTELLIGENCE AGENCY</h1>
+
+<p>PSYCHOLOGICAL ASSESSMENT DIVISION</p>
+
+</div>
+
+
+<div class="warning">
+
+<h2 class="blink">⚠ PSYCHOLOGICAL EVALUATION</h2>
+
+<p>
+
+You are accessing a restricted psychological assessment
+associated with Subject B-001.
+
+</p>
+
+<p>
+
+Before the profile can be released, the investigator must
+answer the following questions.
+
+</p>
+
+<p>
+
+Answer honestly.
+
+</p>
+
+<p>
+
+<b>There are no incorrect answers.</b>
+
+</p>
+
+</div>
+
+
+<div id="questions"></div>
+
+
+<div class="status">
+
+Questions completed:
+<b><span id="completed">0</span>/10</b>
+
+</div>
+
+
+<div id="profile">
+
+
+<div class="profile-section">
+
+<span class="classification">
+
+TOP SECRET // OMEGA
+
+</span>
+
+<h2>SUBJECT B-001 — PSYCHOLOGICAL PROFILE</h2>
+
+<p>
+
+Following completion of the investigator assessment,
+additional information concerning Subject B-001 has been
+authorized for release.
+
+</p>
+
+<p>
+
+The following profile was reconstructed from archived
+interviews, witness statements, behavioral observations,
+and recovered records.
+
+</p>
+
+</div>
+
+
+<div class="profile-section">
+
+<h2>01 — EARLY DEVELOPMENT</h2>
+
+<p>
+
+Subject B-001 experienced a childhood characterized by
+instability, financial hardship, and prolonged periods of
+emotional isolation.
+
+</p>
+
+<p>
+
+Records indicate that the subject grew up in an environment
+where basic stability could not always be guaranteed.
+Frequent changes in circumstances forced the subject to
+adapt at an unusually young age.
+
+</p>
+
+<p>
+
+There are indications that the subject learned to remain
+quiet when confronted with conflict and developed a habit
+of observing people before deciding whether they could be
+trusted.
+
+</p>
+
+<p>
+
+Investigators believe these experiences significantly
+influenced the subject's later personality.
+
+</p>
+
+</div>
+
+
+<div class="profile-section">
+
+<h2>02 — SOCIAL DEVELOPMENT</h2>
+
+<p>
+
+The subject demonstrated difficulty forming conventional
+social relationships.
+
+</p>
+
+<p>
+
+Rather than seeking large social groups, B-001 appeared to
+maintain a very small circle of individuals considered
+worthy of trust.
+
+</p>
+
+<p>
+
+Once trust was established, however, the subject displayed
+strong loyalty and a willingness to protect those individuals
+even at considerable personal cost.
+
+</p>
+
+<p>
+
+This creates an important contradiction in the psychological
+profile.
+
+</p>
+
+<p>
+
+The subject is not emotionally detached.
+
+The subject is highly selective about where emotional
+attachment is placed.
+
+</p>
+
+</div>
+
+
+<div class="profile-section">
+
+<h2>03 — COGNITIVE RESPONSE</h2>
+
+<p>
+
+B-001 demonstrates an unusually strong ability to identify
+patterns within incomplete information.
+
+</p>
+
+<p>
+
+During stressful situations, the subject does not
+immediately react.
+
+Instead, available information is observed,
+classified, and compared before a decision is made.
+
+</p>
+
+<p>
+
+This behavior may have developed as a survival mechanism
+during childhood.
+
+</p>
+
+<p>
+
+The subject learned that recognizing a situation before
+acting could prevent consequences that could not easily
+be reversed.
+
+</p>
+
+</div>
+
+
+<div class="profile-section">
+
+<h2>04 — EMOTIONAL RESPONSE</h2>
+
+<p>
+
+The subject's emotional responses appear considerably
+stronger than outward behavior would suggest.
+
+</p>
+
+<p>
+
+B-001 frequently suppresses visible emotional reactions,
+particularly when experiencing fear, uncertainty, or grief.
+
+</p>
+
+<p>
+
+This should not be interpreted as emotional weakness.
+
+The available evidence suggests the opposite.
+
+The subject developed a high tolerance for emotional
+pressure as a consequence of prolonged exposure to
+uncertainty during childhood.
+
+</p>
+
+</div>
+
+
+<div class="profile-section">
+
+<h2>05 — FEAR RESPONSE</h2>
+
+<p>
+
+The subject does not appear to respond to fear in a
+conventional manner.
+
+</p>
+
+<p>
+
+When confronted with an unknown situation, B-001 tends
+to investigate rather than immediately retreat.
+
+</p>
+
+<p>
+
+This behavior may explain the subject's repeated willingness
+to enter situations that other individuals would consider
+unsafe.
+
+</p>
+
+<p>
+
+However, investigators should not interpret this behavior
+as fearlessness.
+
+It may instead represent an unusually strong need to
+understand the source of a threat.
+
+</p>
+
+</div>
+
+
+<div class="profile-section">
+
+<h2>06 — THE DISAPPEARANCE</h2>
+
+<p>
+
+The psychological profile becomes considerably less
+consistent around the period immediately preceding the
+subject's disappearance.
+
+</p>
+
+<p>
+
+Several behavioral changes were reported.
+
+The subject became more withdrawn, spent increased amounts
+of time alone, and reportedly expressed the belief that
+certain events were repeating themselves.
+
+</p>
+
+<p>
+
+No definitive explanation for these observations has been
+established.
+
+</p>
+
+</div>
+
+
+<div class="profile-section">
+
+<h2>07 — POST-RECOVERY OBSERVATION</h2>
+
+<p>
+
+Following the subject's return, investigators observed
+significant changes in interpersonal behavior.
+
+</p>
+
+<p>
+
+B-001 appeared more cautious when discussing personal
+experiences.
+
+Certain questions produced unusually long pauses before
+a response was given.
+
+</p>
+
+<p>
+
+The subject also demonstrated an apparent awareness of
+details that investigators had not yet disclosed.
+
+</p>
+
+<p>
+
+The origin of this knowledge remains unexplained.
+
+</p>
+
+</div>
+
+
+<div class="conclusion">
+
+<h2>PSYCHOLOGICAL CONCLUSION</h2>
+
+<p>
+
+Subject B-001 should not be classified as inherently
+dangerous.
+
+</p>
+
+<p>
+
+The available evidence suggests that many of the subject's
+unusual behaviors originated as adaptations to a difficult
+childhood rather than evidence of malicious intent.
+
+</p>
+
+<p>
+
+The subject learned to observe before trusting,
+to remain calm under pressure,
+and to protect a very small number of people with
+exceptional determination.
+
+</p>
+
+<p>
+
+However, one observation remains unresolved.
+
+</p>
+
+<p>
+
+The subject's behavior following the disappearance cannot
+be completely explained by the psychological profile.
+
+</p>
+
+<p>
+
+Further investigation is recommended.
+
+</p>
+
+<p>
+
+<b>Assessment Status:</b>
+INCONCLUSIVE
+
+</p>
+
+</div>
+
+
+<button class="back" onclick="location.href='dashboard.html'">
+
+RETURN TO HEADQUARTERS
+
+</button>
+
+
+</div>
+
+
+</div>
+
+
+<script>
+
+
+const questions = [
+
+"Do you feel a personal connection to the subject?",
+
+"Have you ever met the subject in person?",
+
+"Have you ever communicated with the subject?",
+
+"Did the subject's story remind you of something from your own life?",
+
+"Have you thought about the subject outside of this investigation?",
+
+"Do you believe you would recognize the subject immediately?",
+
+"Have you ever felt that someone connected to this case was watching you?",
+
+"Do you believe the subject is hiding something?",
+
+"Do you feel emotionally affected by the subject's disappearance?",
+
+"Would you continue investigating this case even if you were told to stop?"
+
+];
+
+
+let current = 0;
+
+let answers = [];
+
+
+const questionsContainer =
+document.getElementById("questions");
+
+
+const completed =
+document.getElementById("completed");
+
+
+const profile =
+document.getElementById("profile");
+
+
+function createQuestion(){
+
+if(current >= questions.length){
+
+finishTest();
+
+return;
+
+}
+
+
+questionsContainer.innerHTML = `
+
+<div class="question-box">
+
+<div class="question-number">
+
+QUESTION ${current + 1} OF ${questions.length}
+
+</div>
+
+<div class="question">
+
+${questions[current]}
+
+</div>
+
+<div class="answers">
+
+<button class="answer yes-answer">
+
+YES
+
+</button>
+
+<button class="answer no-answer">
+
+NO
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+
+const yes =
+document.querySelector(".yes-answer");
+
+const no =
+document.querySelector(".no-answer");
+
+
+/*
+
+When the pointer enters NO,
+the displayed answer becomes YES.
+
+When the pointer leaves,
+it returns to NO.
+
+*/
+
+no.addEventListener("mouseenter",function(){
+
+no.textContent = "YES";
+
+});
+
+
+no.addEventListener("mouseleave",function(){
+
+no.textContent = "NO";
+
+});
+
+
+yes.addEventListener("click",function(){
+
+recordAnswer("YES");
+
+});
+
+
+no.addEventListener("click",function(){
+
+recordAnswer("NO");
+
+});
+
+}
+
+
+function recordAnswer(answer){
+
+answers.push(answer);
+
+current++;
+
+completed.textContent = current;
+
+createQuestion();
+
+}
+
+
+function finishTest(){
+
+questionsContainer.innerHTML = `
+
+<div class="question-box">
+
+<h2 style="color:#ff2020;">
+
+ASSESSMENT COMPLETE
+
+</h2>
+
+<p>
+
+All ten questions have been recorded.
+
+</p>
+
+<p>
+
+Cross-referencing investigator responses
+with the B-001 psychological archive...
+
+</p>
+
+</div>
+
+`;
+
+setTimeout(function(){
+
+questionsContainer.style.display="none";
+
+document.querySelector(".status").style.display="none";
+
+profile.style.display="block";
+
+localStorage.setItem(
+"psychologyCompleted",
+"true"
+);
+
+window.scrollTo({
+
+top:0,
+
+behavior:"smooth"
+
+});
+
+},1800);
+
+}
+
+
+if(localStorage.getItem("psychologyCompleted")==="true"){
+
+current=10;
+
+completed.textContent="10";
+
+questionsContainer.style.display="none";
+
+document.querySelector(".status").style.display="none";
+
+profile.style.display="block";
+
+}
+
+else{
+
+createQuestion();
+
+}
+
+
+</script>
+
+
+</body>
+
+  </html>
