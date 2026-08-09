@@ -1,885 +1,671 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>IRIS — Timeline Reconstruction</title>
 
 <style>
 
-*{
-    box-sizing:border-box;
+* {
+    box-sizing: border-box;
 }
 
-html,body{
-    margin:0;
-    padding:0;
-    min-height:100%;
+body {
+    margin: 0;
+    background: #030405;
+    color: #e8e8e8;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-body{
+/* HEADER */
 
-    background:#030507;
-
-    color:#e8e8e8;
-
-    font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
-
+header {
+    background: #070a0e;
+    border-bottom: 2px solid #a40000;
+    padding: 25px 15px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(255,0,0,.12);
 }
 
-/* =========================
-   HEADER
-========================= */
-
-.header{
-
-    background:
-    linear-gradient(
-        180deg,
-        #0b1016,
-        #05080c
-    );
-
-    border-bottom:
-    2px solid #9b0000;
-
-    padding:25px 18px;
-
-    text-align:center;
-
-    box-shadow:
-    0 0 30px rgba(255,0,0,.12);
-
+header h1 {
+    margin: 0;
+    color: #ff2020;
+    font-size: 24px;
+    letter-spacing: 4px;
 }
 
-.header h1{
-
-    margin:0;
-
-    color:#ff2020;
-
-    font-size:25px;
-
-    letter-spacing:4px;
-
+header p {
+    color: #777;
+    font-size: 11px;
+    letter-spacing: 2px;
+    margin: 10px 0 0;
 }
 
-.header .subtitle{
+/* MAIN */
 
-    margin-top:8px;
-
-    color:#777;
-
-    font-size:12px;
-
-    letter-spacing:2px;
-
+.container {
+    width: 94%;
+    max-width: 1100px;
+    margin: auto;
+    padding: 25px 0 50px;
 }
 
-/* =========================
-   MAIN
-========================= */
+/* WARNING */
 
-.container{
-
-    width:95%;
-
-    max-width:1200px;
-
-    margin:auto;
-
-    padding:25px 0 50px;
-
+.warning {
+    background: #0b0606;
+    border: 1px solid #561111;
+    border-left: 5px solid #d00000;
+    padding: 20px;
+    margin-bottom: 22px;
 }
 
-/* =========================
-   CLASSIFIED WARNING
-========================= */
-
-.warning{
-
-    background:#0b0606;
-
-    border:
-    1px solid #5d1515;
-
-    border-left:
-    5px solid #e00000;
-
-    padding:20px;
-
-    margin-bottom:20px;
-
+.warning h2 {
+    margin-top: 0;
+    color: #ff2525;
+    font-size: 17px;
 }
 
-.warning-title{
-
-    color:#ff2525;
-
-    font-weight:bold;
-
-    font-size:18px;
-
-    margin-bottom:12px;
-
-    letter-spacing:1px;
-
+.warning p {
+    color: #999;
+    line-height: 1.7;
 }
 
-.warning p{
+/* MAP */
 
-    color:#aaa;
-
-    line-height:1.7;
-
-    margin:6px 0;
-
+.map-box {
+    background: #080c10;
+    border: 1px solid #293743;
+    padding: 10px;
 }
 
-/* =========================
-   MAP
-========================= */
-
-.map-section{
-
-    background:#070a0e;
-
-    border:
-    1px solid #26333e;
-
-    padding:10px;
-
-    box-shadow:
-    0 0 30px rgba(0,0,0,.8);
-
+.map-title {
+    padding: 14px;
+    background: #0c1117;
+    border-bottom: 1px solid #293743;
+    display: flex;
+    justify-content: space-between;
 }
 
-.map-header{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    padding:12px;
-
-    background:#0b1016;
-
-    border-bottom:
-    1px solid #273641;
-
+.map-title strong {
+    color: #66b9ff;
+    letter-spacing: 1px;
 }
 
-.map-header strong{
-
-    color:#6bbcff;
-
-    letter-spacing:1px;
-
+.active {
+    color: #ff2929;
+    font-size: 11px;
 }
 
-.map-status{
-
-    color:#ff3030;
-
-    font-size:11px;
-
-    letter-spacing:1px;
-
+.map {
+    width: 100%;
+    height: 600px;
+    border: 0;
+    display: block;
 }
 
-.map-frame{
+/* MAP INFO */
 
-    width:100%;
-
-    height:650px;
-
-    border:0;
-
-    display:block;
-
-    background:#050505;
-
+.map-info {
+    background: #080d12;
+    border: 1px solid #263642;
+    margin-top: 15px;
+    padding: 17px;
+    color: #8f9aa4;
+    font-size: 13px;
+    line-height: 1.8;
 }
 
-/* =========================
-   MAP INFORMATION
-========================= */
-
-.map-info{
-
-    margin-top:15px;
-
-    background:#090e13;
-
-    border:
-    1px solid #263746;
-
-    padding:16px;
-
-    font-size:13px;
-
-    line-height:1.8;
-
-    color:#8e9aa5;
-
+.map-info b {
+    color: #d0d7dc;
 }
 
-.map-info b{
+/* LOCATIONS */
 
-    color:#c6d2dc;
-
+.section-title {
+    color: #ff2424;
+    margin-top: 35px;
+    letter-spacing: 2px;
+    font-size: 18px;
 }
 
-/* =========================
-   LOCATION FILES
-========================= */
-
-.section-title{
-
-    margin-top:30px;
-
-    margin-bottom:15px;
-
-    color:#ff2424;
-
-    font-size:18px;
-
-    letter-spacing:2px;
-
+.locations {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
 }
 
-.locations{
-
-    display:grid;
-
-    grid-template-columns:
-    repeat(
-        auto-fit,
-        minmax(260px,1fr)
-    );
-
-    gap:15px;
-
+.location {
+    background: #090d12;
+    border: 1px solid #293944;
+    padding: 20px;
+    cursor: pointer;
+    transition: .2s;
 }
 
-.location{
-
-    background:#090e13;
-
-    border:
-    1px solid #263746;
-
-    padding:20px;
-
-    cursor:pointer;
-
-    transition:
-    .2s ease;
-
+.location:hover {
+    border-color: #4aaeff;
+    transform: translateY(-3px);
+    box-shadow: 0 0 20px rgba(70,170,255,.12);
 }
 
-.location:hover{
-
-    border-color:#5cb6ff;
-
-    transform:
-    translateY(-3px);
-
-    box-shadow:
-    0 0 18px
-    rgba(80,180,255,.15);
-
+.location.examined {
+    border-color: #176b39;
+    background: #07100b;
 }
 
-.location.locked{
-
-    opacity:.65;
-
+.location-code {
+    color: #777;
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-bottom: 9px;
 }
 
-.location-code{
-
-    font-size:11px;
-
-    color:#777;
-
-    letter-spacing:2px;
-
-    margin-bottom:8px;
-
+.location h3 {
+    color: #65b8ff;
+    font-size: 16px;
+    margin: 0 0 10px;
 }
 
-.location h3{
-
-    color:#68baff;
-
-    font-size:16px;
-
-    margin:0 0 10px;
-
+.location p {
+    color: #929ba4;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0;
 }
 
-.location p{
-
-    color:#929da7;
-
-    font-size:13px;
-
-    line-height:1.6;
-
-    margin:0;
-
+.examined-label {
+    display: none;
+    color: #38d879;
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-top: 12px;
 }
 
-/* =========================
-   EVIDENCE
-========================= */
-
-.evidence{
-
-    margin-top:30px;
-
-    background:#080b0f;
-
-    border:
-    1px solid #273642;
-
-    padding:20px;
-
+.location.examined .examined-label {
+    display: block;
 }
 
-.evidence h2{
+/* L-07 */
 
-    color:#ff2929;
-
-    margin-top:0;
-
+.l7 {
+    margin-top: 25px;
+    background: #0b0506;
+    border: 1px solid #681111;
+    border-left: 5px solid #d00000;
+    padding: 23px;
 }
 
-.evidence p{
-
-    color:#9aa4ad;
-
-    line-height:1.7;
-
+.l7-label {
+    color: #ff2020;
+    font-size: 10px;
+    letter-spacing: 3px;
 }
 
-/* =========================
-   STATUS
-========================= */
-
-.status{
-
-    margin-top:25px;
-
-    padding:18px;
-
-    background:#090d12;
-
-    border:
-    1px solid #263746;
-
-    text-align:center;
-
-    color:#777;
-
+.l7 h2 {
+    color: #67baff;
+    font-size: 20px;
 }
 
-.status strong{
-
-    color:#ff2929;
-
+.l7 p {
+    color: #999;
+    line-height: 1.7;
 }
 
-/* =========================
-   BACK BUTTON
-========================= */
-
-.back-button{
-
-    display:block;
-
-    width:100%;
-
-    margin-top:30px;
-
-    padding:16px;
-
-    background:#350707;
-
-    border:
-    1px solid #a00000;
-
-    color:#fff;
-
-    font-size:16px;
-
-    cursor:pointer;
-
-    border-radius:5px;
-
+.l7-button {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: #300707;
+    color: white;
+    border: 1px solid #a00000;
+    cursor: pointer;
+    font-size: 14px;
+    letter-spacing: 1px;
 }
 
-.back-button:hover{
-
-    background:#600909;
-
+.l7-button:hover {
+    background: #570909;
 }
 
-/* =========================
-   MODAL
-========================= */
+/* L7 REVEAL */
 
-.overlay{
-
-    display:none;
-
-    position:fixed;
-
-    inset:0;
-
-    background:
-    rgba(0,0,0,.82);
-
-    z-index:90;
-
+#locationReveal {
+    display: none;
+    margin-top: 22px;
+    border-top: 1px solid #4b1111;
+    padding-top: 20px;
 }
 
-.modal{
-
-    display:none;
-
-    position:fixed;
-
-    z-index:100;
-
-    left:50%;
-
-    top:50%;
-
-    transform:
-    translate(-50%,-50%);
-
-    width:90%;
-
-    max-width:650px;
-
-    max-height:85vh;
-
-    overflow:auto;
-
-    background:#080c11;
-
-    border:
-    2px solid #a00000;
-
-    box-shadow:
-    0 0 50px rgba(255,0,0,.15);
-
-    padding:25px;
-
+.location-reveal-title {
+    color: #ff2929;
+    font-size: 12px;
+    letter-spacing: 3px;
 }
 
-.modal-code{
-
-    color:#ff2929;
-
-    font-size:11px;
-
-    letter-spacing:2px;
-
+.location-reveal-status {
+    color: #777;
+    font-size: 10px;
+    line-height: 1.8;
+    margin: 12px 0;
 }
 
-.modal h2{
-
-    color:#6bbcff;
-
-    margin-top:10px;
-
+.location-image {
+    width: 100%;
+    max-height: 650px;
+    object-fit: contain;
+    background: #000;
+    border: 1px solid #551111;
 }
 
-.modal p{
+/* PROGRESS */
 
-    color:#b5bec6;
-
-    line-height:1.8;
-
+.progress {
+    margin-top: 30px;
+    background: #090d12;
+    border: 1px solid #293743;
+    padding: 20px;
+    text-align: center;
 }
 
-.close-button{
-
-    width:100%;
-
-    margin-top:15px;
-
-    padding:14px;
-
-    background:#360707;
-
-    border:
-    1px solid #a00000;
-
-    color:#fff;
-
-    cursor:pointer;
-
+.progress-title {
+    color: #777;
+    font-size: 11px;
+    letter-spacing: 2px;
 }
 
-.close-button:hover{
-
-    background:#5c0909;
-
+#progressText {
+    color: #ff2525;
+    font-size: 20px;
+    margin-top: 8px;
 }
 
-/* =========================
-   IMAGE
-========================= */
-
-.evidence-image{
-
-    width:100%;
-
-    max-height:400px;
-
-    object-fit:cover;
-
-    display:block;
-
-    margin:
-    15px 0;
-
-    border:
-    1px solid #3a3a3a;
-
+.progress-bar {
+    height: 7px;
+    background: #171b20;
+    margin-top: 15px;
+    overflow: hidden;
 }
 
-/* =========================
-   MOBILE
-========================= */
+#progressFill {
+    height: 100%;
+    width: 0%;
+    background: #c90000;
+    transition: width .4s;
+}
 
-@media(max-width:700px){
+/* MODAL */
 
-    .header h1{
+.overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.88);
+    z-index: 50;
+}
 
-        font-size:19px;
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 60;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 92%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #070b10;
+    border: 2px solid #850000;
+    box-shadow: 0 0 50px rgba(255,0,0,.18);
+    padding: 23px;
+}
 
+.modal-code {
+    color: #ff2525;
+    font-size: 10px;
+    letter-spacing: 3px;
+}
+
+.modal h2 {
+    color: #68baff;
+    margin-bottom: 18px;
+}
+
+.modal-text {
+    color: #adb5bc;
+    line-height: 1.8;
+}
+
+/* EVIDENCE */
+
+.evidence-box {
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid #421010;
+}
+
+.evidence-label {
+    color: #ff2929;
+    font-size: 11px;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+}
+
+.evidence-status {
+    color: #666;
+    font-size: 10px;
+    line-height: 1.7;
+    margin-bottom: 15px;
+}
+
+.evidence-image {
+    display: block;
+    width: 100%;
+    max-height: 600px;
+    object-fit: contain;
+    background: #000;
+    border: 1px solid #401010;
+}
+
+.evidence-caption {
+    color: #777;
+    font-size: 9px;
+    letter-spacing: 2px;
+    margin-top: 9px;
+}
+
+/* EXAMINE BUTTON */
+
+.examine-button {
+    width: 100%;
+    padding: 15px;
+    margin-top: 24px;
+    background: #063b20;
+    border: 1px solid #16a957;
+    color: #55ef99;
+    cursor: pointer;
+    font-size: 13px;
+    letter-spacing: 2px;
+}
+
+.examine-button:hover {
+    background: #075a2f;
+}
+
+.examine-button.completed {
+    background: #111;
+    border-color: #31513e;
+    color: #4f8f69;
+    cursor: default;
+}
+
+/* CLOSE */
+
+.close {
+    width: 100%;
+    padding: 14px;
+    margin-top: 12px;
+    background: #320707;
+    color: white;
+    border: 1px solid #950000;
+    cursor: pointer;
+}
+
+.close:hover {
+    background: #550909;
+}
+
+/* RETURN */
+
+.return {
+    width: 100%;
+    margin-top: 30px;
+    padding: 15px;
+    background: #280606;
+    color: white;
+    border: 1px solid #8f0000;
+    cursor: pointer;
+}
+
+/* MOBILE */
+
+@media(max-width:700px) {
+
+    header h1 {
+        font-size: 18px;
     }
 
-    .map-frame{
-
-        height:500px;
-
+    .map {
+        height: 500px;
     }
 
-    .container{
-
-        width:94%;
-
+    .modal {
+        width: 94%;
+        padding: 18px;
     }
 
 }
 
 </style>
-
 </head>
 
 
 <body>
 
 
-<!-- =========================
-     HEADER
-========================= -->
+<header>
 
-<header class="header">
+    <h1>IRIS INTELLIGENCE AGENCY</h1>
 
-<h1>
-IRIS INTELLIGENCE AGENCY
-</h1>
-
-<div class="subtitle">
-
-TIMELINE RECONSTRUCTION //
-SUBJECT B-001
-
-</div>
+    <p>
+        TIMELINE RECONSTRUCTION // SUBJECT B-001
+    </p>
 
 </header>
 
 
-<main class="container">
+<div class="container">
 
 
-<!-- =========================
-     WARNING
-========================= -->
+<!-- WARNING -->
 
-<section class="warning">
+<div class="warning">
 
-<div class="warning-title">
+    <h2>⚠ CLASSIFIED INVESTIGATION</h2>
 
-⚠ CLASSIFIED INVESTIGATION
+    <p>
+        This reconstruction contains six locations
+        connected to Subject B-001.
+    </p>
 
-</div>
+    <p>
+        Examine each location and determine what
+        information it contributes to the investigation.
+    </p>
 
-<p>
-
-This geographical reconstruction contains
-locations associated with Subject B-001.
-
-</p>
-
-<p>
-
-Seven locations have been identified.
-
-Each location may contain evidence relevant
-to the investigation.
-
-</p>
-
-<p>
-
-<b>
-Investigators are instructed to examine
-every location.
-</b>
-
-</p>
-
-</section>
-
-
-<!-- =========================
-     MAP
-========================= -->
-
-<section class="map-section">
-
-<div class="map-header">
-
-<strong>
-MAP 001 — SUBJECT MOVEMENT
-</strong>
-
-<span class="map-status">
-● LIVE MAP
-</span>
+    <p>
+        <b>
+            Opening a file does NOT mark it as examined.
+        </b>
+    </p>
 
 </div>
 
 
-<iframe
+<!-- MAP -->
 
-class="map-frame"
+<div class="map-box">
 
-src="https://umap.openstreetmap.fr/fr/map/anonymous-edit/1443532:pGy9ZfrsYTsujJol9lfX1vhzviraBJ4wt3m5aGO6JAc"
+    <div class="map-title">
 
-allowfullscreen
+        <strong>
+            MAP 001 — SUBJECT MOVEMENT
+        </strong>
 
-loading="lazy">
+        <span class="active">
+            ● ACTIVE
+        </span>
 
-</iframe>
+    </div>
 
+    <iframe
+        class="map"
+        src="https://umap.openstreetmap.fr/fr/map/anonymous-edit/1443532:pGy9ZfrsYTsujJol9lfX1vhzviraBJ4wt3m5aGO6JAc"
+        allowfullscreen>
+    </iframe>
 
-</section>
+</div>
 
-
-<!-- =========================
-     MAP INFO
-========================= -->
 
 <div class="map-info">
 
-<b>SUBJECT:</b>
-B-001
+    <b>SUBJECT:</b> B-001
 
-<br>
+    <br>
 
-<b>LOCATIONS IDENTIFIED:</b>
-07
+    <b>LOCATIONS:</b> 06
 
-<br>
+    <br>
 
-<b>RECONSTRUCTION STATUS:</b>
-ACTIVE
+    <b>STATUS:</b> ACTIVE INVESTIGATION
 
-<br>
+    <br>
 
-<b>WARNING:</b>
-Several timestamps contained in the recovered
-records appear inconsistent.
+    <b>INSTRUCTION:</b>
+    Examine all six locations before proceeding.
 
 </div>
 
 
-<!-- =========================
-     LOCATIONS
-========================= -->
+<!-- LOCATIONS -->
 
 <h2 class="section-title">
-
-INVESTIGATION LOCATIONS
-
+    INVESTIGATION LOCATIONS
 </h2>
 
 
 <div class="locations">
 
 
-<div
-class="location"
-onclick="openLocation(1)"
->
+<div class="location" id="location-1" onclick="openLocation(1)">
 
-<div class="location-code">
-LOCATION 01
-</div>
+    <div class="location-code">
+        LOCATION 01
+    </div>
 
-<h3>
-🔴 SUBJECT RESIDENCE
-</h3>
+    <h3>🔴 SUBJECT RESIDENCE</h3>
 
-<p>
-Last confirmed residential location
-associated with B-001.
-</p>
+    <p>
+        Last confirmed residential location
+        associated with Subject B-001.
+    </p>
 
-</div>
-
-
-<div
-class="location"
-onclick="openLocation(2)"
->
-
-<div class="location-code">
-LOCATION 02
-</div>
-
-<h3>
-🟠 CHILDHOOD LOCATION
-</h3>
-
-<p>
-Location connected to the subject's
-early life.
-</p>
+    <div class="examined-label">
+        ✓ EXAMINED
+    </div>
 
 </div>
 
 
-<div
-class="location"
-onclick="openLocation(3)"
->
+<div class="location" id="location-2" onclick="openLocation(2)">
 
-<div class="location-code">
-LOCATION 03
-</div>
+    <div class="location-code">
+        LOCATION 02
+    </div>
 
-<h3>
-🟡 WITNESS SIGHTING
-</h3>
+    <h3>🟠 CHILDHOOD LOCATION</h3>
 
-<p>
-A witness reportedly observed B-001
-near this location.
-</p>
+    <p>
+        Location connected to the subject's
+        early life.
+    </p>
 
-</div>
-
-
-<div
-class="location"
-onclick="openLocation(4)"
->
-
-<div class="location-code">
-LOCATION 04
-</div>
-
-<h3>
-🔵 ABANDONED BUILDING
-</h3>
-
-<p>
-An unidentified object was recovered
-at this location.
-</p>
+    <div class="examined-label">
+        ✓ EXAMINED
+    </div>
 
 </div>
 
 
-<div
-class="location"
-onclick="openLocation(5)"
->
+<div class="location" id="location-3" onclick="openLocation(3)">
 
-<div class="location-code">
-LOCATION 05
-</div>
+    <div class="location-code">
+        LOCATION 03
+    </div>
 
-<h3>
-🟣 UNKNOWN CONTACT
-</h3>
+    <h3>🟡 WITNESS SIGHTING</h3>
 
-<p>
-A mysterious individual was observed
-near this location.
-</p>
+    <p>
+        A reported sighting involving
+        Subject B-001.
+    </p>
 
-</div>
-
-
-<div
-class="location"
-onclick="openLocation(6)"
->
-
-<div class="location-code">
-LOCATION 06
-</div>
-
-<h3>
-⚫ DISAPPEARANCE SITE
-</h3>
-
-<p>
-The final confirmed location connected
-to B-001.
-</p>
+    <div class="examined-label">
+        ✓ EXAMINED
+    </div>
 
 </div>
 
 
-<div
-class="location locked"
-onclick="openLocation(7)"
->
+<div class="location" id="location-4" onclick="openLocation(4)">
 
-<div class="location-code">
-LOCATION 07
+    <div class="location-code">
+        LOCATION 04
+    </div>
+
+    <h3>🔵 ABANDONED BUILDING</h3>
+
+    <p>
+        An unidentified object was recovered
+        at this location.
+    </p>
+
+    <div class="examined-label">
+        ✓ EXAMINED
+    </div>
+
 </div>
 
-<h3>
-🔒 CLASSIFIED
-</h3>
 
-<p>
-Coordinates unavailable.
-Further evidence required.
-</p>
+<div class="location" id="location-5" onclick="openLocation(5)">
+
+    <div class="location-code">
+        LOCATION 05
+    </div>
+
+    <h3>🟣 UNKNOWN CONTACT</h3>
+
+    <p>
+        A mysterious individual was observed
+        near this location.
+    </p>
+
+    <div class="examined-label">
+        ✓ EXAMINED
+    </div>
+
+</div>
+
+
+<div class="location" id="location-6" onclick="openLocation(6)">
+
+    <div class="location-code">
+        LOCATION 06
+    </div>
+
+    <h3>⚫ DISAPPEARANCE SITE</h3>
+
+    <p>
+        Final confirmed location connected
+        to Subject B-001.
+    </p>
+
+    <div class="examined-label">
+        ✓ EXAMINED
+    </div>
 
 </div>
 
@@ -887,123 +673,145 @@ Further evidence required.
 </div>
 
 
-<!-- =========================
-     EVIDENCE
-========================= -->
+<!-- L7 -->
 
-<section class="evidence">
+<div class="l7">
 
-<h2>
-EVIDENCE RECONSTRUCTION
-</h2>
+    <div class="l7-label">
+        IRIS // RESTRICTED DATA
+    </div>
 
-<p>
+    <h2>
+        🔒 L-07 — UNKNOWN LOCATION
+    </h2>
 
-The map and recovered evidence must be
-examined together.
+    <p>
+        A location has been recovered from the
+        investigation records.
+    </p>
 
-</p>
+    <p>
+        Its significance remains unknown.
+    </p>
 
-<p>
+    <button
+        class="l7-button"
+        id="l7Button"
+        onclick="revealLocation()">
 
-The official timeline contains several
-contradictions.
+        ⚠ REVEAL LOCATION
 
-Determine which events occurred first.
-
-</p>
-
-<p>
-
-Pay particular attention to:
-
-<b>
-L-04
-</b>
-
-and
-
-<b>
-L-05
-</b>
-
-.
-
-</p>
-
-</section>
+    </button>
 
 
-<!-- =========================
-     STATUS
-========================= -->
+    <div id="locationReveal">
 
-<div class="status">
+        <div class="location-reveal-title">
+            LOCATION IDENTIFIED
+        </div>
 
-INVESTIGATION PROGRESS:
+        <div class="location-reveal-status">
 
-<br><br>
+            IRIS ARCHIVE // L-07
+            <br>
+            STATUS: LOCATION CONFIRMED
+            <br>
+            CLASSIFICATION: RESTRICTED
 
-<strong id="progress">
-0 / 7 LOCATIONS EXAMINED
-</strong>
+        </div>
+
+        <img
+            src="her-location.jpg"
+            class="location-image"
+            alt="Recovered location">
+
+    </div>
+
+</div>
+
+
+<!-- PROGRESS -->
+
+<div class="progress">
+
+    <div class="progress-title">
+        INVESTIGATION PROGRESS
+    </div>
+
+    <div id="progressText">
+        0 / 6 LOCATIONS EXAMINED
+    </div>
+
+    <div class="progress-bar">
+
+        <div id="progressFill"></div>
+
+    </div>
 
 </div>
 
 
 <button
-class="back-button"
-onclick="window.location.href='dashboard.html'"
->
+    class="return"
+    onclick="window.location.href='dashboard.html'">
 
-RETURN TO HEADQUARTERS
+    RETURN TO HEADQUARTERS
 
 </button>
 
 
-</main>
-
-
-<!-- =========================
-     OVERLAY
-========================= -->
-
-<div
-id="overlay"
-class="overlay"
-onclick="closeLocation()"
->
 </div>
 
 
-<!-- =========================
-     MODAL
-========================= -->
+<!-- OVERLAY -->
 
 <div
-id="modal"
-class="modal"
->
-
-<div
-id="modalCode"
-class="modal-code"
->
-IRIS // RESTRICTED
+    class="overlay"
+    id="overlay"
+    onclick="closeModal()">
 </div>
 
-<h2 id="modalTitle"></h2>
 
-<div id="modalContent"></div>
+<!-- MODAL -->
 
-<button
-class="close-button"
-onclick="closeLocation()"
->
+<div
+    class="modal"
+    id="modal">
 
-CLOSE FILE
+    <div
+        class="modal-code"
+        id="modalCode">
+    </div>
 
-</button>
+    <h2
+        id="modalTitle">
+    </h2>
+
+    <div
+        class="modal-text"
+        id="modalText">
+    </div>
+
+    <div
+        id="evidence">
+    </div>
+
+    <button
+        id="examineButton"
+        class="examine-button"
+        onclick="markExamined()">
+
+        ✓ MARK LOCATION EXAMINED
+
+    </button>
+
+    <button
+        class="close"
+        onclick="closeModal()">
+
+        CLOSE FILE
+
+    </button>
 
 </div>
 
@@ -1011,376 +819,428 @@ CLOSE FILE
 <script>
 
 
-/* ==========================================
-   LOCATION INFORMATION
-========================================== */
+/* =========================
+   LOCATION DATA
+========================= */
 
 const locations = {
 
-1:{
+    1: {
 
-code:"L-01",
+        code: "L-01",
 
-title:"SUBJECT RESIDENCE",
+        title: "SUBJECT RESIDENCE",
 
-content:`
+        text: `
+            <p>
+            This location was identified as a
+            residence associated with Subject B-001.
+            </p>
 
-<p>
+            <p>
+            Investigators recovered several records
+            connecting the subject to this location.
+            </p>
 
-This location was identified as the last
-stable residence associated with Subject B-001.
+            <p>
+            The residence appears to have been
+            occupied for a significant period of time.
+            </p>
+        `
 
-</p>
+    },
 
-<p>
 
-Records indicate that the subject spent a
-significant period of time in this area.
+    2: {
 
-</p>
+        code: "L-02",
 
-<p>
+        title: "CHILDHOOD LOCATION",
 
-The final confirmed presence at this location
-does not completely match the official
-disappearance timeline.
+        text: `
+            <p>
+            This location is connected to the
+            early life of Subject B-001.
+            </p>
 
-</p>
+            <p>
+            Psychological records indicate that
+            the subject experienced a difficult
+            and unstable childhood.
+            </p>
 
-`
+            <p>
+            Investigators believe these experiences
+            may have influenced the subject's later
+            behavior.
+            </p>
+        `
 
-},
+    },
 
 
-2:{
+    3: {
 
-code:"L-02",
+        code: "L-03",
 
-title:"CHILDHOOD LOCATION",
+        title: "WITNESS SIGHTING",
 
-content:`
+        text: `
+            <p>
+            A witness reported seeing an individual
+            matching the description of B-001.
+            </p>
 
-<p>
+            <p>
+            The reported time does not completely
+            correspond with the official timeline.
+            </p>
 
-This location is connected to the early life
-of Subject B-001.
+            <p>
+            One of the recovered records may be false.
+            </p>
+        `
 
-</p>
+    },
 
-<p>
 
-Psychological records indicate that the subject
-experienced significant instability during
-childhood.
+    4: {
 
-</p>
+        code: "L-04",
 
-<p>
+        title: "UNIDENTIFIED OBJECT",
 
-Investigators believe these experiences
-influenced the subject's later behavior,
-particularly his distrust of unfamiliar people
-and strong attachment to a small number of
-individuals.
+        text: `
+            <p>
+            Investigators discovered an unidentified
+            object at this location.
+            </p>
 
-</p>
+            <p>
+            No manufacturer markings or identifying
+            information were recovered.
+            </p>
 
-`
+            <p>
+            The object's connection to Subject B-001
+            remains unknown.
+            </p>
+        `,
 
-},
+        image: "unidentified-object.jpg",
 
+        imageLabel: "EVIDENCE PHOTOGRAPH // L-04",
 
-3:{
+        imageStatus: `
+            SOURCE: INVESTIGATION ARCHIVE<br>
+            OBJECT DESIGNATION: UNKNOWN<br>
+            STATUS: UNDER ANALYSIS
+        `
 
-code:"L-03",
+    },
 
-title:"WITNESS SIGHTING",
 
-content:`
+    5: {
 
-<p>
+        code: "L-05",
 
-A witness reported seeing an individual
-matching the description of B-001 near this
-location.
+        title: "MYSTERIOUS PERSON",
 
-</p>
+        text: `
+            <p>
+            A witness reported an unidentified
+            individual near this location.
+            </p>
 
-<p>
+            <p>
+            The individual appeared to be observing
+            the surrounding area.
+            </p>
 
-<b>
-Reported time: 22:47
-</b>
+            <p>
+            No confirmed identity has been established.
+            </p>
 
-</p>
+            <p>
+            Investigators have designated this person
+            as UNKNOWN-05.
+            </p>
+        `,
 
-<p>
+        image: "mysterious-person.jpg",
 
-However, another recovered document places
-the subject somewhere else at approximately
-the same time.
+        imageLabel: "SURVEILLANCE PHOTOGRAPH // L-05",
 
-</p>
+        imageStatus: `
+            SOURCE: SURVEILLANCE ARCHIVE<br>
+            SUBJECT DESIGNATION: UNKNOWN-05<br>
+            IDENTITY: UNCONFIRMED
+        `
 
-<p>
+    },
 
-One of these records is incorrect.
 
-</p>
+    6: {
 
-`
+        code: "L-06",
 
-},
+        title: "DISAPPEARANCE SITE",
 
+        text: `
+            <p>
+            This location represents the final
+            confirmed sighting of Subject B-001.
+            </p>
 
-4:{
+            <p>
+            No definitive evidence explains what
+            happened after this point.
+            </p>
 
-code:"L-04",
+            <p>
+            The disappearance remains unexplained.
+            </p>
+        `
 
-title:"ABANDONED BUILDING",
-
-content:`
-
-<p>
-
-Investigators discovered an unidentified
-object inside this building.
-
-</p>
-
-<p>
-
-The object contained no recognizable
-manufacturer markings.
-
-</p>
-
-<p>
-
-Its origin remains unknown.
-
-</p>
-
-<p>
-
-The evidence photograph associated with this
-location should be examined carefully.
-
-</p>
-
-<p>
-
-<b>
-EVIDENCE TYPE:
-UNIDENTIFIED OBJECT
-</b>
-
-</p>
-
-`
-
-},
-
-
-5:{
-
-code:"L-05",
-
-title:"UNKNOWN CONTACT",
-
-content:`
-
-<p>
-
-An unidentified individual was reportedly
-observed near this location.
-
-</p>
-
-<p>
-
-Witness descriptions are incomplete.
-
-The person's identity remains unknown.
-
-</p>
-
-<p>
-
-Several witnesses independently mentioned
-that the individual appeared to know details
-about B-001 that had not been publicly released.
-
-</p>
-
-<p>
-
-<b>
-DESIGNATION:
-UNKNOWN-05
-</b>
-
-</p>
-
-<p>
-
-The surveillance photograph associated with
-this location is considered relevant evidence.
-
-</p>
-
-`
-
-},
-
-
-6:{
-
-code:"L-06",
-
-title:"DISAPPEARANCE SITE",
-
-content:`
-
-<p>
-
-This location represents the final confirmed
-sighting of Subject B-001.
-
-</p>
-
-<p>
-
-No definitive evidence explains what happened
-after this point.
-
-</p>
-
-<p>
-
-The official record classifies the disappearance
-as unexplained.
-
-</p>
-
-<p>
-
-However, recovered evidence suggests the
-possibility that the subject left voluntarily.
-
-</p>
-
-`
-
-},
-
-
-7:{
-
-code:"L-07",
-
-title:"CLASSIFIED LOCATION",
-
-content:`
-
-<p>
-
-<b>
-ACCESS DENIED.
-</b>
-
-</p>
-
-<p>
-
-Coordinates have been removed from the
-available investigation archive.
-
-</p>
-
-<p>
-
-Additional evidence is required before
-this location can be reconstructed.
-
-</p>
-
-<p>
-
-One recovered document suggests that L-07
-may connect several of the previous locations.
-
-</p>
-
-`
-
-}
+    }
 
 };
 
 
-/* ==========================================
+/* =========================
+   STATE
+========================= */
+
+let examined = [];
+
+try {
+
+    examined = JSON.parse(
+        localStorage.getItem(
+            "IRIS_timeline_examined"
+        ) || "[]"
+    );
+
+} catch (error) {
+
+    examined = [];
+
+}
+
+
+let currentLocation = null;
+
+
+/* =========================
    PROGRESS
-========================================== */
+========================= */
 
-let examined =
-JSON.parse(
-localStorage.getItem(
-"IRIS_timeline_locations"
-) || "[]"
-);
+function updateProgress() {
+
+    const count = examined.length;
+
+    document.getElementById(
+        "progressText"
+    ).textContent =
+        count + " / 6 LOCATIONS EXAMINED";
 
 
-/* ==========================================
+    document.getElementById(
+        "progressFill"
+    ).style.width =
+        ((count / 6) * 100) + "%";
+
+
+    for (
+        let i = 1;
+        i <= 6;
+        i++
+    ) {
+
+        const card =
+            document.getElementById(
+                "location-" + i
+            );
+
+        if (!card) continue;
+
+        if (examined.includes(i)) {
+
+            card.classList.add("examined");
+
+        } else {
+
+            card.classList.remove("examined");
+
+        }
+
+    }
+
+}
+
+
+/* =========================
    OPEN LOCATION
-========================================== */
+========================= */
 
-function openLocation(id){
+function openLocation(id) {
 
-    if(!examined.includes(id)){
+    const location =
+        locations[id];
 
-        examined.push(id);
+    currentLocation = id;
+
+
+    document.getElementById(
+        "modalCode"
+    ).textContent =
+        "IRIS // " + location.code;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        location.title;
+
+
+    document.getElementById(
+        "modalText"
+    ).innerHTML =
+        location.text;
+
+
+    const evidence =
+        document.getElementById(
+            "evidence"
+        );
+
+    evidence.innerHTML = "";
+
+
+    if (location.image) {
+
+        evidence.innerHTML = `
+
+            <div class="evidence-box">
+
+                <div class="evidence-label">
+                    ${location.imageLabel}
+                </div>
+
+                <div class="evidence-status">
+                    ${location.imageStatus}
+                </div>
+
+                <img
+                    src="${location.image}"
+                    class="evidence-image"
+                    alt="${location.title}"
+                >
+
+                <div class="evidence-caption">
+                    IRIS ARCHIVE // RESTRICTED EVIDENCE
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    const button =
+        document.getElementById(
+            "examineButton"
+        );
+
+
+    if (examined.includes(id)) {
+
+        button.textContent =
+            "✓ LOCATION ALREADY EXAMINED";
+
+        button.classList.add(
+            "completed"
+        );
+
+        button.disabled = true;
+
+    } else {
+
+        button.textContent =
+            "✓ MARK LOCATION EXAMINED";
+
+        button.classList.remove(
+            "completed"
+        );
+
+        button.disabled = false;
+
+    }
+
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "overlay"
+    ).style.display =
+        "block";
+
+}
+
+
+/* =========================
+   MARK EXAMINED
+========================= */
+
+function markExamined() {
+
+    if (
+        currentLocation === null
+    ) {
+        return;
+    }
+
+
+    if (
+        !examined.includes(
+            currentLocation
+        )
+    ) {
+
+        examined.push(
+            currentLocation
+        );
+
 
         localStorage.setItem(
-            "IRIS_timeline_locations",
+            "IRIS_timeline_examined",
             JSON.stringify(examined)
         );
 
     }
 
 
-    const location =
-    locations[id];
+    const button =
+        document.getElementById(
+            "examineButton"
+        );
 
 
-    document.getElementById(
-        "modalCode"
-    ).textContent =
-    "IRIS // " + location.code;
+    button.textContent =
+        "✓ LOCATION EXAMINED";
 
 
-    document.getElementById(
-        "modalTitle"
-    ).textContent =
-    location.title;
+    button.classList.add(
+        "completed"
+    );
 
 
-    document.getElementById(
-        "modalContent"
-    ).innerHTML =
-    location.content;
-
-
-    document.getElementById(
-        "modal"
-    ).style.display =
-    "block";
-
-
-    document.getElementById(
-        "overlay"
-    ).style.display =
-    "block";
+    button.disabled = true;
 
 
     updateProgress();
@@ -1388,64 +1248,90 @@ function openLocation(id){
 }
 
 
-/* ==========================================
-   CLOSE LOCATION
-========================================== */
+/* =========================
+   L-07 REVEAL
+========================= */
 
-function closeLocation(){
+function revealLocation() {
+
+    const reveal =
+        document.getElementById(
+            "locationReveal"
+        );
+
+    const button =
+        document.getElementById(
+            "l7Button"
+        );
+
+
+    reveal.style.display =
+        "block";
+
+
+    button.textContent =
+        "✓ LOCATION REVEALED";
+
+
+    button.disabled = true;
+
+
+    button.style.opacity =
+        "0.6";
+
+}
+
+
+/* =========================
+   CLOSE MODAL
+========================= */
+
+function closeModal() {
 
     document.getElementById(
         "modal"
     ).style.display =
-    "none";
+        "none";
 
 
     document.getElementById(
         "overlay"
     ).style.display =
-    "none";
+        "none";
+
+
+    currentLocation = null;
 
 }
 
 
-/* ==========================================
-   UPDATE PROGRESS
-========================================== */
+/* =========================
+   ESCAPE KEY
+========================= */
 
-function updateProgress(){
+document.addEventListener(
+    "keydown",
+    function(event) {
 
-    document.getElementById(
-        "progress"
-    ).textContent =
+        if (
+            event.key === "Escape"
+        ) {
 
-    examined.length +
-    " / 7 LOCATIONS EXAMINED";
+            closeModal();
 
-}
+        }
 
+    }
+);
+
+
+/* =========================
+   INITIALIZE
+========================= */
 
 updateProgress();
 
-
-/* ==========================================
-   ESC KEY
-========================================== */
-
-document.addEventListener(
-"keydown",
-function(event){
-
-    if(event.key === "Escape"){
-
-        closeLocation();
-
-    }
-
-});
-
 </script>
 
-
 </body>
-
-</html>10132076383
+</html>
