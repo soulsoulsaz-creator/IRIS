@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>IRIS — Timeline Reconstruction</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+html,body{
+    margin:0;
+    padding:0;
+    min-height:100%;
+}
+
+body{
+
+    background:#030507;
+
+    color:#e8e8e8;
+
+    font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header{
+
+    background:
+    linear-gradient(
+        180deg,
+        #0b1016,
+        #05080c
+    );
+
+    border-bottom:
+    2px solid #9b0000;
+
+    padding:25px 18px;
+
+    text-align:center;
+
+    box-shadow:
+    0 0 30px rgba(255,0,0,.12);
+
+}
+
+.header h1{
+
+    margin:0;
+
+    color:#ff2020;
+
+    font-size:25px;
+
+    letter-spacing:4px;
+
+}
+
+.header .subtitle{
+
+    margin-top:8px;
+
+    color:#777;
+
+    font-size:12px;
+
+    letter-spacing:2px;
+
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.container{
+
+    width:95%;
+
+    max-width:1200px;
+
+    margin:auto;
+
+    padding:25px 0 50px;
+
+}
+
+/* =========================
+   CLASSIFIED WARNING
+========================= */
+
+.warning{
+
+    background:#0b0606;
+
+    border:
+    1px solid #5d1515;
+
+    border-left:
+    5px solid #e00000;
+
+    padding:20px;
+
+    margin-bottom:20px;
+
+}
+
+.warning-title{
+
+    color:#ff2525;
+
+    font-weight:bold;
+
+    font-size:18px;
+
+    margin-bottom:12px;
+
+    letter-spacing:1px;
+
+}
+
+.warning p{
+
+    color:#aaa;
+
+    line-height:1.7;
+
+    margin:6px 0;
+
+}
+
+/* =========================
+   MAP
+========================= */
+
+.map-section{
+
+    background:#070a0e;
+
+    border:
+    1px solid #26333e;
+
+    padding:10px;
+
+    box-shadow:
+    0 0 30px rgba(0,0,0,.8);
+
+}
+
+.map-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px;
+
+    background:#0b1016;
+
+    border-bottom:
+    1px solid #273641;
+
+}
+
+.map-header strong{
+
+    color:#6bbcff;
+
+    letter-spacing:1px;
+
+}
+
+.map-status{
+
+    color:#ff3030;
+
+    font-size:11px;
+
+    letter-spacing:1px;
+
+}
+
+.map-frame{
+
+    width:100%;
+
+    height:650px;
+
+    border:0;
+
+    display:block;
+
+    background:#050505;
+
+}
+
+/* =========================
+   MAP INFORMATION
+========================= */
+
+.map-info{
+
+    margin-top:15px;
+
+    background:#090e13;
+
+    border:
+    1px solid #263746;
+
+    padding:16px;
+
+    font-size:13px;
+
+    line-height:1.8;
+
+    color:#8e9aa5;
+
+}
+
+.map-info b{
+
+    color:#c6d2dc;
+
+}
+
+/* =========================
+   LOCATION FILES
+========================= */
+
+.section-title{
+
+    margin-top:30px;
+
+    margin-bottom:15px;
+
+    color:#ff2424;
+
+    font-size:18px;
+
+    letter-spacing:2px;
+
+}
+
+.locations{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(
+        auto-fit,
+        minmax(260px,1fr)
+    );
+
+    gap:15px;
+
+}
+
+.location{
+
+    background:#090e13;
+
+    border:
+    1px solid #263746;
+
+    padding:20px;
+
+    cursor:pointer;
+
+    transition:
+    .2s ease;
+
+}
+
+.location:hover{
+
+    border-color:#5cb6ff;
+
+    transform:
+    translateY(-3px);
+
+    box-shadow:
+    0 0 18px
+    rgba(80,180,255,.15);
+
+}
+
+.location.locked{
+
+    opacity:.65;
+
+}
+
+.location-code{
+
+    font-size:11px;
+
+    color:#777;
+
+    letter-spacing:2px;
+
+    margin-bottom:8px;
+
+}
+
+.location h3{
+
+    color:#68baff;
+
+    font-size:16px;
+
+    margin:0 0 10px;
+
+}
+
+.location p{
+
+    color:#929da7;
+
+    font-size:13px;
+
+    line-height:1.6;
+
+    margin:0;
+
+}
+
+/* =========================
+   EVIDENCE
+========================= */
+
+.evidence{
+
+    margin-top:30px;
+
+    background:#080b0f;
+
+    border:
+    1px solid #273642;
+
+    padding:20px;
+
+}
+
+.evidence h2{
+
+    color:#ff2929;
+
+    margin-top:0;
+
+}
+
+.evidence p{
+
+    color:#9aa4ad;
+
+    line-height:1.7;
+
+}
+
+/* =========================
+   STATUS
+========================= */
+
+.status{
+
+    margin-top:25px;
+
+    padding:18px;
+
+    background:#090d12;
+
+    border:
+    1px solid #263746;
+
+    text-align:center;
+
+    color:#777;
+
+}
+
+.status strong{
+
+    color:#ff2929;
+
+}
+
+/* =========================
+   BACK BUTTON
+========================= */
+
+.back-button{
+
+    display:block;
+
+    width:100%;
+
+    margin-top:30px;
+
+    padding:16px;
+
+    background:#350707;
+
+    border:
+    1px solid #a00000;
+
+    color:#fff;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+    border-radius:5px;
+
+}
+
+.back-button:hover{
+
+    background:#600909;
+
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.overlay{
+
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+    rgba(0,0,0,.82);
+
+    z-index:90;
+
+}
+
+.modal{
+
+    display:none;
+
+    position:fixed;
+
+    z-index:100;
+
+    left:50%;
+
+    top:50%;
+
+    transform:
+    translate(-50%,-50%);
+
+    width:90%;
+
+    max-width:650px;
+
+    max-height:85vh;
+
+    overflow:auto;
+
+    background:#080c11;
+
+    border:
+    2px solid #a00000;
+
+    box-shadow:
+    0 0 50px rgba(255,0,0,.15);
+
+    padding:25px;
+
+}
+
+.modal-code{
+
+    color:#ff2929;
+
+    font-size:11px;
+
+    letter-spacing:2px;
+
+}
+
+.modal h2{
+
+    color:#6bbcff;
+
+    margin-top:10px;
+
+}
+
+.modal p{
+
+    color:#b5bec6;
+
+    line-height:1.8;
+
+}
+
+.close-button{
+
+    width:100%;
+
+    margin-top:15px;
+
+    padding:14px;
+
+    background:#360707;
+
+    border:
+    1px solid #a00000;
+
+    color:#fff;
+
+    cursor:pointer;
+
+}
+
+.close-button:hover{
+
+    background:#5c0909;
+
+}
+
+/* =========================
+   IMAGE
+========================= */
+
+.evidence-image{
+
+    width:100%;
+
+    max-height:400px;
+
+    object-fit:cover;
+
+    display:block;
+
+    margin:
+    15px 0;
+
+    border:
+    1px solid #3a3a3a;
+
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+    .header h1{
+
+        font-size:19px;
+
+    }
+
+    .map-frame{
+
+        height:500px;
+
+    }
+
+    .container{
+
+        width:94%;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header class="header">
+
+<h1>
+IRIS INTELLIGENCE AGENCY
+</h1>
+
+<div class="subtitle">
+
+TIMELINE RECONSTRUCTION //
+SUBJECT B-001
+
+</div>
+
+</header>
+
+
+<main class="container">
+
+
+<!-- =========================
+     WARNING
+========================= -->
+
+<section class="warning">
+
+<div class="warning-title">
+
+⚠ CLASSIFIED INVESTIGATION
+
+</div>
+
+<p>
+
+This geographical reconstruction contains
+locations associated with Subject B-001.
+
+</p>
+
+<p>
+
+Seven locations have been identified.
+
+Each location may contain evidence relevant
+to the investigation.
+
+</p>
+
+<p>
+
+<b>
+Investigators are instructed to examine
+every location.
+</b>
+
+</p>
+
+</section>
+
+
+<!-- =========================
+     MAP
+========================= -->
+
+<section class="map-section">
+
+<div class="map-header">
+
+<strong>
+MAP 001 — SUBJECT MOVEMENT
+</strong>
+
+<span class="map-status">
+● LIVE MAP
+</span>
+
+</div>
+
+
+<iframe
+
+class="map-frame"
+
+src="https://umap.openstreetmap.fr/fr/map/anonymous-edit/1443532:pGy9ZfrsYTsujJol9lfX1vhzviraBJ4wt3m5aGO6JAc"
+
+allowfullscreen
+
+loading="lazy">
+
+</iframe>
+
+
+</section>
+
+
+<!-- =========================
+     MAP INFO
+========================= -->
+
+<div class="map-info">
+
+<b>SUBJECT:</b>
+B-001
+
+<br>
+
+<b>LOCATIONS IDENTIFIED:</b>
+07
+
+<br>
+
+<b>RECONSTRUCTION STATUS:</b>
+ACTIVE
+
+<br>
+
+<b>WARNING:</b>
+Several timestamps contained in the recovered
+records appear inconsistent.
+
+</div>
+
+
+<!-- =========================
+     LOCATIONS
+========================= -->
+
+<h2 class="section-title">
+
+INVESTIGATION LOCATIONS
+
+</h2>
+
+
+<div class="locations">
+
+
+<div
+class="location"
+onclick="openLocation(1)"
+>
+
+<div class="location-code">
+LOCATION 01
+</div>
+
+<h3>
+🔴 SUBJECT RESIDENCE
+</h3>
+
+<p>
+Last confirmed residential location
+associated with B-001.
+</p>
+
+</div>
+
+
+<div
+class="location"
+onclick="openLocation(2)"
+>
+
+<div class="location-code">
+LOCATION 02
+</div>
+
+<h3>
+🟠 CHILDHOOD LOCATION
+</h3>
+
+<p>
+Location connected to the subject's
+early life.
+</p>
+
+</div>
+
+
+<div
+class="location"
+onclick="openLocation(3)"
+>
+
+<div class="location-code">
+LOCATION 03
+</div>
+
+<h3>
+🟡 WITNESS SIGHTING
+</h3>
+
+<p>
+A witness reportedly observed B-001
+near this location.
+</p>
+
+</div>
+
+
+<div
+class="location"
+onclick="openLocation(4)"
+>
+
+<div class="location-code">
+LOCATION 04
+</div>
+
+<h3>
+🔵 ABANDONED BUILDING
+</h3>
+
+<p>
+An unidentified object was recovered
+at this location.
+</p>
+
+</div>
+
+
+<div
+class="location"
+onclick="openLocation(5)"
+>
+
+<div class="location-code">
+LOCATION 05
+</div>
+
+<h3>
+🟣 UNKNOWN CONTACT
+</h3>
+
+<p>
+A mysterious individual was observed
+near this location.
+</p>
+
+</div>
+
+
+<div
+class="location"
+onclick="openLocation(6)"
+>
+
+<div class="location-code">
+LOCATION 06
+</div>
+
+<h3>
+⚫ DISAPPEARANCE SITE
+</h3>
+
+<p>
+The final confirmed location connected
+to B-001.
+</p>
+
+</div>
+
+
+<div
+class="location locked"
+onclick="openLocation(7)"
+>
+
+<div class="location-code">
+LOCATION 07
+</div>
+
+<h3>
+🔒 CLASSIFIED
+</h3>
+
+<p>
+Coordinates unavailable.
+Further evidence required.
+</p>
+
+</div>
+
+
+</div>
+
+
+<!-- =========================
+     EVIDENCE
+========================= -->
+
+<section class="evidence">
+
+<h2>
+EVIDENCE RECONSTRUCTION
+</h2>
+
+<p>
+
+The map and recovered evidence must be
+examined together.
+
+</p>
+
+<p>
+
+The official timeline contains several
+contradictions.
+
+Determine which events occurred first.
+
+</p>
+
+<p>
+
+Pay particular attention to:
+
+<b>
+L-04
+</b>
+
+and
+
+<b>
+L-05
+</b>
+
+.
+
+</p>
+
+</section>
+
+
+<!-- =========================
+     STATUS
+========================= -->
+
+<div class="status">
+
+INVESTIGATION PROGRESS:
+
+<br><br>
+
+<strong id="progress">
+0 / 7 LOCATIONS EXAMINED
+</strong>
+
+</div>
+
+
+<button
+class="back-button"
+onclick="window.location.href='dashboard.html'"
+>
+
+RETURN TO HEADQUARTERS
+
+</button>
+
+
+</main>
+
+
+<!-- =========================
+     OVERLAY
+========================= -->
+
+<div
+id="overlay"
+class="overlay"
+onclick="closeLocation()"
+>
+</div>
+
+
+<!-- =========================
+     MODAL
+========================= -->
+
+<div
+id="modal"
+class="modal"
+>
+
+<div
+id="modalCode"
+class="modal-code"
+>
+IRIS // RESTRICTED
+</div>
+
+<h2 id="modalTitle"></h2>
+
+<div id="modalContent"></div>
+
+<button
+class="close-button"
+onclick="closeLocation()"
+>
+
+CLOSE FILE
+
+</button>
+
+</div>
+
+
+<script>
+
+
+/* ==========================================
+   LOCATION INFORMATION
+========================================== */
+
+const locations = {
+
+1:{
+
+code:"L-01",
+
+title:"SUBJECT RESIDENCE",
+
+content:`
+
+<p>
+
+This location was identified as the last
+stable residence associated with Subject B-001.
+
+</p>
+
+<p>
+
+Records indicate that the subject spent a
+significant period of time in this area.
+
+</p>
+
+<p>
+
+The final confirmed presence at this location
+does not completely match the official
+disappearance timeline.
+
+</p>
+
+`
+
+},
+
+
+2:{
+
+code:"L-02",
+
+title:"CHILDHOOD LOCATION",
+
+content:`
+
+<p>
+
+This location is connected to the early life
+of Subject B-001.
+
+</p>
+
+<p>
+
+Psychological records indicate that the subject
+experienced significant instability during
+childhood.
+
+</p>
+
+<p>
+
+Investigators believe these experiences
+influenced the subject's later behavior,
+particularly his distrust of unfamiliar people
+and strong attachment to a small number of
+individuals.
+
+</p>
+
+`
+
+},
+
+
+3:{
+
+code:"L-03",
+
+title:"WITNESS SIGHTING",
+
+content:`
+
+<p>
+
+A witness reported seeing an individual
+matching the description of B-001 near this
+location.
+
+</p>
+
+<p>
+
+<b>
+Reported time: 22:47
+</b>
+
+</p>
+
+<p>
+
+However, another recovered document places
+the subject somewhere else at approximately
+the same time.
+
+</p>
+
+<p>
+
+One of these records is incorrect.
+
+</p>
+
+`
+
+},
+
+
+4:{
+
+code:"L-04",
+
+title:"ABANDONED BUILDING",
+
+content:`
+
+<p>
+
+Investigators discovered an unidentified
+object inside this building.
+
+</p>
+
+<p>
+
+The object contained no recognizable
+manufacturer markings.
+
+</p>
+
+<p>
+
+Its origin remains unknown.
+
+</p>
+
+<p>
+
+The evidence photograph associated with this
+location should be examined carefully.
+
+</p>
+
+<p>
+
+<b>
+EVIDENCE TYPE:
+UNIDENTIFIED OBJECT
+</b>
+
+</p>
+
+`
+
+},
+
+
+5:{
+
+code:"L-05",
+
+title:"UNKNOWN CONTACT",
+
+content:`
+
+<p>
+
+An unidentified individual was reportedly
+observed near this location.
+
+</p>
+
+<p>
+
+Witness descriptions are incomplete.
+
+The person's identity remains unknown.
+
+</p>
+
+<p>
+
+Several witnesses independently mentioned
+that the individual appeared to know details
+about B-001 that had not been publicly released.
+
+</p>
+
+<p>
+
+<b>
+DESIGNATION:
+UNKNOWN-05
+</b>
+
+</p>
+
+<p>
+
+The surveillance photograph associated with
+this location is considered relevant evidence.
+
+</p>
+
+`
+
+},
+
+
+6:{
+
+code:"L-06",
+
+title:"DISAPPEARANCE SITE",
+
+content:`
+
+<p>
+
+This location represents the final confirmed
+sighting of Subject B-001.
+
+</p>
+
+<p>
+
+No definitive evidence explains what happened
+after this point.
+
+</p>
+
+<p>
+
+The official record classifies the disappearance
+as unexplained.
+
+</p>
+
+<p>
+
+However, recovered evidence suggests the
+possibility that the subject left voluntarily.
+
+</p>
+
+`
+
+},
+
+
+7:{
+
+code:"L-07",
+
+title:"CLASSIFIED LOCATION",
+
+content:`
+
+<p>
+
+<b>
+ACCESS DENIED.
+</b>
+
+</p>
+
+<p>
+
+Coordinates have been removed from the
+available investigation archive.
+
+</p>
+
+<p>
+
+Additional evidence is required before
+this location can be reconstructed.
+
+</p>
+
+<p>
+
+One recovered document suggests that L-07
+may connect several of the previous locations.
+
+</p>
+
+`
+
+}
+
+};
+
+
+/* ==========================================
+   PROGRESS
+========================================== */
+
+let examined =
+JSON.parse(
+localStorage.getItem(
+"IRIS_timeline_locations"
+) || "[]"
+);
+
+
+/* ==========================================
+   OPEN LOCATION
+========================================== */
+
+function openLocation(id){
+
+    if(!examined.includes(id)){
+
+        examined.push(id);
+
+        localStorage.setItem(
+            "IRIS_timeline_locations",
+            JSON.stringify(examined)
+        );
+
+    }
+
+
+    const location =
+    locations[id];
+
+
+    document.getElementById(
+        "modalCode"
+    ).textContent =
+    "IRIS // " + location.code;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+    location.title;
+
+
+    document.getElementById(
+        "modalContent"
+    ).innerHTML =
+    location.content;
+
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+    "block";
+
+
+    document.getElementById(
+        "overlay"
+    ).style.display =
+    "block";
+
+
+    updateProgress();
+
+}
+
+
+/* ==========================================
+   CLOSE LOCATION
+========================================== */
+
+function closeLocation(){
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+    "none";
+
+
+    document.getElementById(
+        "overlay"
+    ).style.display =
+    "none";
+
+}
+
+
+/* ==========================================
+   UPDATE PROGRESS
+========================================== */
+
+function updateProgress(){
+
+    document.getElementById(
+        "progress"
+    ).textContent =
+
+    examined.length +
+    " / 7 LOCATIONS EXAMINED";
+
+}
+
+
+updateProgress();
+
+
+/* ==========================================
+   ESC KEY
+========================================== */
+
+document.addEventListener(
+"keydown",
+function(event){
+
+    if(event.key === "Escape"){
+
+        closeLocation();
+
+    }
+
+});
+
+</script>
+
+
+</body>
+
+</html>10132076383
