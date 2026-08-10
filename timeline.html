@@ -1,824 +1,582 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>IRIS — Timeline Reconstruction</title>
 
 <style>
+*{box-sizing:border-box}
 
-/* =========================
-   GLOBAL
-========================= */
-
-* {
-    box-sizing: border-box;
+body{
+    margin:0;
+    background:#030405;
+    color:#e8e8e8;
+    font-family:Arial,Helvetica,sans-serif
 }
 
-body {
-    margin: 0;
-    background: #030405;
-    color: #e8e8e8;
-    font-family: Arial, Helvetica, sans-serif;
+button{font-family:inherit}
+
+header{
+    background:#070a0e;
+    border-bottom:2px solid #a40000;
+    padding:25px 15px;
+    text-align:center
 }
 
-button {
-    font-family: inherit;
+header h1{
+    margin:0;
+    color:#ff2020;
+    font-size:24px;
+    letter-spacing:4px
 }
 
-/* =========================
-   HEADER
-========================= */
-
-header {
-    background: #070a0e;
-    border-bottom: 2px solid #a40000;
-    padding: 25px 15px;
-    text-align: center;
+header p{
+    color:#777;
+    font-size:11px;
+    letter-spacing:2px;
+    margin:10px 0 0
 }
 
-header h1 {
-    margin: 0;
-    color: #ff2020;
-    font-size: 24px;
-    letter-spacing: 4px;
+.container{
+    width:94%;
+    max-width:1100px;
+    margin:auto;
+    padding:25px 0 50px
 }
 
-header p {
-    color: #777;
-    font-size: 11px;
-    letter-spacing: 2px;
-    margin: 10px 0 0;
+.warning{
+    background:#0b0606;
+    border:1px solid #561111;
+    border-left:5px solid #d00000;
+    padding:20px;
+    margin-bottom:22px
 }
 
-/* =========================
-   MAIN
-========================= */
-
-.container {
-    width: 94%;
-    max-width: 1100px;
-    margin: auto;
-    padding: 25px 0 50px;
+.warning h2{
+    margin-top:0;
+    color:#ff2525;
+    font-size:17px
 }
 
-/* =========================
-   WARNING
-========================= */
-
-.warning {
-    background: #0b0606;
-    border: 1px solid #561111;
-    border-left: 5px solid #d00000;
-    padding: 20px;
-    margin-bottom: 22px;
+.warning p{
+    color:#999;
+    line-height:1.7
 }
 
-.warning h2 {
-    margin-top: 0;
-    color: #ff2525;
-    font-size: 17px;
+.map-box{
+    background:#080c10;
+    border:1px solid #293743;
+    padding:10px
 }
 
-.warning p {
-    color: #999;
-    line-height: 1.7;
+.map-title{
+    padding:14px;
+    background:#0c1117;
+    border-bottom:1px solid #293743;
+    display:flex;
+    justify-content:space-between
 }
 
-/* =========================
-   MAP
-========================= */
-
-.map-box {
-    background: #080c10;
-    border: 1px solid #293743;
-    padding: 10px;
+.map-title strong{
+    color:#66b9ff;
+    letter-spacing:1px
 }
 
-.map-title {
-    padding: 14px;
-    background: #0c1117;
-    border-bottom: 1px solid #293743;
-    display: flex;
-    justify-content: space-between;
+.active{
+    color:#ff2929;
+    font-size:11px
 }
 
-.map-title strong {
-    color: #66b9ff;
-    letter-spacing: 1px;
+.map{
+    width:100%;
+    height:600px;
+    border:0;
+    display:block
 }
 
-.active {
-    color: #ff2929;
-    font-size: 11px;
+.map-info{
+    background:#080d12;
+    border:1px solid #263642;
+    margin-top:15px;
+    padding:17px;
+    color:#8f9aa4;
+    font-size:13px;
+    line-height:1.8
 }
 
-.map {
-    width: 100%;
-    height: 600px;
-    border: 0;
-    display: block;
+.map-info b{color:#d0d7dc}
+
+.section-title{
+    color:#ff2424;
+    margin-top:35px;
+    letter-spacing:2px;
+    font-size:18px
 }
 
-.map-info {
-    background: #080d12;
-    border: 1px solid #263642;
-    margin-top: 15px;
-    padding: 17px;
-    color: #8f9aa4;
-    font-size: 13px;
-    line-height: 1.8;
+.locations{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:15px
 }
 
-.map-info b {
-    color: #d0d7dc;
+.location{
+    background:#090d12;
+    border:1px solid #293944;
+    padding:20px;
+    cursor:pointer;
+    transition:.2s
 }
 
-/* =========================
-   LOCATIONS
-========================= */
-
-.section-title {
-    color: #ff2424;
-    margin-top: 35px;
-    letter-spacing: 2px;
-    font-size: 18px;
+.location:hover{
+    border-color:#4aaeff;
+    transform:translateY(-3px)
 }
 
-.locations {
-    display: grid;
-    grid-template-columns:
-        repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
+.location.examined{
+    border-color:#176b39;
+    background:#07100b
 }
 
-.location {
-    background: #090d12;
-    border: 1px solid #293944;
-    padding: 20px;
-    cursor: pointer;
-    transition: .2s;
+.location-code{
+    color:#777;
+    font-size:10px;
+    letter-spacing:2px;
+    margin-bottom:9px
 }
 
-.location:hover {
-    border-color: #4aaeff;
-    transform: translateY(-3px);
+.location h3{
+    color:#65b8ff;
+    font-size:16px;
+    margin:0 0 10px
 }
 
-.location.examined {
-    border-color: #176b39;
-    background: #07100b;
+.location p{
+    color:#929ba4;
+    font-size:13px;
+    line-height:1.6;
+    margin:0
 }
 
-.location-code {
-    color: #777;
-    font-size: 10px;
-    letter-spacing: 2px;
-    margin-bottom: 9px;
+.examined-label{
+    display:none;
+    color:#38d879;
+    font-size:10px;
+    letter-spacing:2px;
+    margin-top:12px
 }
 
-.location h3 {
-    color: #65b8ff;
-    font-size: 16px;
-    margin: 0 0 10px;
+.location.examined .examined-label{
+    display:block
 }
 
-.location p {
-    color: #929ba4;
-    font-size: 13px;
-    line-height: 1.6;
-    margin: 0;
+.progress{
+    margin-top:30px;
+    background:#090d12;
+    border:1px solid #293743;
+    padding:20px;
+    text-align:center
 }
 
-.examined-label {
-    display: none;
-    color: #38d879;
-    font-size: 10px;
-    letter-spacing: 2px;
-    margin-top: 12px;
+.progress-title{
+    color:#777;
+    font-size:11px;
+    letter-spacing:2px
 }
 
-.location.examined .examined-label {
-    display: block;
+#progressText{
+    color:#ff2525;
+    font-size:20px;
+    margin-top:8px
 }
 
-/* =========================
-   PROGRESS
-========================= */
-
-.progress {
-    margin-top: 30px;
-    background: #090d12;
-    border: 1px solid #293743;
-    padding: 20px;
-    text-align: center;
+.progress-bar{
+    height:7px;
+    background:#171b20;
+    margin-top:15px;
+    overflow:hidden
 }
 
-.progress-title {
-    color: #777;
-    font-size: 11px;
-    letter-spacing: 2px;
+#progressFill{
+    height:100%;
+    width:0%;
+    background:#c90000;
+    transition:width .4s
 }
 
-#progressText {
-    color: #ff2525;
-    font-size: 20px;
-    margin-top: 8px;
+.overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.9);
+    z-index:100
 }
 
-.progress-bar {
-    height: 7px;
-    background: #171b20;
-    margin-top: 15px;
-    overflow: hidden;
+.modal{
+    display:none;
+    position:fixed;
+    z-index:110;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:92%;
+    max-width:700px;
+    max-height:90vh;
+    overflow-y:auto;
+    background:#070b10;
+    border:2px solid #850000;
+    padding:23px
 }
 
-#progressFill {
-    height: 100%;
-    width: 0%;
-    background: #c90000;
-    transition: width .4s;
+.modal-code{
+    color:#ff2525;
+    font-size:10px;
+    letter-spacing:3px
 }
 
-/* =========================
-   NORMAL LOCATION MODAL
-========================= */
-
-.overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.9);
-    z-index: 100;
+.modal h2{
+    color:#68baff;
+    margin-bottom:18px
 }
 
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 110;
-
-    top: 50%;
-    left: 50%;
-
-    transform: translate(-50%, -50%);
-
-    width: 92%;
-    max-width: 700px;
-    max-height: 90vh;
-
-    overflow-y: auto;
-
-    background: #070b10;
-    border: 2px solid #850000;
-
-    padding: 23px;
+.modal-text{
+    color:#adb5bc;
+    line-height:1.8
 }
 
-.modal-code {
-    color: #ff2525;
-    font-size: 10px;
-    letter-spacing: 3px;
+.evidence-box{
+    margin-top:22px;
+    padding-top:20px;
+    border-top:1px solid #421010
 }
 
-.modal h2 {
-    color: #68baff;
-    margin-bottom: 18px;
+.evidence-label{
+    color:#ff2929;
+    font-size:11px;
+    letter-spacing:3px;
+    margin-bottom:12px
 }
 
-.modal-text {
-    color: #adb5bc;
-    line-height: 1.8;
+.evidence-status{
+    color:#666;
+    font-size:10px;
+    line-height:1.7;
+    margin-bottom:15px
 }
 
-/* =========================
-   EVIDENCE
-========================= */
-
-.evidence-box {
-    margin-top: 22px;
-    padding-top: 20px;
-    border-top: 1px solid #421010;
+.evidence-image{
+    display:block;
+    width:100%;
+    max-height:600px;
+    object-fit:contain;
+    background:#000;
+    border:1px solid #401010
 }
 
-.evidence-label {
-    color: #ff2929;
-    font-size: 11px;
-    letter-spacing: 3px;
-    margin-bottom: 12px;
+.evidence-caption{
+    color:#777;
+    font-size:9px;
+    letter-spacing:2px;
+    margin-top:9px
 }
 
-.evidence-status {
-    color: #666;
-    font-size: 10px;
-    line-height: 1.7;
-    margin-bottom: 15px;
+.examine-button{
+    width:100%;
+    padding:15px;
+    margin-top:24px;
+    background:#063b20;
+    border:1px solid #16a957;
+    color:#55ef99;
+    cursor:pointer;
+    font-size:13px;
+    letter-spacing:2px
 }
 
-.evidence-image {
-    display: block;
-    width: 100%;
-    max-height: 600px;
-    object-fit: contain;
-    background: #000;
-    border: 1px solid #401010;
+.examine-button.completed{
+    background:#111;
+    border-color:#31513e;
+    color:#4f8f69;
+    cursor:default
 }
 
-.evidence-caption {
-    color: #777;
-    font-size: 9px;
-    letter-spacing: 2px;
-    margin-top: 9px;
+.close{
+    width:100%;
+    padding:14px;
+    margin-top:12px;
+    background:#320707;
+    color:white;
+    border:1px solid #950000;
+    cursor:pointer
 }
 
-/* =========================
-   EXAMINE
-========================= */
-
-.examine-button {
-    width: 100%;
-    padding: 15px;
-    margin-top: 24px;
-
-    background: #063b20;
-    border: 1px solid #16a957;
-
-    color: #55ef99;
-
-    cursor: pointer;
-
-    font-size: 13px;
-    letter-spacing: 2px;
+.l7-entry{
+    margin-top:30px;
+    background:#0b0506;
+    border:1px solid #681111;
+    border-left:5px solid #d00000;
+    padding:23px
 }
 
-.examine-button.completed {
-    background: #111;
-    border-color: #31513e;
-    color: #4f8f69;
-    cursor: default;
+.l7-label{
+    color:#ff2020;
+    font-size:10px;
+    letter-spacing:3px
 }
 
-/* =========================
-   CLOSE
-========================= */
-
-.close {
-    width: 100%;
-    padding: 14px;
-    margin-top: 12px;
-
-    background: #320707;
-    color: white;
-
-    border: 1px solid #950000;
-
-    cursor: pointer;
+.l7-entry h2{
+    color:#67baff;
+    font-size:20px
 }
 
-/* =========================
-   L-07 ENTRY
-========================= */
-
-.l7-entry {
-    margin-top: 30px;
-
-    background: #0b0506;
-
-    border: 1px solid #681111;
-    border-left: 5px solid #d00000;
-
-    padding: 23px;
+.l7-entry p{
+    color:#999;
+    line-height:1.7
 }
 
-.l7-label {
-    color: #ff2020;
-    font-size: 10px;
-    letter-spacing: 3px;
+.l7-button{
+    display:block;
+    width:100%;
+    padding:15px;
+    background:#300707;
+    color:white;
+    border:1px solid #a00000;
+    cursor:pointer;
+    font-size:14px;
+    letter-spacing:1px
 }
 
-.l7-entry h2 {
-    color: #67baff;
-    font-size: 20px;
-}
+.l7-button:hover{background:#570909}
 
-.l7-entry p {
-    color: #999;
-    line-height: 1.7;
-}
-
-.l7-button {
-    display: block;
-    width: 100%;
-
-    padding: 15px;
-
-    background: #300707;
-
-    color: white;
-
-    border: 1px solid #a00000;
-
-    cursor: pointer;
-
-    font-size: 14px;
-    letter-spacing: 1px;
-}
-
-.l7-button:hover {
-    background: #570909;
-}
-
-/* ==================================================
-   L-07 FULLSCREEN EXPERIENCE
-   EYE BACKGROUND ONLY EXISTS HERE
-================================================== */
-
-.l7-screen {
-    display: none;
-
-    position: fixed;
-    inset: 0;
-
-    z-index: 500;
-
-    overflow-y: auto;
-
+.l7-screen{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:500;
+    overflow-y:auto;
     background:
-        linear-gradient(
-            rgba(0,0,0,.72),
-            rgba(0,0,0,.78)
-        ),
+        linear-gradient(rgba(0,0,0,.72),rgba(0,0,0,.78)),
         url("timeline-background.jpg");
-
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed
 }
 
-/* =========================
-   L7 CONTENT
-========================= */
-
-.l7-content {
-    width: 94%;
-    max-width: 750px;
-
-    margin: 0 auto;
-
-    padding: 35px 0 70px;
+.l7-content{
+    width:94%;
+    max-width:750px;
+    margin:0 auto;
+    padding:35px 0 70px
 }
 
-.l7-header {
-    text-align: center;
-
-    border-bottom: 1px solid #601111;
-
-    padding-bottom: 22px;
-
-    margin-bottom: 25px;
+.l7-header{
+    text-align:center;
+    border-bottom:1px solid #601111;
+    padding-bottom:22px;
+    margin-bottom:25px
 }
 
-.l7-header small {
-    color: #ff2020;
-    letter-spacing: 4px;
-    font-size: 10px;
+.l7-header small{
+    color:#ff2020;
+    letter-spacing:4px;
+    font-size:10px
 }
 
-.l7-header h1 {
-    color: white;
-
-    font-size: 25px;
-
-    letter-spacing: 4px;
-
-    margin: 12px 0;
+.l7-header h1{
+    color:white;
+    font-size:25px;
+    letter-spacing:4px;
+    margin:12px 0
 }
 
-.l7-header p {
-    color: #888;
-
-    font-size: 11px;
-
-    letter-spacing: 2px;
+.l7-header p{
+    color:#888;
+    font-size:11px;
+    letter-spacing:2px
 }
 
-/* =========================
-   L7 INTRO
-========================= */
-
-.l7-message {
-    background: rgba(3,5,7,.88);
-
-    border: 1px solid #441111;
-
-    padding: 22px;
-
-    margin-bottom: 22px;
-
-    line-height: 1.8;
+.l7-message{
+    background:rgba(3,5,7,.88);
+    border:1px solid #441111;
+    padding:22px;
+    margin-bottom:22px;
+    line-height:1.8
 }
 
-.subject-label {
-    color: #ff2020;
-
-    font-size: 10px;
-
-    letter-spacing: 3px;
-
-    margin-bottom: 12px;
+.subject-label{
+    color:#ff2020;
+    font-size:10px;
+    letter-spacing:3px;
+    margin-bottom:12px
 }
 
-.subject-text {
-    color: #ddd;
-
-    font-size: 16px;
-
-    font-style: italic;
+.subject-text{
+    color:#ddd;
+    font-size:16px;
+    font-style:italic
 }
 
-/* =========================
-   QUESTION
-========================= */
-
-.question-card {
-    background: rgba(3,5,7,.92);
-
-    border: 1px solid #343b42;
-
-    padding: 22px;
-
-    margin-top: 20px;
+.question-card{
+    background:rgba(3,5,7,.92);
+    border:1px solid #343b42;
+    padding:22px;
+    margin-top:20px
 }
 
-.question-number {
-    color: #777;
-
-    font-size: 10px;
-
-    letter-spacing: 3px;
-
-    margin-bottom: 12px;
+.question-number{
+    color:#777;
+    font-size:10px;
+    letter-spacing:3px;
+    margin-bottom:12px
 }
 
-.question-image {
-    display: block;
-
-    width: 100%;
-
-    max-height: 500px;
-
-    object-fit: contain;
-
-    background: #000;
-
-    border: 1px solid #421010;
-
-    margin-bottom: 20px;
+.question-image{
+    display:block;
+    width:100%;
+    max-height:500px;
+    object-fit:contain;
+    background:#000;
+    border:1px solid #421010;
+    margin-bottom:20px
 }
 
-.question-subject {
-    color: #ff2020;
-
-    font-size: 10px;
-
-    letter-spacing: 3px;
-
-    margin-bottom: 12px;
+.question-subject{
+    color:#ff2020;
+    font-size:10px;
+    letter-spacing:3px;
+    margin-bottom:12px
 }
 
-.question-text {
-    color: white;
-
-    font-size: 19px;
-
-    line-height: 1.6;
-
-    margin-bottom: 25px;
+.question-text{
+    color:white;
+    font-size:19px;
+    line-height:1.6;
+    margin-bottom:25px
 }
 
-/* =========================
-   YES / NO
-========================= */
-
-.answer-buttons {
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
-
-    gap: 12px;
+.answer-buttons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px
 }
 
-.answer-button {
-    padding: 16px;
-
-    background: #090c10;
-
-    color: white;
-
-    border: 1px solid #3b444c;
-
-    cursor: pointer;
-
-    font-size: 14px;
-
-    letter-spacing: 2px;
+.answer-button{
+    padding:16px;
+    background:#090c10;
+    color:white;
+    border:1px solid #3b444c;
+    cursor:pointer;
+    font-size:14px;
+    letter-spacing:2px
 }
 
-.answer-button:hover {
-    border-color: #ff2020;
-
-    background: #170707;
+.answer-button:hover{
+    border-color:#ff2020;
+    background:#170707
 }
 
-/* =========================
-   FINAL QUESTION
-========================= */
-
-.final-card {
-    border: 2px solid #a00000;
-
-    box-shadow:
-        0 0 30px rgba(255,0,0,.18);
+.final-card{
+    border:2px solid #a00000;
+    box-shadow:0 0 30px rgba(255,0,0,.18)
 }
 
-.final-card .question-number {
-    color: #ff2020;
+.final-warning{
+    color:#ff2020;
+    text-align:center;
+    font-size:11px;
+    letter-spacing:4px;
+    margin-bottom:15px
 }
 
-.final-warning {
-    color: #ff2020;
-
-    text-align: center;
-
-    font-size: 11px;
-
-    letter-spacing: 4px;
-
-    margin-bottom: 15px;
+.final-question{
+    color:#ff2020;
+    text-align:center;
+    font-size:25px;
+    line-height:1.5;
+    font-weight:bold;
+    margin-bottom:28px
 }
 
-.final-question {
-    color: #ff2020;
-
-    text-align: center;
-
-    font-size: 25px;
-
-    line-height: 1.5;
-
-    font-weight: bold;
-
-    margin-bottom: 28px;
+.final-card .answer-button{
+    border-color:#7a0000
 }
 
-.final-card .answer-button {
-    border-color: #7a0000;
+.l7-progress{
+    text-align:center;
+    color:#777;
+    font-size:10px;
+    letter-spacing:3px;
+    margin:25px 0
 }
 
-.final-card .answer-button:hover {
-    background: #330707;
-    border-color: #ff2020;
+.ending{
+    display:none;
+    background:rgba(3,5,7,.94);
+    border:2px solid #8b0000;
+    padding:30px;
+    margin-top:25px;
+    text-align:center
 }
 
-/* =========================
-   L7 PROGRESS
-========================= */
-
-.l7-progress {
-    text-align: center;
-
-    color: #777;
-
-    font-size: 10px;
-
-    letter-spacing: 3px;
-
-    margin: 25px 0;
+.ending h2{
+    color:#ff2020;
+    letter-spacing:3px
 }
 
-/* =========================
-   ENDING
-========================= */
-
-.ending {
-    display: none;
-
-    background: rgba(3,5,7,.94);
-
-    border: 2px solid #8b0000;
-
-    padding: 30px;
-
-    margin-top: 25px;
-
-    text-align: center;
+.ending p{
+    color:#ccc;
+    line-height:1.8;
+    font-style:italic
 }
 
-.ending h2 {
-    color: #ff2020;
-
-    letter-spacing: 3px;
+.ending-code{
+    color:#777;
+    font-size:10px;
+    letter-spacing:3px;
+    margin-top:20px
 }
 
-.ending p {
-    color: #ccc;
-
-    line-height: 1.8;
-
-    font-style: italic;
+.return-button{
+    width:100%;
+    padding:15px;
+    margin-top:25px;
+    background:#250606;
+    color:white;
+    border:1px solid #850000;
+    cursor:pointer
 }
 
-.ending-code {
-    color: #777;
+@media(max-width:700px){
 
-    font-size: 10px;
+    header h1{font-size:18px}
 
-    letter-spacing: 3px;
+    .map{height:500px}
 
-    margin-top: 20px;
-}
-
-.return-timeline {
-    width: 100%;
-
-    padding: 15px;
-
-    margin-top: 25px;
-
-    background: #250606;
-
-    color: white;
-
-    border: 1px solid #850000;
-
-    cursor: pointer;
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:700px) {
-
-    header h1 {
-        font-size: 18px;
+    .modal{
+        width:94%;
+        padding:18px
     }
 
-    .map {
-        height: 500px;
-    }
+    .l7-content{padding-top:20px}
 
-    .modal {
-        width: 94%;
-        padding: 18px;
-    }
+    .l7-header h1{font-size:20px}
 
-    .l7-content {
-        padding-top: 20px;
-    }
+    .question-text{font-size:17px}
 
-    .l7-header h1 {
-        font-size: 20px;
-    }
-
-    .question-text {
-        font-size: 17px;
-    }
-
-    .final-question {
-        font-size: 21px;
-    }
-
+    .final-question{font-size:21px}
 }
-
 </style>
 </head>
 
-
 <body>
 
-
-<!-- ==================================================
-     NORMAL TIMELINE
-================================================== -->
-
 <header>
-
     <h1>IRIS INTELLIGENCE AGENCY</h1>
-
-    <p>
-        TIMELINE RECONSTRUCTION // SUBJECT B-001
-    </p>
-
+    <p>TIMELINE RECONSTRUCTION // SUBJECT B-001</p>
 </header>
-
 
 <div class="container">
 
-
 <div class="warning">
-
     <h2>⚠ CLASSIFIED INVESTIGATION</h2>
 
     <p>
@@ -832,28 +590,20 @@ header p {
     </p>
 
     <p>
-        <b>
-            Opening a file does NOT mark it as examined.
-        </b>
+        <b>Opening a file does NOT mark it as examined.</b>
     </p>
-
 </div>
 
 
-<!-- MAP -->
+<!-- ==================================================
+     YOUR EXACT UMAP LINK
+================================================== -->
 
 <div class="map-box">
 
     <div class="map-title">
-
-        <strong>
-            MAP 001 — SUBJECT MOVEMENT
-        </strong>
-
-        <span class="active">
-            ● ACTIVE
-        </span>
-
+        <strong>MAP 001 — SUBJECT MOVEMENT</strong>
+        <span class="active">● ACTIVE</span>
     </div>
 
     <iframe
@@ -867,25 +617,13 @@ header p {
 
 <div class="map-info">
 
-    <b>SUBJECT:</b> B-001
-
-    <br>
-
-    <b>LOCATIONS:</b> 06
-
-    <br>
-
-    <b>STATUS:</b> ACTIVE INVESTIGATION
-
-    <br>
-
-    <b>INSTRUCTION:</b>
-    Examine all six locations.
+    <b>SUBJECT:</b> B-001<br>
+    <b>LOCATIONS:</b> 06<br>
+    <b>STATUS:</b> ACTIVE INVESTIGATION<br>
+    <b>INSTRUCTION:</b> Examine all six locations.
 
 </div>
 
-
-<!-- LOCATIONS -->
 
 <h2 class="section-title">
     INVESTIGATION LOCATIONS
@@ -894,155 +632,50 @@ header p {
 
 <div class="locations">
 
-
-<div
-    class="location"
-    id="location-1"
-    onclick="openLocation(1)"
->
-
-    <div class="location-code">
-        LOCATION 01
-    </div>
-
+<div class="location" id="location-1" onclick="openLocation(1)">
+    <div class="location-code">LOCATION 01</div>
     <h3>🔴 SUBJECT RESIDENCE</h3>
-
-    <p>
-        Last confirmed residential location
-        associated with Subject B-001.
-    </p>
-
-    <div class="examined-label">
-        ✓ EXAMINED
-    </div>
-
+    <p>Last confirmed residential location associated with Subject B-001.</p>
+    <div class="examined-label">✓ EXAMINED</div>
 </div>
 
-
-<div
-    class="location"
-    id="location-2"
-    onclick="openLocation(2)"
->
-
-    <div class="location-code">
-        LOCATION 02
-    </div>
-
+<div class="location" id="location-2" onclick="openLocation(2)">
+    <div class="location-code">LOCATION 02</div>
     <h3>🟠 CHILDHOOD LOCATION</h3>
-
-    <p>
-        Location connected to the subject's
-        early life.
-    </p>
-
-    <div class="examined-label">
-        ✓ EXAMINED
-    </div>
-
+    <p>Location connected to the subject's early life.</p>
+    <div class="examined-label">✓ EXAMINED</div>
 </div>
 
-
-<div
-    class="location"
-    id="location-3"
-    onclick="openLocation(3)"
->
-
-    <div class="location-code">
-        LOCATION 03
-    </div>
-
+<div class="location" id="location-3" onclick="openLocation(3)">
+    <div class="location-code">LOCATION 03</div>
     <h3>🟡 WITNESS SIGHTING</h3>
-
-    <p>
-        A reported sighting involving
-        Subject B-001.
-    </p>
-
-    <div class="examined-label">
-        ✓ EXAMINED
-    </div>
-
+    <p>A reported sighting involving Subject B-001.</p>
+    <div class="examined-label">✓ EXAMINED</div>
 </div>
 
-
-<div
-    class="location"
-    id="location-4"
-    onclick="openLocation(4)"
->
-
-    <div class="location-code">
-        LOCATION 04
-    </div>
-
+<div class="location" id="location-4" onclick="openLocation(4)">
+    <div class="location-code">LOCATION 04</div>
     <h3>🔵 ABANDONED BUILDING</h3>
-
-    <p>
-        An unidentified object was recovered
-        at this location.
-    </p>
-
-    <div class="examined-label">
-        ✓ EXAMINED
-    </div>
-
+    <p>An unidentified object was recovered at this location.</p>
+    <div class="examined-label">✓ EXAMINED</div>
 </div>
 
-
-<div
-    class="location"
-    id="location-5"
-    onclick="openLocation(5)"
->
-
-    <div class="location-code">
-        LOCATION 05
-    </div>
-
+<div class="location" id="location-5" onclick="openLocation(5)">
+    <div class="location-code">LOCATION 05</div>
     <h3>🟣 UNKNOWN CONTACT</h3>
-
-    <p>
-        A mysterious individual was observed
-        near this location.
-    </p>
-
-    <div class="examined-label">
-        ✓ EXAMINED
-    </div>
-
+    <p>A mysterious individual was observed near this location.</p>
+    <div class="examined-label">✓ EXAMINED</div>
 </div>
 
-
-<div
-    class="location"
-    id="location-6"
-    onclick="openLocation(6)"
->
-
-    <div class="location-code">
-        LOCATION 06
-    </div>
-
+<div class="location" id="location-6" onclick="openLocation(6)">
+    <div class="location-code">LOCATION 06</div>
     <h3>⚫ DISAPPEARANCE SITE</h3>
-
-    <p>
-        Final confirmed location connected
-        to Subject B-001.
-    </p>
-
-    <div class="examined-label">
-        ✓ EXAMINED
-    </div>
+    <p>Final confirmed location connected to Subject B-001.</p>
+    <div class="examined-label">✓ EXAMINED</div>
+</div>
 
 </div>
 
-
-</div>
-
-
-<!-- PROGRESS -->
 
 <div class="progress">
 
@@ -1055,15 +688,15 @@ header p {
     </div>
 
     <div class="progress-bar">
-
         <div id="progressFill"></div>
-
     </div>
 
 </div>
 
 
-<!-- L7 ENTRY -->
+<!-- ==================================================
+     L7
+================================================== -->
 
 <div class="l7-entry">
 
@@ -1071,23 +704,18 @@ header p {
         IRIS // RESTRICTED DATA
     </div>
 
-    <h2>
-        🔒 L-07 — UNKNOWN LOCATION
-    </h2>
+    <h2>🔒 L-07 — UNKNOWN LOCATION</h2>
 
     <p>
         A restricted file has been recovered.
     </p>
 
     <p>
-        Its contents appear to have been
-        deliberately left for the investigator.
+        Its contents appear to have been deliberately
+        left for the investigator.
     </p>
 
-    <button
-        class="l7-button"
-        onclick="openL7()"
-    >
+    <button class="l7-button" onclick="openL7()">
         ⚠ ACCESS L-07
     </button>
 
@@ -1095,50 +723,30 @@ header p {
 
 
 <button
-    class="return-timeline"
+    class="return-button"
     onclick="window.location.href='dashboard.html'"
 >
-
     RETURN TO HEADQUARTERS
-
 </button>
-
 
 </div>
 
 
 <!-- ==================================================
-     NORMAL LOCATION MODAL
+     LOCATION MODAL
 ================================================== -->
 
-<div
-    class="overlay"
-    id="overlay"
-></div>
+<div class="overlay" id="overlay"></div>
 
+<div class="modal" id="modal">
 
-<div
-    class="modal"
-    id="modal"
->
+    <div class="modal-code" id="modalCode"></div>
 
-    <div
-        class="modal-code"
-        id="modalCode"
-    ></div>
+    <h2 id="modalTitle"></h2>
 
-    <h2
-        id="modalTitle"
-    ></h2>
+    <div class="modal-text" id="modalText"></div>
 
-    <div
-        class="modal-text"
-        id="modalText"
-    ></div>
-
-    <div
-        id="evidence"
-    ></div>
+    <div id="evidence"></div>
 
     <button
         id="examineButton"
@@ -1148,10 +756,7 @@ header p {
         ✓ MARK LOCATION EXAMINED
     </button>
 
-    <button
-        class="close"
-        onclick="closeModal()"
-    >
+    <button class="close" onclick="closeModal()">
         CLOSE FILE
     </button>
 
@@ -1159,41 +764,25 @@ header p {
 
 
 <!-- ==================================================
-     L-07 SCREEN
+     L7 SCREEN
 ================================================== -->
 
-<div
-    class="l7-screen"
-    id="l7Screen"
->
-
+<div class="l7-screen" id="l7Screen">
 
 <div class="l7-content">
 
-
 <div class="l7-header">
 
-    <small>
-        IRIS // L-07 // RESTRICTED
-    </small>
+    <small>IRIS // L-07 // RESTRICTED</small>
 
-    <h1>
-        THE SUBJECT WANTS TO SPEAK
-    </h1>
+    <h1>THE SUBJECT WANTS TO SPEAK</h1>
 
-    <p>
-        PRIVATE COMMUNICATION CHANNEL
-    </p>
+    <p>PRIVATE COMMUNICATION CHANNEL</p>
 
 </div>
 
 
-<!-- INTRO -->
-
-<div
-    class="l7-message"
-    id="l7Intro"
->
+<div class="l7-message" id="l7Intro">
 
     <div class="subject-label">
         INCOMING MESSAGE // SUBJECT B-001
@@ -1210,25 +799,14 @@ header p {
 </div>
 
 
-<!-- QUESTION CONTAINER -->
-
 <div id="questionContainer"></div>
 
 
-<!-- ENDING -->
+<div class="ending" id="endingYes">
 
-<div
-    class="ending"
-    id="endingYes"
->
+    <h2>CONNECTION ESTABLISHED</h2>
 
-    <h2>
-        CONNECTION ESTABLISHED
-    </h2>
-
-    <p>
-        “So you believe it.”
-    </p>
+    <p>“So you believe it.”</p>
 
     <p>
         “After everything they showed you,
@@ -1244,854 +822,453 @@ header p {
         SUBJECT RESPONSE // CLASSIFICATION: UNKNOWN
     </div>
 
-    <button
-        class="return-timeline"
-        onclick="closeL7()"
-    >
+    <button class="return-button" onclick="closeL7()">
         RETURN TO TIMELINE
     </button>
 
 </div>
 
 
-<div
-    class="ending"
-    id="endingNo"
->
+<div class="ending" id="endingNo">
 
-    <h2>
-        IDENTITY REMAINS UNRESOLVED
-    </h2>
+    <h2>IDENTITY REMAINS UNRESOLVED</h2>
 
-    <p>
-        “No.”
-    </p>
+    <p>“No.”</p>
 
     <p>
         “That's what I expected you to say.”
     </p>
 
     <p>
-        “But if I'm not the person you're
-        looking for...”
+        “But if I'm not the person you're looking for...”
     </p>
 
     <p>
-        “Then who do you think you've been
-        following this entire time?”
+        “Then who do you think you've been following
+        this entire time?”
     </p>
 
     <div class="ending-code">
         SUBJECT RESPONSE // CLASSIFICATION: UNKNOWN
     </div>
 
-    <button
-        class="return-timeline"
-        onclick="closeL7()"
-    >
+    <button class="return-button" onclick="closeL7()">
         RETURN TO TIMELINE
     </button>
 
 </div>
 
-
 </div>
-
 </div>
 
 
 <script>
 
-/* ==================================================
-   LOCATION DATA
-================================================== */
-
 const locations = {
 
-    1: {
+1:{
+    code:"L-01",
+    title:"SUBJECT RESIDENCE",
+    text:`
+        <p>This location was identified as a residence
+        associated with Subject B-001.</p>
 
-        code: "L-01",
+        <p>Investigators recovered records connecting
+        the subject to this location.</p>
+    `
+},
 
-        title: "SUBJECT RESIDENCE",
+2:{
+    code:"L-02",
+    title:"CHILDHOOD LOCATION",
+    text:`
+        <p>This location is connected to the early life
+        of Subject B-001.</p>
 
-        text: `
-            <p>
-            This location was identified as a
-            residence associated with Subject B-001.
-            </p>
+        <p>Records indicate that the subject experienced
+        a difficult childhood.</p>
+    `
+},
 
-            <p>
-            Investigators recovered records
-            connecting the subject to this location.
-            </p>
-        `
+3:{
+    code:"L-03",
+    title:"WITNESS SIGHTING",
+    text:`
+        <p>A witness reported seeing an individual
+        matching the description of B-001.</p>
 
-    },
+        <p>The reported time does not completely
+        correspond with the official timeline.</p>
+    `
+},
 
+4:{
+    code:"L-04",
+    title:"UNIDENTIFIED OBJECT",
+    text:`
+        <p>Investigators discovered an unidentified
+        object at this location.</p>
 
-    2: {
+        <p>No manufacturer markings or identifying
+        information were recovered.</p>
 
-        code: "L-02",
+        <p>Its connection to Subject B-001 remains unknown.</p>
+    `,
+    image:"unidentified-object.jpg",
+    imageLabel:"EVIDENCE PHOTOGRAPH // L-04"
+},
 
-        title: "CHILDHOOD LOCATION",
+5:{
+    code:"L-05",
+    title:"MYSTERIOUS PERSON",
+    text:`
+        <p>A witness reported an unidentified individual
+        near this location.</p>
 
-        text: `
-            <p>
-            This location is connected to the
-            early life of Subject B-001.
-            </p>
+        <p>The individual appeared to be observing
+        the surrounding area.</p>
 
-            <p>
-            Records indicate that the subject
-            experienced a difficult childhood.
-            </p>
+        <p>No confirmed identity has been established.</p>
+    `,
+    image:"mysterious-person.jpg",
+    imageLabel:"SURVEILLANCE PHOTOGRAPH // L-05"
+},
 
-            <p>
-            Investigators believe these experiences
-            may have influenced the subject's later behavior.
-            </p>
-        `
+6:{
+    code:"L-06",
+    title:"DISAPPEARANCE SITE",
+    text:`
+        <p>This location represents the final confirmed
+        sighting of Subject B-001.</p>
 
-    },
+        <p>No definitive evidence explains what happened
+        after this point.</p>
 
-
-    3: {
-
-        code: "L-03",
-
-        title: "WITNESS SIGHTING",
-
-        text: `
-            <p>
-            A witness reported seeing an individual
-            matching the description of B-001.
-            </p>
-
-            <p>
-            The reported time does not completely
-            correspond with the official timeline.
-            </p>
-        `
-
-    },
-
-
-    4: {
-
-        code: "L-04",
-
-        title: "UNIDENTIFIED OBJECT",
-
-        text: `
-            <p>
-            Investigators discovered an unidentified
-            object at this location.
-            </p>
-
-            <p>
-            No manufacturer markings or identifying
-            information were recovered.
-            </p>
-
-            <p>
-            Its connection to Subject B-001 remains unknown.
-            </p>
-        `,
-
-        image: "unidentified-object.jpg",
-
-        imageLabel:
-            "EVIDENCE PHOTOGRAPH // L-04",
-
-        imageStatus: `
-            SOURCE: INVESTIGATION ARCHIVE<br>
-            OBJECT DESIGNATION: UNKNOWN<br>
-            STATUS: UNDER ANALYSIS
-        `
-
-    },
-
-
-    5: {
-
-        code: "L-05",
-
-        title: "MYSTERIOUS PERSON",
-
-        text: `
-            <p>
-            A witness reported an unidentified
-            individual near this location.
-            </p>
-
-            <p>
-            The individual appeared to be observing
-            the surrounding area.
-            </p>
-
-            <p>
-            No confirmed identity has been established.
-            </p>
-        `,
-
-        image: "mysterious-person.jpg",
-
-        imageLabel:
-            "SURVEILLANCE PHOTOGRAPH // L-05",
-
-        imageStatus: `
-            SOURCE: SURVEILLANCE ARCHIVE<br>
-            SUBJECT DESIGNATION: UNKNOWN-05<br>
-            IDENTITY: UNCONFIRMED
-        `
-
-    },
-
-
-    6: {
-
-        code: "L-06",
-
-        title: "DISAPPEARANCE SITE",
-
-        text: `
-            <p>
-            This location represents the final
-            confirmed sighting of Subject B-001.
-            </p>
-
-            <p>
-            No definitive evidence explains what
-            happened after this point.
-            </p>
-
-            <p>
-            The disappearance remains unexplained.
-            </p>
-        `
-
-    }
+        <p>The disappearance remains unexplained.</p>
+    `
+}
 
 };
 
 
-/* ==================================================
-   PROGRESS
-================================================== */
+let examined=[];
 
-let examined = [];
-
-try {
-
-    examined = JSON.parse(
-        localStorage.getItem(
-            "IRIS_timeline_examined"
-        ) || "[]"
+try{
+    examined=JSON.parse(
+        localStorage.getItem("IRIS_timeline_examined")||"[]"
     );
-
-} catch {
-
-    examined = [];
-
+}catch{
+    examined=[];
 }
 
-
-let currentLocation = null;
-
-
-function updateProgress() {
-
-    const count =
-        examined.length;
+let currentLocation=null;
 
 
-    document.getElementById(
-        "progressText"
-    ).textContent =
-        count +
-        " / 6 LOCATIONS EXAMINED";
+function updateProgress(){
 
+    document.getElementById("progressText").textContent =
+        examined.length+" / 6 LOCATIONS EXAMINED";
 
-    document.getElementById(
-        "progressFill"
-    ).style.width =
-        (count / 6 * 100) + "%";
+    document.getElementById("progressFill").style.width =
+        (examined.length/6*100)+"%";
 
+    for(let i=1;i<=6;i++){
 
-    for (
-        let i = 1;
-        i <= 6;
-        i++
-    ) {
+        const card=document.getElementById("location-"+i);
 
-        const card =
-            document.getElementById(
-                "location-" + i
-            );
+        if(!card)continue;
 
-
-        if (!card) continue;
-
-
-        if (
-            examined.includes(i)
-        ) {
-
-            card.classList.add(
-                "examined"
-            );
-
-        } else {
-
-            card.classList.remove(
-                "examined"
-            );
-
-        }
-
+        if(examined.includes(i))
+            card.classList.add("examined");
+        else
+            card.classList.remove("examined");
     }
-
 }
 
 
-/* ==================================================
-   OPEN NORMAL LOCATION
-================================================== */
+function openLocation(id){
 
-function openLocation(id) {
+    const location=locations[id];
 
-    const location =
-        locations[id];
+    currentLocation=id;
 
+    document.getElementById("modalCode").textContent =
+        "IRIS // "+location.code;
 
-    currentLocation = id;
-
-
-    document.getElementById(
-        "modalCode"
-    ).textContent =
-        "IRIS // " +
-        location.code;
-
-
-    document.getElementById(
-        "modalTitle"
-    ).textContent =
+    document.getElementById("modalTitle").textContent =
         location.title;
 
-
-    document.getElementById(
-        "modalText"
-    ).innerHTML =
+    document.getElementById("modalText").innerHTML =
         location.text;
 
+    const evidence=document.getElementById("evidence");
 
-    const evidence =
-        document.getElementById(
-            "evidence"
-        );
+    evidence.innerHTML="";
 
+    if(location.image){
 
-    evidence.innerHTML = "";
+        evidence.innerHTML=`
 
+        <div class="evidence-box">
 
-    if (location.image) {
-
-        evidence.innerHTML = `
-
-            <div class="evidence-box">
-
-                <div class="evidence-label">
-                    ${location.imageLabel}
-                </div>
-
-                <div class="evidence-status">
-                    ${location.imageStatus}
-                </div>
-
-                <img
-                    src="${location.image}"
-                    class="evidence-image"
-                    alt="${location.title}"
-                >
-
-                <div class="evidence-caption">
-                    IRIS ARCHIVE // RESTRICTED EVIDENCE
-                </div>
-
+            <div class="evidence-label">
+                ${location.imageLabel}
             </div>
 
+            <img
+                src="${location.image}"
+                class="evidence-image"
+                alt="${location.title}"
+            >
+
+            <div class="evidence-caption">
+                IRIS ARCHIVE // RESTRICTED EVIDENCE
+            </div>
+
+        </div>
+
         `;
-
     }
 
+    const button=document.getElementById("examineButton");
 
-    const button =
-        document.getElementById(
-            "examineButton"
-        );
+    if(examined.includes(id)){
 
+        button.textContent="✓ LOCATION ALREADY EXAMINED";
+        button.classList.add("completed");
+        button.disabled=true;
 
-    if (
-        examined.includes(id)
-    ) {
+    }else{
 
-        button.textContent =
-            "✓ LOCATION ALREADY EXAMINED";
-
-        button.classList.add(
-            "completed"
-        );
-
-        button.disabled = true;
-
-    } else {
-
-        button.textContent =
-            "✓ MARK LOCATION EXAMINED";
-
-        button.classList.remove(
-            "completed"
-        );
-
-        button.disabled = false;
-
+        button.textContent="✓ MARK LOCATION EXAMINED";
+        button.classList.remove("completed");
+        button.disabled=false;
     }
 
-
-    document.getElementById(
-        "modal"
-    ).style.display =
-        "block";
-
-
-    document.getElementById(
-        "overlay"
-    ).style.display =
-        "block";
-
+    document.getElementById("modal").style.display="block";
+    document.getElementById("overlay").style.display="block";
 }
 
 
-/* ==================================================
-   MARK LOCATION EXAMINED
-================================================== */
+function markExamined(){
 
-function markExamined() {
+    if(currentLocation===null)return;
 
-    if (
-        currentLocation === null
-    ) return;
+    if(!examined.includes(currentLocation)){
 
-
-    if (
-        !examined.includes(
-            currentLocation
-        )
-    ) {
-
-        examined.push(
-            currentLocation
-        );
-
+        examined.push(currentLocation);
 
         localStorage.setItem(
             "IRIS_timeline_examined",
             JSON.stringify(examined)
         );
-
     }
 
+    const button=document.getElementById("examineButton");
 
-    const button =
-        document.getElementById(
-            "examineButton"
-        );
-
-
-    button.textContent =
-        "✓ LOCATION EXAMINED";
-
-
-    button.classList.add(
-        "completed"
-    );
-
-
-    button.disabled = true;
-
+    button.textContent="✓ LOCATION EXAMINED";
+    button.classList.add("completed");
+    button.disabled=true;
 
     updateProgress();
+}
 
+
+function closeModal(){
+
+    document.getElementById("modal").style.display="none";
+    document.getElementById("overlay").style.display="none";
+
+    currentLocation=null;
 }
 
 
 /* ==================================================
-   CLOSE NORMAL MODAL
+   L7 QUESTIONS
 ================================================== */
 
-function closeModal() {
+const questions=[
 
-    document.getElementById(
-        "modal"
-    ).style.display =
-        "none";
+{
+    image:"question-1.jpg",
+    text:"Do you think I chose this place deliberately?"
+},
 
+{
+    image:"question-2.jpg",
+    text:"Do you think someone else was here with me?"
+},
 
-    document.getElementById(
-        "overlay"
-    ).style.display =
-        "none";
+{
+    image:"question-3.jpg",
+    text:"Does this place look familiar to you?"
+},
 
+{
+    image:"question-4.jpg",
+    text:"Do you think I was watching someone here?"
+},
 
-    currentLocation = null;
-
+{
+    image:"question-5.jpg",
+    text:"After everything you've discovered... do you think I'm the person you've been looking for?"
 }
-
-
-/* ==================================================
-   L-07 QUESTIONS
-================================================== */
-
-const questions = [
-
-    {
-
-        image: "question-1.jpg",
-
-        text:
-        "Do you think I chose this place deliberately?"
-
-    },
-
-    {
-
-        image: "question-2.jpg",
-
-        text:
-        "Do you think someone else was here with me?"
-
-    },
-
-    {
-
-        image: "question-3.jpg",
-
-        text:
-        "Does this place look familiar to you?"
-
-    },
-
-    {
-
-        image: "question-4.jpg",
-
-        text:
-        "Do you think I was watching someone here?"
-
-    },
-
-    {
-
-        image: "question-5.jpg",
-
-        text:
-        "After everything you've discovered... do you think I'm the person you've been looking for?"
-
-    }
 
 ];
 
 
-let currentQuestion = 0;
-
-let answers = [];
-
-
-/* ==================================================
-   OPEN L7
-================================================== */
-
-function openL7() {
-
-    document.getElementById(
-        "l7Screen"
-    ).style.display =
-        "block";
+let currentQuestion=0;
+let answers=[];
 
 
-    document.body.style.overflow =
-        "hidden";
+function openL7(){
 
+    document.getElementById("l7Screen").style.display="block";
 
-    currentQuestion = 0;
+    document.body.style.overflow="hidden";
 
-    answers = [];
+    currentQuestion=0;
+    answers=[];
 
-
-    document.getElementById(
-        "endingYes"
-    ).style.display =
-        "none";
-
-
-    document.getElementById(
-        "endingNo"
-    ).style.display =
-        "none";
-
-
-    document.getElementById(
-        "l7Intro"
-    ).style.display =
-        "block";
-
+    document.getElementById("endingYes").style.display="none";
+    document.getElementById("endingNo").style.display="none";
+    document.getElementById("l7Intro").style.display="block";
 
     showQuestion();
-
 }
 
 
-/* ==================================================
-   SHOW QUESTION
-================================================== */
+function showQuestion(){
 
-function showQuestion() {
+    const container=document.getElementById("questionContainer");
 
-    const container =
-        document.getElementById(
-            "questionContainer"
-        );
+    const q=questions[currentQuestion];
 
+    const isFinal=currentQuestion===4;
 
-    const q =
-        questions[currentQuestion];
+    container.innerHTML=`
 
+    <div class="question-card ${isFinal?"final-card":""}">
 
-    const isFinal =
-        currentQuestion === 4;
+        <div class="question-number">
+            QUESTION ${currentQuestion+1} / 5
+        </div>
 
+        <img
+            src="${q.image}"
+            class="question-image"
+            alt="Investigation evidence"
+        >
 
-    container.innerHTML = `
+        ${
+            isFinal
+            ? `<div class="final-warning">
+                THE FINAL QUESTION
+               </div>`
+            : ""
+        }
 
-        <div class="
-            question-card
-            ${isFinal ? "final-card" : ""}
-        ">
+        <div class="question-subject">
+            SUBJECT B-001
+        </div>
 
-            <div class="question-number">
+        <div class="${isFinal?"final-question":"question-text"}">
+            ${q.text}
+        </div>
 
-                QUESTION
-                ${currentQuestion + 1}
-                / 5
+        <div class="answer-buttons">
 
-            </div>
-
-
-            <img
-                src="${q.image}"
-                class="question-image"
-                alt="Investigation evidence"
+            <button
+                class="answer-button"
+                onclick="answerQuestion('YES')"
             >
+                YES
+            </button>
 
-
-            ${
-                isFinal
-                ? `
-                    <div class="final-warning">
-                        THE FINAL QUESTION
-                    </div>
-                  `
-                : ""
-            }
-
-
-            <div class="question-subject">
-                SUBJECT B-001
-            </div>
-
-
-            <div class="
-                ${
-                    isFinal
-                    ? "final-question"
-                    : "question-text"
-                }
-            ">
-
-                ${q.text}
-
-            </div>
-
-
-            <div class="answer-buttons">
-
-                <button
-                    class="answer-button"
-                    onclick="answerQuestion('YES')"
-                >
-                    YES
-                </button>
-
-
-                <button
-                    class="answer-button"
-                    onclick="answerQuestion('NO')"
-                >
-                    NO
-                </button>
-
-            </div>
+            <button
+                class="answer-button"
+                onclick="answerQuestion('NO')"
+            >
+                NO
+            </button>
 
         </div>
 
+    </div>
 
-        <div class="l7-progress">
-
-            QUESTION
-            ${currentQuestion + 1}
-            / 5
-
-        </div>
-
+    <div class="l7-progress">
+        QUESTION ${currentQuestion+1} / 5
+    </div>
     `;
 
-
     window.scrollTo({
-        top: 0,
-        behavior: "smooth"
+        top:0,
+        behavior:"smooth"
     });
-
 }
 
 
-/* ==================================================
-   ANSWER
-================================================== */
+function answerQuestion(answer){
 
-function answerQuestion(answer) {
-
-    answers[currentQuestion] =
-        answer;
-
+    answers[currentQuestion]=answer;
 
     localStorage.setItem(
         "IRIS_L7_answers",
         JSON.stringify(answers)
     );
 
-
-    /* FINAL QUESTION */
-
-    if (
-        currentQuestion === 4
-    ) {
+    if(currentQuestion===4){
 
         showEnding(answer);
-
         return;
-
     }
-
 
     currentQuestion++;
 
     showQuestion();
-
 }
 
 
-/* ==================================================
-   ENDING
-================================================== */
+function showEnding(answer){
 
-function showEnding(answer) {
+    document.getElementById("questionContainer").innerHTML="";
 
-    document.getElementById(
-        "questionContainer"
-    ).innerHTML = "";
+    document.getElementById("l7Intro").style.display="none";
 
-
-    document.getElementById(
-        "l7Intro"
-    ).style.display =
-        "none";
-
-
-    if (
-        answer === "YES"
-    ) {
-
-        document.getElementById(
-            "endingYes"
-        ).style.display =
-            "block";
-
-    } else {
-
-        document.getElementById(
-            "endingNo"
-        ).style.display =
-            "block";
-
-    }
-
+    if(answer==="YES")
+        document.getElementById("endingYes").style.display="block";
+    else
+        document.getElementById("endingNo").style.display="block";
 
     window.scrollTo({
-        top: 0,
-        behavior: "smooth"
+        top:0,
+        behavior:"smooth"
     });
-
 }
 
 
-/* ==================================================
-   CLOSE L7
-================================================== */
+function closeL7(){
 
-function closeL7() {
+    document.getElementById("l7Screen").style.display="none";
 
-    document.getElementById(
-        "l7Screen"
-    ).style.display =
-        "none";
-
-
-    document.body.style.overflow =
-        "auto";
-
+    document.body.style.overflow="auto";
 }
 
 
-/* ==================================================
-   ESCAPE
-================================================== */
+document.addEventListener("keydown",function(event){
 
-document.addEventListener(
-    "keydown",
-    function(event) {
+    if(event.key==="Escape"){
 
-        if (
-            event.key === "Escape"
-        ) {
-
-            closeModal();
-
-            closeL7();
-
-        }
-
+        closeModal();
+        closeL7();
     }
-);
 
+});
 
-/* ==================================================
-   INITIALIZE
-================================================== */
 
 updateProgress();
 
 </script>
 
 </body>
-    </html>
+   </html>
