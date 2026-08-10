@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>IRIS — Timeline Reconstruction</title>
 
 <style>
+
+/* =========================
+   GLOBAL
+========================= */
 
 * {
     box-sizing: border-box;
@@ -19,14 +24,19 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-/* HEADER */
+button {
+    font-family: inherit;
+}
+
+/* =========================
+   HEADER
+========================= */
 
 header {
     background: #070a0e;
     border-bottom: 2px solid #a40000;
     padding: 25px 15px;
     text-align: center;
-    box-shadow: 0 0 30px rgba(255,0,0,.12);
 }
 
 header h1 {
@@ -43,7 +53,9 @@ header p {
     margin: 10px 0 0;
 }
 
-/* MAIN */
+/* =========================
+   MAIN
+========================= */
 
 .container {
     width: 94%;
@@ -52,7 +64,9 @@ header p {
     padding: 25px 0 50px;
 }
 
-/* WARNING */
+/* =========================
+   WARNING
+========================= */
 
 .warning {
     background: #0b0606;
@@ -73,7 +87,9 @@ header p {
     line-height: 1.7;
 }
 
-/* MAP */
+/* =========================
+   MAP
+========================= */
 
 .map-box {
     background: #080c10;
@@ -106,8 +122,6 @@ header p {
     display: block;
 }
 
-/* MAP INFO */
-
 .map-info {
     background: #080d12;
     border: 1px solid #263642;
@@ -122,7 +136,9 @@ header p {
     color: #d0d7dc;
 }
 
-/* LOCATIONS */
+/* =========================
+   LOCATIONS
+========================= */
 
 .section-title {
     color: #ff2424;
@@ -133,7 +149,8 @@ header p {
 
 .locations {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns:
+        repeat(auto-fit, minmax(250px, 1fr));
     gap: 15px;
 }
 
@@ -148,7 +165,6 @@ header p {
 .location:hover {
     border-color: #4aaeff;
     transform: translateY(-3px);
-    box-shadow: 0 0 20px rgba(70,170,255,.12);
 }
 
 .location.examined {
@@ -188,79 +204,9 @@ header p {
     display: block;
 }
 
-/* L-07 */
-
-.l7 {
-    margin-top: 25px;
-    background: #0b0506;
-    border: 1px solid #681111;
-    border-left: 5px solid #d00000;
-    padding: 23px;
-}
-
-.l7-label {
-    color: #ff2020;
-    font-size: 10px;
-    letter-spacing: 3px;
-}
-
-.l7 h2 {
-    color: #67baff;
-    font-size: 20px;
-}
-
-.l7 p {
-    color: #999;
-    line-height: 1.7;
-}
-
-.l7-button {
-    display: block;
-    width: 100%;
-    padding: 15px;
-    background: #300707;
-    color: white;
-    border: 1px solid #a00000;
-    cursor: pointer;
-    font-size: 14px;
-    letter-spacing: 1px;
-}
-
-.l7-button:hover {
-    background: #570909;
-}
-
-/* L7 REVEAL */
-
-#locationReveal {
-    display: none;
-    margin-top: 22px;
-    border-top: 1px solid #4b1111;
-    padding-top: 20px;
-}
-
-.location-reveal-title {
-    color: #ff2929;
-    font-size: 12px;
-    letter-spacing: 3px;
-}
-
-.location-reveal-status {
-    color: #777;
-    font-size: 10px;
-    line-height: 1.8;
-    margin: 12px 0;
-}
-
-.location-image {
-    width: 100%;
-    max-height: 650px;
-    object-fit: contain;
-    background: #000;
-    border: 1px solid #551111;
-}
-
-/* PROGRESS */
+/* =========================
+   PROGRESS
+========================= */
 
 .progress {
     margin-top: 30px;
@@ -296,30 +242,37 @@ header p {
     transition: width .4s;
 }
 
-/* MODAL */
+/* =========================
+   NORMAL LOCATION MODAL
+========================= */
 
 .overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.88);
-    z-index: 50;
+    background: rgba(0,0,0,.9);
+    z-index: 100;
 }
 
 .modal {
     display: none;
     position: fixed;
-    z-index: 60;
+    z-index: 110;
+
     top: 50%;
     left: 50%;
+
     transform: translate(-50%, -50%);
+
     width: 92%;
     max-width: 700px;
     max-height: 90vh;
+
     overflow-y: auto;
+
     background: #070b10;
     border: 2px solid #850000;
-    box-shadow: 0 0 50px rgba(255,0,0,.18);
+
     padding: 23px;
 }
 
@@ -339,7 +292,9 @@ header p {
     line-height: 1.8;
 }
 
-/* EVIDENCE */
+/* =========================
+   EVIDENCE
+========================= */
 
 .evidence-box {
     margin-top: 22px;
@@ -377,22 +332,24 @@ header p {
     margin-top: 9px;
 }
 
-/* EXAMINE BUTTON */
+/* =========================
+   EXAMINE
+========================= */
 
 .examine-button {
     width: 100%;
     padding: 15px;
     margin-top: 24px;
+
     background: #063b20;
     border: 1px solid #16a957;
+
     color: #55ef99;
+
     cursor: pointer;
+
     font-size: 13px;
     letter-spacing: 2px;
-}
-
-.examine-button:hover {
-    background: #075a2f;
 }
 
 .examine-button.completed {
@@ -402,35 +359,405 @@ header p {
     cursor: default;
 }
 
-/* CLOSE */
+/* =========================
+   CLOSE
+========================= */
 
 .close {
     width: 100%;
     padding: 14px;
     margin-top: 12px;
+
     background: #320707;
     color: white;
+
     border: 1px solid #950000;
+
     cursor: pointer;
 }
 
-.close:hover {
-    background: #550909;
-}
+/* =========================
+   L-07 ENTRY
+========================= */
 
-/* RETURN */
-
-.return {
-    width: 100%;
+.l7-entry {
     margin-top: 30px;
+
+    background: #0b0506;
+
+    border: 1px solid #681111;
+    border-left: 5px solid #d00000;
+
+    padding: 23px;
+}
+
+.l7-label {
+    color: #ff2020;
+    font-size: 10px;
+    letter-spacing: 3px;
+}
+
+.l7-entry h2 {
+    color: #67baff;
+    font-size: 20px;
+}
+
+.l7-entry p {
+    color: #999;
+    line-height: 1.7;
+}
+
+.l7-button {
+    display: block;
+    width: 100%;
+
     padding: 15px;
-    background: #280606;
+
+    background: #300707;
+
     color: white;
-    border: 1px solid #8f0000;
+
+    border: 1px solid #a00000;
+
+    cursor: pointer;
+
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.l7-button:hover {
+    background: #570909;
+}
+
+/* ==================================================
+   L-07 FULLSCREEN EXPERIENCE
+   EYE BACKGROUND ONLY EXISTS HERE
+================================================== */
+
+.l7-screen {
+    display: none;
+
+    position: fixed;
+    inset: 0;
+
+    z-index: 500;
+
+    overflow-y: auto;
+
+    background:
+        linear-gradient(
+            rgba(0,0,0,.72),
+            rgba(0,0,0,.78)
+        ),
+        url("timeline-background.jpg");
+
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+/* =========================
+   L7 CONTENT
+========================= */
+
+.l7-content {
+    width: 94%;
+    max-width: 750px;
+
+    margin: 0 auto;
+
+    padding: 35px 0 70px;
+}
+
+.l7-header {
+    text-align: center;
+
+    border-bottom: 1px solid #601111;
+
+    padding-bottom: 22px;
+
+    margin-bottom: 25px;
+}
+
+.l7-header small {
+    color: #ff2020;
+    letter-spacing: 4px;
+    font-size: 10px;
+}
+
+.l7-header h1 {
+    color: white;
+
+    font-size: 25px;
+
+    letter-spacing: 4px;
+
+    margin: 12px 0;
+}
+
+.l7-header p {
+    color: #888;
+
+    font-size: 11px;
+
+    letter-spacing: 2px;
+}
+
+/* =========================
+   L7 INTRO
+========================= */
+
+.l7-message {
+    background: rgba(3,5,7,.88);
+
+    border: 1px solid #441111;
+
+    padding: 22px;
+
+    margin-bottom: 22px;
+
+    line-height: 1.8;
+}
+
+.subject-label {
+    color: #ff2020;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+    margin-bottom: 12px;
+}
+
+.subject-text {
+    color: #ddd;
+
+    font-size: 16px;
+
+    font-style: italic;
+}
+
+/* =========================
+   QUESTION
+========================= */
+
+.question-card {
+    background: rgba(3,5,7,.92);
+
+    border: 1px solid #343b42;
+
+    padding: 22px;
+
+    margin-top: 20px;
+}
+
+.question-number {
+    color: #777;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+    margin-bottom: 12px;
+}
+
+.question-image {
+    display: block;
+
+    width: 100%;
+
+    max-height: 500px;
+
+    object-fit: contain;
+
+    background: #000;
+
+    border: 1px solid #421010;
+
+    margin-bottom: 20px;
+}
+
+.question-subject {
+    color: #ff2020;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+    margin-bottom: 12px;
+}
+
+.question-text {
+    color: white;
+
+    font-size: 19px;
+
+    line-height: 1.6;
+
+    margin-bottom: 25px;
+}
+
+/* =========================
+   YES / NO
+========================= */
+
+.answer-buttons {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 12px;
+}
+
+.answer-button {
+    padding: 16px;
+
+    background: #090c10;
+
+    color: white;
+
+    border: 1px solid #3b444c;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    letter-spacing: 2px;
+}
+
+.answer-button:hover {
+    border-color: #ff2020;
+
+    background: #170707;
+}
+
+/* =========================
+   FINAL QUESTION
+========================= */
+
+.final-card {
+    border: 2px solid #a00000;
+
+    box-shadow:
+        0 0 30px rgba(255,0,0,.18);
+}
+
+.final-card .question-number {
+    color: #ff2020;
+}
+
+.final-warning {
+    color: #ff2020;
+
+    text-align: center;
+
+    font-size: 11px;
+
+    letter-spacing: 4px;
+
+    margin-bottom: 15px;
+}
+
+.final-question {
+    color: #ff2020;
+
+    text-align: center;
+
+    font-size: 25px;
+
+    line-height: 1.5;
+
+    font-weight: bold;
+
+    margin-bottom: 28px;
+}
+
+.final-card .answer-button {
+    border-color: #7a0000;
+}
+
+.final-card .answer-button:hover {
+    background: #330707;
+    border-color: #ff2020;
+}
+
+/* =========================
+   L7 PROGRESS
+========================= */
+
+.l7-progress {
+    text-align: center;
+
+    color: #777;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+    margin: 25px 0;
+}
+
+/* =========================
+   ENDING
+========================= */
+
+.ending {
+    display: none;
+
+    background: rgba(3,5,7,.94);
+
+    border: 2px solid #8b0000;
+
+    padding: 30px;
+
+    margin-top: 25px;
+
+    text-align: center;
+}
+
+.ending h2 {
+    color: #ff2020;
+
+    letter-spacing: 3px;
+}
+
+.ending p {
+    color: #ccc;
+
+    line-height: 1.8;
+
+    font-style: italic;
+}
+
+.ending-code {
+    color: #777;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+    margin-top: 20px;
+}
+
+.return-timeline {
+    width: 100%;
+
+    padding: 15px;
+
+    margin-top: 25px;
+
+    background: #250606;
+
+    color: white;
+
+    border: 1px solid #850000;
+
     cursor: pointer;
 }
 
-/* MOBILE */
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:700px) {
 
@@ -447,6 +774,22 @@ header p {
         padding: 18px;
     }
 
+    .l7-content {
+        padding-top: 20px;
+    }
+
+    .l7-header h1 {
+        font-size: 20px;
+    }
+
+    .question-text {
+        font-size: 17px;
+    }
+
+    .final-question {
+        font-size: 21px;
+    }
+
 }
 
 </style>
@@ -455,6 +798,10 @@ header p {
 
 <body>
 
+
+<!-- ==================================================
+     NORMAL TIMELINE
+================================================== -->
 
 <header>
 
@@ -469,8 +816,6 @@ header p {
 
 <div class="container">
 
-
-<!-- WARNING -->
 
 <div class="warning">
 
@@ -535,7 +880,7 @@ header p {
     <br>
 
     <b>INSTRUCTION:</b>
-    Examine all six locations before proceeding.
+    Examine all six locations.
 
 </div>
 
@@ -550,7 +895,11 @@ header p {
 <div class="locations">
 
 
-<div class="location" id="location-1" onclick="openLocation(1)">
+<div
+    class="location"
+    id="location-1"
+    onclick="openLocation(1)"
+>
 
     <div class="location-code">
         LOCATION 01
@@ -570,7 +919,11 @@ header p {
 </div>
 
 
-<div class="location" id="location-2" onclick="openLocation(2)">
+<div
+    class="location"
+    id="location-2"
+    onclick="openLocation(2)"
+>
 
     <div class="location-code">
         LOCATION 02
@@ -590,7 +943,11 @@ header p {
 </div>
 
 
-<div class="location" id="location-3" onclick="openLocation(3)">
+<div
+    class="location"
+    id="location-3"
+    onclick="openLocation(3)"
+>
 
     <div class="location-code">
         LOCATION 03
@@ -610,7 +967,11 @@ header p {
 </div>
 
 
-<div class="location" id="location-4" onclick="openLocation(4)">
+<div
+    class="location"
+    id="location-4"
+    onclick="openLocation(4)"
+>
 
     <div class="location-code">
         LOCATION 04
@@ -630,7 +991,11 @@ header p {
 </div>
 
 
-<div class="location" id="location-5" onclick="openLocation(5)">
+<div
+    class="location"
+    id="location-5"
+    onclick="openLocation(5)"
+>
 
     <div class="location-code">
         LOCATION 05
@@ -650,7 +1015,11 @@ header p {
 </div>
 
 
-<div class="location" id="location-6" onclick="openLocation(6)">
+<div
+    class="location"
+    id="location-6"
+    onclick="openLocation(6)"
+>
 
     <div class="location-code">
         LOCATION 06
@@ -669,63 +1038,6 @@ header p {
 
 </div>
 
-
-</div>
-
-
-<!-- L7 -->
-
-<div class="l7">
-
-    <div class="l7-label">
-        IRIS // RESTRICTED DATA
-    </div>
-
-    <h2>
-        🔒 L-07 — UNKNOWN LOCATION
-    </h2>
-
-    <p>
-        A location has been recovered from the
-        investigation records.
-    </p>
-
-    <p>
-        Its significance remains unknown.
-    </p>
-
-    <button
-        class="l7-button"
-        id="l7Button"
-        onclick="revealLocation()">
-
-        ⚠ REVEAL LOCATION
-
-    </button>
-
-
-    <div id="locationReveal">
-
-        <div class="location-reveal-title">
-            LOCATION IDENTIFIED
-        </div>
-
-        <div class="location-reveal-status">
-
-            IRIS ARCHIVE // L-07
-            <br>
-            STATUS: LOCATION CONFIRMED
-            <br>
-            CLASSIFICATION: RESTRICTED
-
-        </div>
-
-        <img
-            src="her-location.jpg"
-            class="location-image"
-            alt="Recovered location">
-
-    </div>
 
 </div>
 
@@ -751,9 +1063,41 @@ header p {
 </div>
 
 
+<!-- L7 ENTRY -->
+
+<div class="l7-entry">
+
+    <div class="l7-label">
+        IRIS // RESTRICTED DATA
+    </div>
+
+    <h2>
+        🔒 L-07 — UNKNOWN LOCATION
+    </h2>
+
+    <p>
+        A restricted file has been recovered.
+    </p>
+
+    <p>
+        Its contents appear to have been
+        deliberately left for the investigator.
+    </p>
+
+    <button
+        class="l7-button"
+        onclick="openL7()"
+    >
+        ⚠ ACCESS L-07
+    </button>
+
+</div>
+
+
 <button
-    class="return"
-    onclick="window.location.href='dashboard.html'">
+    class="return-timeline"
+    onclick="window.location.href='dashboard.html'"
+>
 
     RETURN TO HEADQUARTERS
 
@@ -763,65 +1107,204 @@ header p {
 </div>
 
 
-<!-- OVERLAY -->
+<!-- ==================================================
+     NORMAL LOCATION MODAL
+================================================== -->
 
 <div
     class="overlay"
     id="overlay"
-    onclick="closeModal()">
-</div>
+></div>
 
-
-<!-- MODAL -->
 
 <div
     class="modal"
-    id="modal">
+    id="modal"
+>
 
     <div
         class="modal-code"
-        id="modalCode">
-    </div>
+        id="modalCode"
+    ></div>
 
     <h2
-        id="modalTitle">
-    </h2>
+        id="modalTitle"
+    ></h2>
 
     <div
         class="modal-text"
-        id="modalText">
-    </div>
+        id="modalText"
+    ></div>
 
     <div
-        id="evidence">
-    </div>
+        id="evidence"
+    ></div>
 
     <button
         id="examineButton"
         class="examine-button"
-        onclick="markExamined()">
-
+        onclick="markExamined()"
+    >
         ✓ MARK LOCATION EXAMINED
-
     </button>
 
     <button
         class="close"
-        onclick="closeModal()">
-
+        onclick="closeModal()"
+    >
         CLOSE FILE
-
     </button>
+
+</div>
+
+
+<!-- ==================================================
+     L-07 SCREEN
+================================================== -->
+
+<div
+    class="l7-screen"
+    id="l7Screen"
+>
+
+
+<div class="l7-content">
+
+
+<div class="l7-header">
+
+    <small>
+        IRIS // L-07 // RESTRICTED
+    </small>
+
+    <h1>
+        THE SUBJECT WANTS TO SPEAK
+    </h1>
+
+    <p>
+        PRIVATE COMMUNICATION CHANNEL
+    </p>
+
+</div>
+
+
+<!-- INTRO -->
+
+<div
+    class="l7-message"
+    id="l7Intro"
+>
+
+    <div class="subject-label">
+        INCOMING MESSAGE // SUBJECT B-001
+    </div>
+
+    <div class="subject-text">
+        “You wanted to know where I was.
+        <br><br>
+        Now you're here.
+        <br><br>
+        So let's see how well you really know me.”
+    </div>
+
+</div>
+
+
+<!-- QUESTION CONTAINER -->
+
+<div id="questionContainer"></div>
+
+
+<!-- ENDING -->
+
+<div
+    class="ending"
+    id="endingYes"
+>
+
+    <h2>
+        CONNECTION ESTABLISHED
+    </h2>
+
+    <p>
+        “So you believe it.”
+    </p>
+
+    <p>
+        “After everything they showed you,
+        you still think I'm the one.”
+    </p>
+
+    <p>
+        “Then perhaps you finally understand
+        why I wanted you to find me.”
+    </p>
+
+    <div class="ending-code">
+        SUBJECT RESPONSE // CLASSIFICATION: UNKNOWN
+    </div>
+
+    <button
+        class="return-timeline"
+        onclick="closeL7()"
+    >
+        RETURN TO TIMELINE
+    </button>
+
+</div>
+
+
+<div
+    class="ending"
+    id="endingNo"
+>
+
+    <h2>
+        IDENTITY REMAINS UNRESOLVED
+    </h2>
+
+    <p>
+        “No.”
+    </p>
+
+    <p>
+        “That's what I expected you to say.”
+    </p>
+
+    <p>
+        “But if I'm not the person you're
+        looking for...”
+    </p>
+
+    <p>
+        “Then who do you think you've been
+        following this entire time?”
+    </p>
+
+    <div class="ending-code">
+        SUBJECT RESPONSE // CLASSIFICATION: UNKNOWN
+    </div>
+
+    <button
+        class="return-timeline"
+        onclick="closeL7()"
+    >
+        RETURN TO TIMELINE
+    </button>
+
+</div>
+
+
+</div>
 
 </div>
 
 
 <script>
 
-
-/* =========================
+/* ==================================================
    LOCATION DATA
-========================= */
+================================================== */
 
 const locations = {
 
@@ -838,13 +1321,8 @@ const locations = {
             </p>
 
             <p>
-            Investigators recovered several records
+            Investigators recovered records
             connecting the subject to this location.
-            </p>
-
-            <p>
-            The residence appears to have been
-            occupied for a significant period of time.
             </p>
         `
 
@@ -864,15 +1342,13 @@ const locations = {
             </p>
 
             <p>
-            Psychological records indicate that
-            the subject experienced a difficult
-            and unstable childhood.
+            Records indicate that the subject
+            experienced a difficult childhood.
             </p>
 
             <p>
             Investigators believe these experiences
-            may have influenced the subject's later
-            behavior.
+            may have influenced the subject's later behavior.
             </p>
         `
 
@@ -894,10 +1370,6 @@ const locations = {
             <p>
             The reported time does not completely
             correspond with the official timeline.
-            </p>
-
-            <p>
-            One of the recovered records may be false.
             </p>
         `
 
@@ -922,14 +1394,14 @@ const locations = {
             </p>
 
             <p>
-            The object's connection to Subject B-001
-            remains unknown.
+            Its connection to Subject B-001 remains unknown.
             </p>
         `,
 
         image: "unidentified-object.jpg",
 
-        imageLabel: "EVIDENCE PHOTOGRAPH // L-04",
+        imageLabel:
+            "EVIDENCE PHOTOGRAPH // L-04",
 
         imageStatus: `
             SOURCE: INVESTIGATION ARCHIVE<br>
@@ -960,16 +1432,12 @@ const locations = {
             <p>
             No confirmed identity has been established.
             </p>
-
-            <p>
-            Investigators have designated this person
-            as UNKNOWN-05.
-            </p>
         `,
 
         image: "mysterious-person.jpg",
 
-        imageLabel: "SURVEILLANCE PHOTOGRAPH // L-05",
+        imageLabel:
+            "SURVEILLANCE PHOTOGRAPH // L-05",
 
         imageStatus: `
             SOURCE: SURVEILLANCE ARCHIVE<br>
@@ -1007,9 +1475,9 @@ const locations = {
 };
 
 
-/* =========================
-   STATE
-========================= */
+/* ==================================================
+   PROGRESS
+================================================== */
 
 let examined = [];
 
@@ -1021,7 +1489,7 @@ try {
         ) || "[]"
     );
 
-} catch (error) {
+} catch {
 
     examined = [];
 
@@ -1031,24 +1499,23 @@ try {
 let currentLocation = null;
 
 
-/* =========================
-   PROGRESS
-========================= */
-
 function updateProgress() {
 
-    const count = examined.length;
+    const count =
+        examined.length;
+
 
     document.getElementById(
         "progressText"
     ).textContent =
-        count + " / 6 LOCATIONS EXAMINED";
+        count +
+        " / 6 LOCATIONS EXAMINED";
 
 
     document.getElementById(
         "progressFill"
     ).style.width =
-        ((count / 6) * 100) + "%";
+        (count / 6 * 100) + "%";
 
 
     for (
@@ -1062,15 +1529,23 @@ function updateProgress() {
                 "location-" + i
             );
 
+
         if (!card) continue;
 
-        if (examined.includes(i)) {
 
-            card.classList.add("examined");
+        if (
+            examined.includes(i)
+        ) {
+
+            card.classList.add(
+                "examined"
+            );
 
         } else {
 
-            card.classList.remove("examined");
+            card.classList.remove(
+                "examined"
+            );
 
         }
 
@@ -1079,14 +1554,15 @@ function updateProgress() {
 }
 
 
-/* =========================
-   OPEN LOCATION
-========================= */
+/* ==================================================
+   OPEN NORMAL LOCATION
+================================================== */
 
 function openLocation(id) {
 
     const location =
         locations[id];
+
 
     currentLocation = id;
 
@@ -1094,7 +1570,8 @@ function openLocation(id) {
     document.getElementById(
         "modalCode"
     ).textContent =
-        "IRIS // " + location.code;
+        "IRIS // " +
+        location.code;
 
 
     document.getElementById(
@@ -1113,6 +1590,7 @@ function openLocation(id) {
         document.getElementById(
             "evidence"
         );
+
 
     evidence.innerHTML = "";
 
@@ -1154,7 +1632,9 @@ function openLocation(id) {
         );
 
 
-    if (examined.includes(id)) {
+    if (
+        examined.includes(id)
+    ) {
 
         button.textContent =
             "✓ LOCATION ALREADY EXAMINED";
@@ -1193,17 +1673,15 @@ function openLocation(id) {
 }
 
 
-/* =========================
-   MARK EXAMINED
-========================= */
+/* ==================================================
+   MARK LOCATION EXAMINED
+================================================== */
 
 function markExamined() {
 
     if (
         currentLocation === null
-    ) {
-        return;
-    }
+    ) return;
 
 
     if (
@@ -1248,43 +1726,9 @@ function markExamined() {
 }
 
 
-/* =========================
-   L-07 REVEAL
-========================= */
-
-function revealLocation() {
-
-    const reveal =
-        document.getElementById(
-            "locationReveal"
-        );
-
-    const button =
-        document.getElementById(
-            "l7Button"
-        );
-
-
-    reveal.style.display =
-        "block";
-
-
-    button.textContent =
-        "✓ LOCATION REVEALED";
-
-
-    button.disabled = true;
-
-
-    button.style.opacity =
-        "0.6";
-
-}
-
-
-/* =========================
-   CLOSE MODAL
-========================= */
+/* ==================================================
+   CLOSE NORMAL MODAL
+================================================== */
 
 function closeModal() {
 
@@ -1305,9 +1749,323 @@ function closeModal() {
 }
 
 
-/* =========================
-   ESCAPE KEY
-========================= */
+/* ==================================================
+   L-07 QUESTIONS
+================================================== */
+
+const questions = [
+
+    {
+
+        image: "question-1.jpg",
+
+        text:
+        "Do you think I chose this place deliberately?"
+
+    },
+
+    {
+
+        image: "question-2.jpg",
+
+        text:
+        "Do you think someone else was here with me?"
+
+    },
+
+    {
+
+        image: "question-3.jpg",
+
+        text:
+        "Does this place look familiar to you?"
+
+    },
+
+    {
+
+        image: "question-4.jpg",
+
+        text:
+        "Do you think I was watching someone here?"
+
+    },
+
+    {
+
+        image: "question-5.jpg",
+
+        text:
+        "After everything you've discovered... do you think I'm the person you've been looking for?"
+
+    }
+
+];
+
+
+let currentQuestion = 0;
+
+let answers = [];
+
+
+/* ==================================================
+   OPEN L7
+================================================== */
+
+function openL7() {
+
+    document.getElementById(
+        "l7Screen"
+    ).style.display =
+        "block";
+
+
+    document.body.style.overflow =
+        "hidden";
+
+
+    currentQuestion = 0;
+
+    answers = [];
+
+
+    document.getElementById(
+        "endingYes"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "endingNo"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "l7Intro"
+    ).style.display =
+        "block";
+
+
+    showQuestion();
+
+}
+
+
+/* ==================================================
+   SHOW QUESTION
+================================================== */
+
+function showQuestion() {
+
+    const container =
+        document.getElementById(
+            "questionContainer"
+        );
+
+
+    const q =
+        questions[currentQuestion];
+
+
+    const isFinal =
+        currentQuestion === 4;
+
+
+    container.innerHTML = `
+
+        <div class="
+            question-card
+            ${isFinal ? "final-card" : ""}
+        ">
+
+            <div class="question-number">
+
+                QUESTION
+                ${currentQuestion + 1}
+                / 5
+
+            </div>
+
+
+            <img
+                src="${q.image}"
+                class="question-image"
+                alt="Investigation evidence"
+            >
+
+
+            ${
+                isFinal
+                ? `
+                    <div class="final-warning">
+                        THE FINAL QUESTION
+                    </div>
+                  `
+                : ""
+            }
+
+
+            <div class="question-subject">
+                SUBJECT B-001
+            </div>
+
+
+            <div class="
+                ${
+                    isFinal
+                    ? "final-question"
+                    : "question-text"
+                }
+            ">
+
+                ${q.text}
+
+            </div>
+
+
+            <div class="answer-buttons">
+
+                <button
+                    class="answer-button"
+                    onclick="answerQuestion('YES')"
+                >
+                    YES
+                </button>
+
+
+                <button
+                    class="answer-button"
+                    onclick="answerQuestion('NO')"
+                >
+                    NO
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="l7-progress">
+
+            QUESTION
+            ${currentQuestion + 1}
+            / 5
+
+        </div>
+
+    `;
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+
+/* ==================================================
+   ANSWER
+================================================== */
+
+function answerQuestion(answer) {
+
+    answers[currentQuestion] =
+        answer;
+
+
+    localStorage.setItem(
+        "IRIS_L7_answers",
+        JSON.stringify(answers)
+    );
+
+
+    /* FINAL QUESTION */
+
+    if (
+        currentQuestion === 4
+    ) {
+
+        showEnding(answer);
+
+        return;
+
+    }
+
+
+    currentQuestion++;
+
+    showQuestion();
+
+}
+
+
+/* ==================================================
+   ENDING
+================================================== */
+
+function showEnding(answer) {
+
+    document.getElementById(
+        "questionContainer"
+    ).innerHTML = "";
+
+
+    document.getElementById(
+        "l7Intro"
+    ).style.display =
+        "none";
+
+
+    if (
+        answer === "YES"
+    ) {
+
+        document.getElementById(
+            "endingYes"
+        ).style.display =
+            "block";
+
+    } else {
+
+        document.getElementById(
+            "endingNo"
+        ).style.display =
+            "block";
+
+    }
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+
+/* ==================================================
+   CLOSE L7
+================================================== */
+
+function closeL7() {
+
+    document.getElementById(
+        "l7Screen"
+    ).style.display =
+        "none";
+
+
+    document.body.style.overflow =
+        "auto";
+
+}
+
+
+/* ==================================================
+   ESCAPE
+================================================== */
 
 document.addEventListener(
     "keydown",
@@ -1319,19 +2077,21 @@ document.addEventListener(
 
             closeModal();
 
+            closeL7();
+
         }
 
     }
 );
 
 
-/* =========================
+/* ==================================================
    INITIALIZE
-========================= */
+================================================== */
 
 updateProgress();
 
 </script>
 
 </body>
-</html>
+    </html>
