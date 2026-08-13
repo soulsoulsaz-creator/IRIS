@@ -30,13 +30,8 @@
 body {
     min-height: 100vh;
     background:
-        radial-gradient(
-            circle at top,
-            rgba(54,125,200,.13),
-            transparent 38%
-        ),
+        radial-gradient(circle at top, rgba(54,125,200,.13), transparent 38%),
         var(--bg);
-
     color: var(--text);
     font-family: Arial, Helvetica, sans-serif;
     padding: 18px;
@@ -540,9 +535,7 @@ Previous access credentials have been altered.
 </div>
 
 
-<!-- =========================
-     PERSONAL VERIFICATION
-========================= -->
+<!-- PERSONAL VERIFICATION -->
 
 <section
 class="card"
@@ -646,9 +639,7 @@ id="verificationSuccess"
 </section>
 
 
-<!-- =========================
-     EVIDENCE AREA
-========================= -->
+<!-- EVIDENCE AREA -->
 
 <section id="evidenceArea">
 
@@ -665,9 +656,7 @@ Recovered digital evidence is now available.
 </div>
 
 
-<!-- =========================
-     EVIDENCE 001
-========================= -->
+<!-- EVIDENCE 001 -->
 
 <div class="file">
 
@@ -710,16 +699,13 @@ class="clue"
 id="externalClue"
 >
 
-
 <div class="identifier">
 @EYESEE-b001
 </div>
 
-
 <div class="identifier-note">
 EXTERNAL SOURCE IDENTIFIER
 </div>
-
 
 <button
 class="copy"
@@ -727,7 +713,6 @@ onclick="copyIdentifier()"
 >
 COPY IDENTIFIER
 </button>
-
 
 <div class="clue-text">
 
@@ -789,7 +774,6 @@ VERIFY
 
 </div>
 
-
 <div
 class="error"
 id="passwordError"
@@ -804,9 +788,7 @@ ACCESS CODE INVALID.
 </div>
 
 
-<!-- =========================
-     EVIDENCE 002
-========================= -->
+<!-- EVIDENCE 002 -->
 
 <div
 class="file locked"
@@ -864,13 +846,15 @@ Listen carefully to the recovered transmission.
 </div>
 
 
+<!-- ROOT FILE: eye-message.mp3 -->
+
 <audio
 controls
 preload="metadata"
 >
 
 <source
-src="audio/eye-message.mp3"
+src="eye-message.mp3"
 type="audio/mpeg"
 >
 
@@ -890,9 +874,7 @@ TRANSMISSION STATUS: DECRYPTED.
 </div>
 
 
-<!-- =========================
-     EVIDENCE 003
-========================= -->
+<!-- EVIDENCE 003 -->
 
 <div
 class="file locked"
@@ -943,7 +925,6 @@ id="audio2"
 ◉ EYE TRANSMISSION // 002
 </div>
 
-
 <div class="audio-description">
 
 A puzzle has been left inside the recording.
@@ -951,13 +932,15 @@ A puzzle has been left inside the recording.
 </div>
 
 
+<!-- ROOT FILE: eye-puzzle.mp3 -->
+
 <audio
 controls
 preload="metadata"
 >
 
 <source
-src="audio/eye-puzzle.mp3"
+src="eye-puzzle.mp3"
 type="audio/mpeg"
 >
 
@@ -1006,9 +989,7 @@ THAT ANSWER DOES NOT MATCH.
 </div>
 
 
-<!-- =========================
-     EVIDENCE 004
-========================= -->
+<!-- EVIDENCE 004 -->
 
 <div
 class="file locked"
@@ -1051,8 +1032,6 @@ from the completed investigation.
 
 </div>
 
-
-<!-- FINAL WARNING -->
 
 <div
 class="warning"
@@ -1138,9 +1117,7 @@ id="toast"
 
 <script>
 
-/* =====================================
-   GAME ANSWERS
-===================================== */
+/* GAME ANSWERS */
 
 const EVIDENCE_001_PASSWORD = "4021822";
 
@@ -1154,9 +1131,7 @@ let progress =
 loadProgress();
 
 
-/* =====================================
-   LOAD / SAVE PROGRESS
-===================================== */
+/* LOAD PROGRESS */
 
 function loadProgress() {
 
@@ -1193,6 +1168,8 @@ function loadProgress() {
 }
 
 
+/* SAVE PROGRESS */
+
 function saveProgress() {
 
     try {
@@ -1207,9 +1184,7 @@ function saveProgress() {
 }
 
 
-/* =====================================
-   NORMALIZE ANSWERS
-===================================== */
+/* NORMALIZE */
 
 function normalize(text) {
 
@@ -1222,9 +1197,7 @@ function normalize(text) {
 }
 
 
-/* =====================================
-   APRIL 2026 ANSWER
-===================================== */
+/* APRIL ANSWER */
 
 function correctApril(answer) {
 
@@ -1234,25 +1207,16 @@ function correctApril(answer) {
     const accepted = [
 
         "our first conversation",
-
         "first conversation",
-
         "the first conversation",
-
         "our first chat",
-
         "first chat",
-
         "the first chat",
-
         "when we first talked",
-
         "when we first spoke",
-
         "our first talk"
 
     ];
-
 
     return accepted.some(
         x => a === x || a.includes(x)
@@ -1261,9 +1225,7 @@ function correctApril(answer) {
 }
 
 
-/* =====================================
-   DIYON + MATTEO ANSWER
-===================================== */
+/* DIYON + MATTEO */
 
 function correctKids(answer) {
 
@@ -1273,21 +1235,14 @@ function correctKids(answer) {
     const accepted = [
 
         "my sons",
-
         "my kids",
-
         "my children",
-
         "my boys",
-
         "my two sons",
-
         "my two kids",
-
         "my two children"
 
     ];
-
 
     return accepted.some(
         x => a === x || a.includes(x)
@@ -1296,9 +1251,7 @@ function correctKids(answer) {
 }
 
 
-/* =====================================
-   VERIFY PERSONAL INFORMATION
-===================================== */
+/* VERIFY IDENTITY */
 
 function verifyIdentity() {
 
@@ -1371,9 +1324,7 @@ function verifyIdentity() {
 }
 
 
-/* =====================================
-   EVIDENCE 001
-===================================== */
+/* EVIDENCE 001 */
 
 function openEvidence001() {
 
@@ -1400,9 +1351,7 @@ function openEvidence001() {
 }
 
 
-/* =====================================
-   COPY @EYESEE-b001
-===================================== */
+/* COPY IDENTIFIER */
 
 function copyIdentifier() {
 
@@ -1465,9 +1414,7 @@ function selectIdentifier() {
 }
 
 
-/* =====================================
-   EVIDENCE 001 PASSWORD
-===================================== */
+/* EVIDENCE 001 PASSWORD */
 
 function checkEvidence001() {
 
@@ -1514,9 +1461,7 @@ function checkEvidence001() {
 }
 
 
-/* =====================================
-   UNLOCK EVIDENCE 002
-===================================== */
+/* UNLOCK EVIDENCE 002 */
 
 function unlockEvidence2() {
 
@@ -1562,9 +1507,7 @@ function unlockEvidence2() {
 }
 
 
-/* =====================================
-   OPEN EVIDENCE 002
-===================================== */
+/* OPEN EVIDENCE 002 */
 
 function openEvidence2() {
 
@@ -1597,9 +1540,7 @@ function openEvidence2() {
 }
 
 
-/* =====================================
-   UNLOCK EVIDENCE 003
-===================================== */
+/* UNLOCK EVIDENCE 003 */
 
 function unlockEvidence3() {
 
@@ -1645,9 +1586,7 @@ function unlockEvidence3() {
 }
 
 
-/* =====================================
-   OPEN EVIDENCE 003
-===================================== */
+/* OPEN EVIDENCE 003 */
 
 function openEvidence3() {
 
@@ -1670,9 +1609,7 @@ function openEvidence3() {
 }
 
 
-/* =====================================
-   CHECK BLUE-EYES PUZZLE
-===================================== */
+/* BLUE EYES PUZZLE */
 
 function checkPuzzle() {
 
@@ -1731,9 +1668,7 @@ function checkPuzzle() {
 }
 
 
-/* =====================================
-   UNLOCK EVIDENCE 004
-===================================== */
+/* UNLOCK EVIDENCE 004 */
 
 function unlockEvidence4() {
 
@@ -1779,9 +1714,7 @@ function unlockEvidence4() {
 }
 
 
-/* =====================================
-   OPEN FINAL EVIDENCE
-===================================== */
+/* FINAL EVIDENCE */
 
 function openEvidence4() {
 
@@ -1816,9 +1749,7 @@ function openEvidence4() {
 }
 
 
-/* =====================================
-   RESTORE SAVED PROGRESS
-===================================== */
+/* RESTORE PROGRESS */
 
 function restoreProgress() {
 
@@ -1892,9 +1823,7 @@ function restoreProgress() {
 }
 
 
-/* =====================================
-   TOAST
-===================================== */
+/* TOAST */
 
 function toast(message) {
 
@@ -1924,9 +1853,7 @@ function toast(message) {
 }
 
 
-/* =====================================
-   ENTER KEY SHORTCUTS
-===================================== */
+/* ENTER KEY SUPPORT */
 
 document
 .getElementById("answer1")
@@ -1978,13 +1905,11 @@ document
 );
 
 
-/* =====================================
-   START
-===================================== */
+/* START */
 
 restoreProgress();
 
 </script>
 
 </body>
-  </html>
+</html>
