@@ -1,1 +1,1990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>IRIS // Digital Evidence</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #070d17;
+    --panel: #0d1725;
+    --panel2: #111d2d;
+    --border: #20344c;
+    --blue: #4aa3ff;
+    --blue2: #247fcf;
+    --text: #e8f0f8;
+    --muted: #8e9daf;
+    --green: #36d58b;
+    --red: #ff4655;
+    --gold: #d9b75f;
+}
+
+body {
+    min-height: 100vh;
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(54,125,200,.13),
+            transparent 38%
+        ),
+        var(--bg);
+
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 18px;
+}
+
+.container {
+    width: 100%;
+    max-width: 760px;
+    margin: auto;
+}
+
+.header {
+    text-align: center;
+    padding: 22px 10px 28px;
+}
+
+.eye {
+    width: 72px;
+    height: 43px;
+    border: 2px solid #60758c;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    position: relative;
+}
+
+.eye:before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #8fa5bd;
+    border-radius: 50%;
+    background: #080e17;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.eye:after {
+    content: "";
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: white;
+    left: 47%;
+    top: 38%;
+}
+
+.classification {
+    color: var(--red);
+    font-size: 9px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 9px;
+}
+
+h1 {
+    font-size: 24px;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.status {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 18px;
+}
+
+.status-title {
+    color: var(--blue);
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    margin-bottom: 7px;
+}
+
+.status-text {
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.card,
+.file {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 20px;
+    margin-bottom: 14px;
+}
+
+.card-title {
+    color: var(--blue);
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 9px;
+}
+
+.description,
+.file-description {
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.8;
+    margin-bottom: 18px;
+}
+
+.question {
+    margin-bottom: 19px;
+}
+
+.question label {
+    display: block;
+    color: #dce6f1;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.number {
+    color: var(--blue);
+    margin-right: 6px;
+}
+
+.hint {
+    display: block;
+    color: #65778b;
+    font-size: 9px;
+    font-weight: normal;
+    margin-top: 4px;
+}
+
+input {
+    width: 100%;
+    background: #08111d;
+    border: 1px solid #29415b;
+    border-radius: 6px;
+    color: white;
+    padding: 12px;
+    font-size: 12px;
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--blue);
+}
+
+button {
+    cursor: pointer;
+}
+
+.primary {
+    width: 100%;
+    padding: 12px;
+    background: var(--blue2);
+    color: white;
+    border: 0;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: .7px;
+}
+
+.primary:hover {
+    background: var(--blue);
+}
+
+.error {
+    display: none;
+    color: #ff6672;
+    font-size: 10px;
+    margin-top: 10px;
+    line-height: 1.6;
+}
+
+.success {
+    display: none;
+    color: var(--green);
+    font-size: 10px;
+    line-height: 1.8;
+    margin-top: 12px;
+}
+
+#evidenceArea {
+    display: none;
+}
+
+.access {
+    background: rgba(54,213,139,.05);
+    border: 1px solid rgba(54,213,139,.28);
+    border-left: 3px solid var(--green);
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 16px;
+}
+
+.access strong {
+    color: var(--green);
+    font-size: 11px;
+}
+
+.access p {
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.7;
+    margin-top: 5px;
+}
+
+.file {
+    border-left: 3px solid var(--blue);
+    padding: 16px;
+}
+
+.file.locked {
+    border-left-color: #354354;
+    opacity: .55;
+}
+
+.file-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 9px;
+}
+
+.file-title {
+    color: #63b0ff;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.file-status {
+    color: #8290a0;
+    background: #182333;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 8px;
+    font-weight: bold;
+    letter-spacing: .8px;
+}
+
+.available {
+    color: var(--green) !important;
+}
+
+.clue {
+    display: none;
+    background: #08111d;
+    border: 1px dashed #36526f;
+    border-radius: 7px;
+    padding: 17px;
+    margin-top: 12px;
+}
+
+.identifier {
+    text-align: center;
+    color: white;
+    font-size: 21px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin: 8px 0;
+    user-select: text;
+}
+
+.identifier-note {
+    text-align: center;
+    color: #65788b;
+    font-size: 8px;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+}
+
+.copy {
+    display: block;
+    margin: 0 auto 15px;
+    padding: 8px 13px;
+    background: #16263a;
+    color: #9fcaff;
+    border: 1px solid #294563;
+    border-radius: 5px;
+    font-size: 9px;
+}
+
+.clue-text {
+    text-align: center;
+    color: #9dacbd;
+    font-size: 10px;
+    line-height: 1.8;
+}
+
+.password {
+    display: none;
+    border-top: 1px solid #24384f;
+    margin-top: 14px;
+    padding-top: 14px;
+}
+
+.password-row {
+    display: flex;
+    gap: 7px;
+}
+
+.small {
+    width: 100px;
+    background: var(--blue2);
+    color: white;
+    border: 0;
+    border-radius: 6px;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.audio {
+    display: none;
+    background: #09131f;
+    border: 1px solid #29415b;
+    border-radius: 7px;
+    padding: 15px;
+    margin-top: 12px;
+}
+
+.audio-title {
+    color: #63b0ff;
+    font-size: 11px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.audio-description {
+    color: #9dacbd;
+    font-size: 10px;
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+
+audio {
+    width: 100%;
+    height: 42px;
+}
+
+.audio-note {
+    color: #65778b;
+    font-size: 9px;
+    line-height: 1.6;
+    margin-top: 9px;
+}
+
+.warning {
+    display: none;
+    margin-top: 15px;
+}
+
+.warning-box {
+    background: #21070b;
+    border: 1px solid var(--red);
+    border-left: 4px solid var(--red);
+    border-radius: 7px;
+    padding: 18px;
+    text-align: center;
+    box-shadow: 0 0 18px rgba(255,70,85,.15);
+}
+
+.warning-title {
+    color: var(--red);
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.warning-text {
+    color: #ff7b85;
+    font-size: 9px;
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+
+.username {
+    display: inline-block;
+    background: #8f101c;
+    border: 1px solid var(--red);
+    border-radius: 4px;
+    padding: 9px 14px;
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+.eye-link {
+    display: inline-block;
+    background: var(--red);
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    padding: 11px 20px;
+    font-size: 9px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 22px;
+    transform: translate(-50%,20px);
+    background: #142336;
+    border: 1px solid #36516d;
+    color: white;
+    padding: 11px 17px;
+    border-radius: 6px;
+    font-size: 10px;
+    opacity: 0;
+    pointer-events: none;
+    transition: .3s;
+    z-index: 100;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translate(-50%,0);
+}
+
+footer {
+    text-align: center;
+    color: #4f5e70;
+    font-size: 8px;
+    letter-spacing: .5px;
+    padding: 25px 10px 12px;
+    line-height: 1.8;
+}
+
+@media(max-width:500px) {
+    body {
+        padding: 12px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .password-row {
+        flex-direction: column;
+    }
+
+    .small {
+        width: 100%;
+        padding: 11px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header class="header">
+
+<div class="eye"></div>
+
+<div class="classification">
+OMEGA CLEARANCE // RESTRICTED
+</div>
+
+<h1>DIGITAL EVIDENCE</h1>
+
+<p class="subtitle">
+Recovered digital material connected to<br>
+<strong>SUBJECT B-001</strong>
+</p>
+
+</header>
+
+
+<div class="status">
+
+<div class="status-title">
+SYSTEM STATUS
+</div>
+
+<div
+class="status-text"
+id="systemStatus"
+>
+PERSONAL VERIFICATION REQUIRED.
+Previous access credentials have been altered.
+</div>
+
+</div>
+
+
+<!-- =========================
+     PERSONAL VERIFICATION
+========================= -->
+
+<section
+class="card"
+id="verification"
+>
+
+<div class="card-title">
+🔐 PERSONAL VERIFICATION
+</div>
+
+<div class="description">
+
+Two previous credentials are required before
+the recovered evidence can be released.
+
+<br><br>
+
+The answers are connected to information
+belonging to the subject.
+
+</div>
+
+
+<div class="question">
+
+<label>
+
+<span class="number">01.</span>
+
+What does <strong>April 2026</strong> mean to you?
+
+<span class="hint">
+Enter the event connected to this date.
+</span>
+
+</label>
+
+<input
+id="answer1"
+type="text"
+autocomplete="off"
+placeholder="Your answer..."
+>
+
+</div>
+
+
+<div class="question">
+
+<label>
+
+<span class="number">02.</span>
+
+What do <strong>Diyon + Matteo</strong> mean to you?
+
+<span class="hint">
+Identify the relationship.
+</span>
+
+</label>
+
+<input
+id="answer2"
+type="text"
+autocomplete="off"
+placeholder="Your answer..."
+>
+
+</div>
+
+
+<button
+class="primary"
+onclick="verifyIdentity()"
+>
+VERIFY PREVIOUS CREDENTIALS
+</button>
+
+
+<div
+class="error"
+id="verificationError"
+>
+VERIFICATION FAILED.
+<br>
+The Agency cannot confirm the previous credentials.
+</div>
+
+
+<div
+class="success"
+id="verificationSuccess"
+>
+✓ MEMORY MATCH CONFIRMED.
+<br>
+✓ PREVIOUS CREDENTIALS RECONSTRUCTED.
+<br>
+✓ DIGITAL EVIDENCE ACCESS GRANTED.
+</div>
+
+</section>
+
+
+<!-- =========================
+     EVIDENCE AREA
+========================= -->
+
+<section id="evidenceArea">
+
+
+<div class="access">
+
+<strong>✓ ACCESS GRANTED</strong>
+
+<p>
+Previous credentials reconstructed.
+Recovered digital evidence is now available.
+</p>
+
+</div>
+
+
+<!-- =========================
+     EVIDENCE 001
+========================= -->
+
+<div class="file">
+
+<div class="file-header">
+
+<div class="file-title">
+📁 EVIDENCE 001
+</div>
+
+<div class="file-status available">
+AVAILABLE
+</div>
+
+</div>
+
+
+<div class="file-description">
+
+An external transmission has been referenced
+by the Agency archive.
+
+<br><br>
+
+The original transmission must be located
+outside this archive.
+
+</div>
+
+
+<button
+class="primary"
+onclick="openEvidence001()"
+>
+EXAMINE EVIDENCE
+</button>
+
+
+<div
+class="clue"
+id="externalClue"
+>
+
+
+<div class="identifier">
+@EYESEE-b001
+</div>
+
+
+<div class="identifier-note">
+EXTERNAL SOURCE IDENTIFIER
+</div>
+
+
+<button
+class="copy"
+onclick="copyIdentifier()"
+>
+COPY IDENTIFIER
+</button>
+
+
+<div class="clue-text">
+
+<strong>
+EXTERNAL SOURCE REQUIRED
+</strong>
+
+<br><br>
+
+Search externally for the identifier above.
+
+<br><br>
+
+Locate the transmission connected to it.
+
+<br><br>
+
+Examine the transmission carefully.
+
+<br><br>
+
+<strong>
+The password is hidden within the transmission.
+</strong>
+
+<br><br>
+
+The Agency will not provide the password.
+
+</div>
+
+
+<div
+class="password"
+id="passwordArea"
+>
+
+<label class="hint">
+ENTER THE PASSWORD RECOVERED FROM THE TRANSMISSION
+</label>
+
+<br>
+
+<div class="password-row">
+
+<input
+id="passwordInput"
+type="password"
+autocomplete="off"
+placeholder="Recovered password..."
+>
+
+<button
+class="small"
+onclick="checkEvidence001()"
+>
+VERIFY
+</button>
+
+</div>
+
+
+<div
+class="error"
+id="passwordError"
+>
+ACCESS CODE INVALID.
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     EVIDENCE 002
+========================= -->
+
+<div
+class="file locked"
+id="file2"
+>
+
+<div class="file-header">
+
+<div class="file-title">
+📁 EVIDENCE 002
+</div>
+
+<div
+class="file-status"
+id="status2"
+>
+LOCKED
+</div>
+
+</div>
+
+
+<div class="file-description">
+
+Recovered audio transmission.
+
+<br><br>
+
+The Eye has left a message specifically
+for the subject.
+
+</div>
+
+
+<div id="lock2">
+
+🔒 Complete Evidence 001 to unlock this file.
+
+</div>
+
+
+<div
+class="audio"
+id="audio1"
+>
+
+<div class="audio-title">
+◉ EYE TRANSMISSION // 001
+</div>
+
+<div class="audio-description">
+
+Listen carefully to the recovered transmission.
+
+</div>
+
+
+<audio
+controls
+preload="metadata"
+>
+
+<source
+src="audio/eye-message.mp3"
+type="audio/mpeg"
+>
+
+Your browser does not support audio.
+
+</audio>
+
+
+<div class="audio-note">
+
+TRANSMISSION STATUS: DECRYPTED.
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     EVIDENCE 003
+========================= -->
+
+<div
+class="file locked"
+id="file3"
+>
+
+<div class="file-header">
+
+<div class="file-title">
+📁 EVIDENCE 003
+</div>
+
+<div
+class="file-status"
+id="status3"
+>
+LOCKED
+</div>
+
+</div>
+
+
+<div class="file-description">
+
+Second recovered Eye transmission.
+
+<br><br>
+
+The recording contains a puzzle.
+Listen carefully and determine its answer.
+
+</div>
+
+
+<div id="lock3">
+
+🔒 Complete Evidence 002 to unlock this file.
+
+</div>
+
+
+<div
+class="audio"
+id="audio2"
+>
+
+<div class="audio-title">
+◉ EYE TRANSMISSION // 002
+</div>
+
+
+<div class="audio-description">
+
+A puzzle has been left inside the recording.
+
+</div>
+
+
+<audio
+controls
+preload="metadata"
+>
+
+<source
+src="audio/eye-puzzle.mp3"
+type="audio/mpeg"
+>
+
+Your browser does not support audio.
+
+</audio>
+
+
+<div class="audio-note">
+
+LISTEN. THINK. ANSWER THE EYE.
+
+</div>
+
+
+<br>
+
+
+<input
+id="puzzleAnswer"
+type="text"
+placeholder="Enter your answer..."
+>
+
+
+<br><br>
+
+
+<button
+class="primary"
+onclick="checkPuzzle()"
+>
+SUBMIT ANSWER
+</button>
+
+
+<div
+class="error"
+id="puzzleError"
+>
+THAT ANSWER DOES NOT MATCH.
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     EVIDENCE 004
+========================= -->
+
+<div
+class="file locked"
+id="file4"
+>
+
+<div class="file-header">
+
+<div class="file-title">
+📁 EVIDENCE 004
+</div>
+
+<div
+class="file-status"
+id="status4"
+>
+LOCKED
+</div>
+
+</div>
+
+
+<div class="file-description">
+
+Final recovered evidence.
+
+<br><br>
+
+The Agency has no further information.
+
+The final destination must be determined
+from the completed investigation.
+
+</div>
+
+
+<div id="lock4">
+
+🔒 Complete Evidence 003 to unlock this file.
+
+</div>
+
+
+<!-- FINAL WARNING -->
+
+<div
+class="warning"
+id="warningReveal"
+>
+
+<div class="warning-box">
+
+
+<div class="warning-title">
+
+⚠ THE EYE WANTS TO SPEAK
+
+</div>
+
+
+<div class="warning-text">
+
+WARNING — AN UNIDENTIFIED TRANSMISSION
+HAS BEEN DETECTED.
+
+<br><br>
+
+THE EYE IS REQUESTING DIRECT CONTACT.
+
+</div>
+
+
+<div class="username">
+
+@_the_eye_b001
+
+</div>
+
+
+<br>
+
+
+<a
+class="eye-link"
+href="https://www.instagram.com/_the_eye_b001?igsh=aXY5cjVwZ3F1bHRi"
+target="_blank"
+rel="noopener"
+>
+
+OPEN THE EYE
+
+</a>
+
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<footer>
+
+IRIS INTELLIGENCE AGENCY
+
+<br>
+
+BLACK IRIS // SUBJECT B-001
+
+<br>
+
+OMEGA CLEARANCE
+
+</footer>
+
+</div>
+
+
+<div
+class="toast"
+id="toast"
+>
+</div>
+
+
+<script>
+
+/* =====================================
+   GAME ANSWERS
+===================================== */
+
+const EVIDENCE_001_PASSWORD = "4021822";
+
+const EYE_PUZZLE_ANSWER = "my blue eyes";
+
+const STORAGE_KEY =
+"IRIS_DIGITAL_EVIDENCE";
+
+
+let progress =
+loadProgress();
+
+
+/* =====================================
+   LOAD / SAVE PROGRESS
+===================================== */
+
+function loadProgress() {
+
+    const defaults = {
+
+        identity: false,
+
+        evidence001: false,
+
+        evidence002: false,
+
+        evidence003: false,
+
+        evidence004: false
+
+    };
+
+
+    try {
+
+        const saved =
+            localStorage.getItem(STORAGE_KEY);
+
+        return saved
+            ? { ...defaults, ...JSON.parse(saved) }
+            : defaults;
+
+    } catch (error) {
+
+        return defaults;
+
+    }
+
+}
+
+
+function saveProgress() {
+
+    try {
+
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(progress)
+        );
+
+    } catch (error) {}
+
+}
+
+
+/* =====================================
+   NORMALIZE ANSWERS
+===================================== */
+
+function normalize(text) {
+
+    return text
+        .toLowerCase()
+        .trim()
+        .replace(/[.,!?'"`]/g, "")
+        .replace(/\s+/g, " ");
+
+}
+
+
+/* =====================================
+   APRIL 2026 ANSWER
+===================================== */
+
+function correctApril(answer) {
+
+    const a =
+        normalize(answer);
+
+    const accepted = [
+
+        "our first conversation",
+
+        "first conversation",
+
+        "the first conversation",
+
+        "our first chat",
+
+        "first chat",
+
+        "the first chat",
+
+        "when we first talked",
+
+        "when we first spoke",
+
+        "our first talk"
+
+    ];
+
+
+    return accepted.some(
+        x => a === x || a.includes(x)
+    );
+
+}
+
+
+/* =====================================
+   DIYON + MATTEO ANSWER
+===================================== */
+
+function correctKids(answer) {
+
+    const a =
+        normalize(answer);
+
+    const accepted = [
+
+        "my sons",
+
+        "my kids",
+
+        "my children",
+
+        "my boys",
+
+        "my two sons",
+
+        "my two kids",
+
+        "my two children"
+
+    ];
+
+
+    return accepted.some(
+        x => a === x || a.includes(x)
+    );
+
+}
+
+
+/* =====================================
+   VERIFY PERSONAL INFORMATION
+===================================== */
+
+function verifyIdentity() {
+
+    const answer1 =
+        document.getElementById(
+            "answer1"
+        ).value;
+
+
+    const answer2 =
+        document.getElementById(
+            "answer2"
+        ).value;
+
+
+    if (
+        correctApril(answer1) &&
+        correctKids(answer2)
+    ) {
+
+        progress.identity = true;
+
+        saveProgress();
+
+
+        document.getElementById(
+            "verificationError"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "verificationSuccess"
+        ).style.display = "block";
+
+
+        document.getElementById(
+            "systemStatus"
+        ).innerHTML =
+            "IDENTITY VERIFIED. DIGITAL EVIDENCE ACCESS GRANTED.";
+
+
+        setTimeout(() => {
+
+            document.getElementById(
+                "verification"
+            ).style.display = "none";
+
+
+            document.getElementById(
+                "evidenceArea"
+            ).style.display = "block";
+
+
+            toast("ACCESS GRANTED");
+
+        }, 700);
+
+
+    } else {
+
+        document.getElementById(
+            "verificationError"
+        ).style.display = "block";
+
+
+        toast("VERIFICATION FAILED");
+
+    }
+
+}
+
+
+/* =====================================
+   EVIDENCE 001
+===================================== */
+
+function openEvidence001() {
+
+    document.getElementById(
+        "externalClue"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "passwordArea"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "externalClue"
+    ).scrollIntoView({
+
+        behavior: "smooth",
+
+        block: "center"
+
+    });
+
+}
+
+
+/* =====================================
+   COPY @EYESEE-b001
+===================================== */
+
+function copyIdentifier() {
+
+    const text =
+        "@EYESEE-b001";
+
+
+    if (navigator.clipboard) {
+
+        navigator.clipboard
+            .writeText(text)
+            .then(() => {
+
+                toast("IDENTIFIER COPIED");
+
+            })
+            .catch(() => {
+
+                selectIdentifier();
+
+            });
+
+    } else {
+
+        selectIdentifier();
+
+    }
+
+}
+
+
+function selectIdentifier() {
+
+    const element =
+        document.querySelector(
+            ".identifier"
+        );
+
+
+    const range =
+        document.createRange();
+
+
+    range.selectNodeContents(
+        element
+    );
+
+
+    const selection =
+        window.getSelection();
+
+
+    selection.removeAllRanges();
+
+    selection.addRange(range);
+
+
+    toast("IDENTIFIER SELECTED");
+
+}
+
+
+/* =====================================
+   EVIDENCE 001 PASSWORD
+===================================== */
+
+function checkEvidence001() {
+
+    const entered =
+        normalize(
+            document.getElementById(
+                "passwordInput"
+            ).value
+        );
+
+
+    if (
+        entered ===
+        normalize(EVIDENCE_001_PASSWORD)
+    ) {
+
+        progress.evidence001 = true;
+
+        saveProgress();
+
+
+        document.getElementById(
+            "passwordError"
+        ).style.display = "none";
+
+
+        unlockEvidence2();
+
+
+        toast("EVIDENCE 001 DECRYPTED");
+
+
+    } else {
+
+        document.getElementById(
+            "passwordError"
+        ).style.display = "block";
+
+
+        toast("INVALID PASSWORD");
+
+    }
+
+}
+
+
+/* =====================================
+   UNLOCK EVIDENCE 002
+===================================== */
+
+function unlockEvidence2() {
+
+    const file =
+        document.getElementById(
+            "file2"
+        );
+
+
+    file.classList.remove(
+        "locked"
+    );
+
+
+    document.getElementById(
+        "status2"
+    ).innerText =
+        "AVAILABLE";
+
+
+    document.getElementById(
+        "status2"
+    ).classList.add(
+        "available"
+    );
+
+
+    document.getElementById(
+        "lock2"
+    ).innerHTML = `
+
+        <button
+        class="primary"
+        onclick="openEvidence2()"
+        >
+
+        OPEN EVIDENCE 002
+
+        </button>
+
+    `;
+
+}
+
+
+/* =====================================
+   OPEN EVIDENCE 002
+===================================== */
+
+function openEvidence2() {
+
+    document.getElementById(
+        "audio1"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "audio1"
+    ).scrollIntoView({
+
+        behavior: "smooth",
+
+        block: "center"
+
+    });
+
+
+    progress.evidence002 =
+        true;
+
+
+    saveProgress();
+
+
+    unlockEvidence3();
+
+}
+
+
+/* =====================================
+   UNLOCK EVIDENCE 003
+===================================== */
+
+function unlockEvidence3() {
+
+    const file =
+        document.getElementById(
+            "file3"
+        );
+
+
+    file.classList.remove(
+        "locked"
+    );
+
+
+    document.getElementById(
+        "status3"
+    ).innerText =
+        "AVAILABLE";
+
+
+    document.getElementById(
+        "status3"
+    ).classList.add(
+        "available"
+    );
+
+
+    document.getElementById(
+        "lock3"
+    ).innerHTML = `
+
+        <button
+        class="primary"
+        onclick="openEvidence3()"
+        >
+
+        OPEN EVIDENCE 003
+
+        </button>
+
+    `;
+
+}
+
+
+/* =====================================
+   OPEN EVIDENCE 003
+===================================== */
+
+function openEvidence3() {
+
+    document.getElementById(
+        "audio2"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "audio2"
+    ).scrollIntoView({
+
+        behavior: "smooth",
+
+        block: "center"
+
+    });
+
+}
+
+
+/* =====================================
+   CHECK BLUE-EYES PUZZLE
+===================================== */
+
+function checkPuzzle() {
+
+    const entered =
+        normalize(
+            document.getElementById(
+                "puzzleAnswer"
+            ).value
+        );
+
+
+    const expected =
+        normalize(
+            EYE_PUZZLE_ANSWER
+        );
+
+
+    if (
+        entered === expected ||
+        entered.includes(expected)
+    ) {
+
+        progress.evidence003 =
+            true;
+
+
+        saveProgress();
+
+
+        document.getElementById(
+            "puzzleError"
+        ).style.display =
+            "none";
+
+
+        unlockEvidence4();
+
+
+        toast("PUZZLE SOLVED");
+
+
+    } else {
+
+        document.getElementById(
+            "puzzleError"
+        ).style.display =
+            "block";
+
+
+        toast(
+            "THE EYE REJECTS YOUR ANSWER"
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   UNLOCK EVIDENCE 004
+===================================== */
+
+function unlockEvidence4() {
+
+    const file =
+        document.getElementById(
+            "file4"
+        );
+
+
+    file.classList.remove(
+        "locked"
+    );
+
+
+    document.getElementById(
+        "status4"
+    ).innerText =
+        "AVAILABLE";
+
+
+    document.getElementById(
+        "status4"
+    ).classList.add(
+        "available"
+    );
+
+
+    document.getElementById(
+        "lock4"
+    ).innerHTML = `
+
+        <button
+        class="primary"
+        onclick="openEvidence4()"
+        >
+
+        OPEN EVIDENCE 004
+
+        </button>
+
+    `;
+
+}
+
+
+/* =====================================
+   OPEN FINAL EVIDENCE
+===================================== */
+
+function openEvidence4() {
+
+    document.getElementById(
+        "warningReveal"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "warningReveal"
+    ).scrollIntoView({
+
+        behavior: "smooth",
+
+        block: "center"
+
+    });
+
+
+    progress.evidence004 =
+        true;
+
+
+    saveProgress();
+
+
+    toast(
+        "FINAL TRANSMISSION DETECTED"
+    );
+
+}
+
+
+/* =====================================
+   RESTORE SAVED PROGRESS
+===================================== */
+
+function restoreProgress() {
+
+    if (!progress.identity) {
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "verification"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "evidenceArea"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "systemStatus"
+    ).innerHTML =
+        "IDENTITY VERIFIED. DIGITAL EVIDENCE ACCESS GRANTED.";
+
+
+    if (progress.evidence001) {
+
+        unlockEvidence2();
+
+    }
+
+
+    if (progress.evidence002) {
+
+        document.getElementById(
+            "audio1"
+        ).style.display =
+            "block";
+
+
+        unlockEvidence3();
+
+    }
+
+
+    if (progress.evidence003) {
+
+        document.getElementById(
+            "audio2"
+        ).style.display =
+            "block";
+
+
+        unlockEvidence4();
+
+    }
+
+
+    if (progress.evidence004) {
+
+        document.getElementById(
+            "warningReveal"
+        ).style.display =
+            "block";
+
+    }
+
+}
+
+
+/* =====================================
+   TOAST
+===================================== */
+
+function toast(message) {
+
+    const element =
+        document.getElementById(
+            "toast"
+        );
+
+
+    element.innerText =
+        message;
+
+
+    element.classList.add(
+        "show"
+    );
+
+
+    setTimeout(() => {
+
+        element.classList.remove(
+            "show"
+        );
+
+    }, 2200);
+
+}
+
+
+/* =====================================
+   ENTER KEY SHORTCUTS
+===================================== */
+
+document
+.getElementById("answer1")
+.addEventListener(
+    "keydown",
+    e => {
+
+        if (e.key === "Enter") {
+
+            document
+            .getElementById("answer2")
+            .focus();
+
+        }
+
+    }
+);
+
+
+document
+.getElementById("answer2")
+.addEventListener(
+    "keydown",
+    e => {
+
+        if (e.key === "Enter") {
+
+            verifyIdentity();
+
+        }
+
+    }
+);
+
+
+document
+.getElementById("passwordInput")
+.addEventListener(
+    "keydown",
+    e => {
+
+        if (e.key === "Enter") {
+
+            checkEvidence001();
+
+        }
+
+    }
+);
+
+
+/* =====================================
+   START
+===================================== */
+
+restoreProgress();
+
+</script>
+
+</body>
+  </html>
