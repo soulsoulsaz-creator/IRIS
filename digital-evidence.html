@@ -24,7 +24,6 @@
     --muted: #8e9daf;
     --green: #36d58b;
     --red: #ff4655;
-    --gold: #d9b75f;
 }
 
 body {
@@ -535,8 +534,6 @@ Previous access credentials have been altered.
 </div>
 
 
-<!-- PERSONAL VERIFICATION -->
-
 <section
 class="card"
 id="verification"
@@ -639,18 +636,15 @@ id="verificationSuccess"
 </section>
 
 
-<!-- EVIDENCE AREA -->
-
 <section id="evidenceArea">
-
 
 <div class="access">
 
 <strong>✓ ACCESS GRANTED</strong>
 
 <p>
-Previous credentials reconstructed.
-Recovered digital evidence is now available.
+Recovered evidence is being released sequentially.
+Each file must be completed before the next one becomes available.
 </p>
 
 </div>
@@ -671,7 +665,6 @@ AVAILABLE
 </div>
 
 </div>
-
 
 <div class="file-description">
 
@@ -707,12 +700,14 @@ id="externalClue"
 EXTERNAL SOURCE IDENTIFIER
 </div>
 
+
 <button
 class="copy"
 onclick="copyIdentifier()"
 >
 COPY IDENTIFIER
 </button>
+
 
 <div class="clue-text">
 
@@ -773,6 +768,7 @@ VERIFY
 </button>
 
 </div>
+
 
 <div
 class="error"
@@ -845,8 +841,6 @@ Listen carefully to the recovered transmission.
 
 </div>
 
-
-<!-- ROOT FILE: eye-message.mp3 -->
 
 <audio
 controls
@@ -932,8 +926,6 @@ A puzzle has been left inside the recording.
 </div>
 
 
-<!-- ROOT FILE: eye-puzzle.mp3 -->
-
 <audio
 controls
 preload="metadata"
@@ -958,13 +950,11 @@ LISTEN. THINK. ANSWER THE EYE.
 
 <br>
 
-
 <input
 id="puzzleAnswer"
 type="text"
 placeholder="Enter your answer..."
 >
-
 
 <br><br>
 
@@ -1040,13 +1030,9 @@ id="warningReveal"
 
 <div class="warning-box">
 
-
 <div class="warning-title">
-
 ⚠ THE EYE WANTS TO SPEAK
-
 </div>
-
 
 <div class="warning-text">
 
@@ -1061,11 +1047,8 @@ THE EYE IS REQUESTING DIRECT CONTACT.
 
 
 <div class="username">
-
 @_the_eye_b001
-
 </div>
-
 
 <br>
 
@@ -1080,7 +1063,6 @@ rel="noopener"
 OPEN THE EYE
 
 </a>
-
 
 </div>
 
@@ -1117,58 +1099,30 @@ id="toast"
 
 <script>
 
-/* GAME ANSWERS */
+/* =====================================================
+   IRIS DIGITAL EVIDENCE
+   NEW VERSION = OLD SAVED PROGRESS IS IGNORED
+   ===================================================== */
+
+const STORAGE_KEY = "IRIS_DIGITAL_EVIDENCE_V2";
 
 const EVIDENCE_001_PASSWORD = "4021822";
 
 const EYE_PUZZLE_ANSWER = "my blue eyes";
 
-const STORAGE_KEY =
-"IRIS_DIGITAL_EVIDENCE";
+
+let progress = {
+    identity: false,
+    evidence001: false,
+    evidence002: false,
+    evidence003: false,
+    evidence004: false
+};
 
 
-let progress =
-loadProgress();
-
-
-/* LOAD PROGRESS */
-
-function loadProgress() {
-
-    const defaults = {
-
-        identity: false,
-
-        evidence001: false,
-
-        evidence002: false,
-
-        evidence003: false,
-
-        evidence004: false
-
-    };
-
-
-    try {
-
-        const saved =
-            localStorage.getItem(STORAGE_KEY);
-
-        return saved
-            ? { ...defaults, ...JSON.parse(saved) }
-            : defaults;
-
-    } catch (error) {
-
-        return defaults;
-
-    }
-
-}
-
-
-/* SAVE PROGRESS */
+/* =====================================================
+   SAVE
+   ===================================================== */
 
 function saveProgress() {
 
@@ -1179,16 +1133,56 @@ function saveProgress() {
             JSON.stringify(progress)
         );
 
-    } catch (error) {}
+    } catch (error) {
+
+        console.log("Progress could not be saved.");
+
+    }
 
 }
 
 
-/* NORMALIZE */
+/* =====================================================
+   LOAD ONLY V2 PROGRESS
+   ===================================================== */
+
+function loadProgress() {
+
+    try {
+
+        const saved =
+            localStorage.getItem(STORAGE_KEY);
+
+        if (!saved) {
+
+            return;
+
+        }
+
+        const data =
+            JSON.parse(saved);
+
+        progress = {
+            ...progress,
+            ...data
+        };
+
+    } catch (error) {
+
+        console.log("Could not load progress.");
+
+    }
+
+}
+
+
+/* =====================================================
+   NORMALIZE ANSWERS
+   ===================================================== */
 
 function normalize(text) {
 
-    return text
+    return String(text)
         .toLowerCase()
         .trim()
         .replace(/[.,!?'"`]/g, "")
@@ -1197,7 +1191,9 @@ function normalize(text) {
 }
 
 
-/* APRIL ANSWER */
+/* =====================================================
+   APRIL 2026
+   ===================================================== */
 
 function correctApril(answer) {
 
@@ -1219,13 +1215,17 @@ function correctApril(answer) {
     ];
 
     return accepted.some(
-        x => a === x || a.includes(x)
+        answer =>
+            a === answer ||
+            a.includes(answer)
     );
 
 }
 
 
-/* DIYON + MATTEO */
+/* =====================================================
+   DIYON + MATTEO
+   ===================================================== */
 
 function correctKids(answer) {
 
@@ -1245,13 +1245,17 @@ function correctKids(answer) {
     ];
 
     return accepted.some(
-        x => a === x || a.includes(x)
+        answer =>
+            a === answer ||
+            a.includes(answer)
     );
 
 }
 
 
-/* VERIFY IDENTITY */
+/* =====================================================
+   IDENTITY VERIFICATION
+   ===================================================== */
 
 function verifyIdentity() {
 
@@ -1259,7 +1263,6 @@ function verifyIdentity() {
         document.getElementById(
             "answer1"
         ).value;
-
 
     const answer2 =
         document.getElementById(
@@ -1293,7 +1296,7 @@ function verifyIdentity() {
             "IDENTITY VERIFIED. DIGITAL EVIDENCE ACCESS GRANTED.";
 
 
-        setTimeout(() => {
+        setTimeout(function() {
 
             document.getElementById(
                 "verification"
@@ -1324,7 +1327,9 @@ function verifyIdentity() {
 }
 
 
-/* EVIDENCE 001 */
+/* =====================================================
+   EVIDENCE 001
+   ===================================================== */
 
 function openEvidence001() {
 
@@ -1343,7 +1348,6 @@ function openEvidence001() {
     ).scrollIntoView({
 
         behavior: "smooth",
-
         block: "center"
 
     });
@@ -1351,24 +1355,28 @@ function openEvidence001() {
 }
 
 
-/* COPY IDENTIFIER */
+/* =====================================================
+   COPY @EYESEE-b001
+   ===================================================== */
 
 function copyIdentifier() {
 
-    const text =
-        "@EYESEE-b001";
+    const text = "@EYESEE-b001";
 
 
-    if (navigator.clipboard) {
+    if (
+        navigator.clipboard &&
+        window.isSecureContext
+    ) {
 
         navigator.clipboard
             .writeText(text)
-            .then(() => {
+            .then(function() {
 
                 toast("IDENTIFIER COPIED");
 
             })
-            .catch(() => {
+            .catch(function() {
 
                 selectIdentifier();
 
@@ -1390,31 +1398,26 @@ function selectIdentifier() {
             ".identifier"
         );
 
-
     const range =
         document.createRange();
 
-
-    range.selectNodeContents(
-        element
-    );
-
+    range.selectNodeContents(element);
 
     const selection =
         window.getSelection();
 
-
     selection.removeAllRanges();
 
     selection.addRange(range);
-
 
     toast("IDENTIFIER SELECTED");
 
 }
 
 
-/* EVIDENCE 001 PASSWORD */
+/* =====================================================
+   EVIDENCE 001 PASSWORD
+   ===================================================== */
 
 function checkEvidence001() {
 
@@ -1461,7 +1464,9 @@ function checkEvidence001() {
 }
 
 
-/* UNLOCK EVIDENCE 002 */
+/* =====================================================
+   UNLOCK EVIDENCE 002
+   ===================================================== */
 
 function unlockEvidence2() {
 
@@ -1471,9 +1476,7 @@ function unlockEvidence2() {
         );
 
 
-    file.classList.remove(
-        "locked"
-    );
+    file.classList.remove("locked");
 
 
     document.getElementById(
@@ -1484,9 +1487,7 @@ function unlockEvidence2() {
 
     document.getElementById(
         "status2"
-    ).classList.add(
-        "available"
-    );
+    ).classList.add("available");
 
 
     document.getElementById(
@@ -1497,9 +1498,7 @@ function unlockEvidence2() {
         class="primary"
         onclick="openEvidence2()"
         >
-
-        OPEN EVIDENCE 002
-
+            OPEN EVIDENCE 002
         </button>
 
     `;
@@ -1507,7 +1506,9 @@ function unlockEvidence2() {
 }
 
 
-/* OPEN EVIDENCE 002 */
+/* =====================================================
+   OPEN EVIDENCE 002
+   ===================================================== */
 
 function openEvidence2() {
 
@@ -1522,25 +1523,28 @@ function openEvidence2() {
     ).scrollIntoView({
 
         behavior: "smooth",
-
         block: "center"
 
     });
 
 
-    progress.evidence002 =
-        true;
+    /*
+       Evidence 003 is NOT unlocked until
+       Evidence 002 has actually been opened.
+    */
 
+    progress.evidence002 = true;
 
     saveProgress();
-
 
     unlockEvidence3();
 
 }
 
 
-/* UNLOCK EVIDENCE 003 */
+/* =====================================================
+   UNLOCK EVIDENCE 003
+   ===================================================== */
 
 function unlockEvidence3() {
 
@@ -1550,9 +1554,7 @@ function unlockEvidence3() {
         );
 
 
-    file.classList.remove(
-        "locked"
-    );
+    file.classList.remove("locked");
 
 
     document.getElementById(
@@ -1563,9 +1565,7 @@ function unlockEvidence3() {
 
     document.getElementById(
         "status3"
-    ).classList.add(
-        "available"
-    );
+    ).classList.add("available");
 
 
     document.getElementById(
@@ -1576,9 +1576,7 @@ function unlockEvidence3() {
         class="primary"
         onclick="openEvidence3()"
         >
-
-        OPEN EVIDENCE 003
-
+            OPEN EVIDENCE 003
         </button>
 
     `;
@@ -1586,7 +1584,9 @@ function unlockEvidence3() {
 }
 
 
-/* OPEN EVIDENCE 003 */
+/* =====================================================
+   OPEN EVIDENCE 003
+   ===================================================== */
 
 function openEvidence3() {
 
@@ -1601,7 +1601,6 @@ function openEvidence3() {
     ).scrollIntoView({
 
         behavior: "smooth",
-
         block: "center"
 
     });
@@ -1609,7 +1608,9 @@ function openEvidence3() {
 }
 
 
-/* BLUE EYES PUZZLE */
+/* =====================================================
+   BLUE EYES PUZZLE
+   ===================================================== */
 
 function checkPuzzle() {
 
@@ -1632,17 +1633,14 @@ function checkPuzzle() {
         entered.includes(expected)
     ) {
 
-        progress.evidence003 =
-            true;
-
+        progress.evidence003 = true;
 
         saveProgress();
 
 
         document.getElementById(
             "puzzleError"
-        ).style.display =
-            "none";
+        ).style.display = "none";
 
 
         unlockEvidence4();
@@ -1655,8 +1653,7 @@ function checkPuzzle() {
 
         document.getElementById(
             "puzzleError"
-        ).style.display =
-            "block";
+        ).style.display = "block";
 
 
         toast(
@@ -1668,7 +1665,9 @@ function checkPuzzle() {
 }
 
 
-/* UNLOCK EVIDENCE 004 */
+/* =====================================================
+   UNLOCK EVIDENCE 004
+   ===================================================== */
 
 function unlockEvidence4() {
 
@@ -1678,9 +1677,7 @@ function unlockEvidence4() {
         );
 
 
-    file.classList.remove(
-        "locked"
-    );
+    file.classList.remove("locked");
 
 
     document.getElementById(
@@ -1691,9 +1688,7 @@ function unlockEvidence4() {
 
     document.getElementById(
         "status4"
-    ).classList.add(
-        "available"
-    );
+    ).classList.add("available");
 
 
     document.getElementById(
@@ -1704,9 +1699,7 @@ function unlockEvidence4() {
         class="primary"
         onclick="openEvidence4()"
         >
-
-        OPEN EVIDENCE 004
-
+            OPEN EVIDENCE 004
         </button>
 
     `;
@@ -1714,7 +1707,9 @@ function unlockEvidence4() {
 }
 
 
-/* FINAL EVIDENCE */
+/* =====================================================
+   FINAL EVIDENCE
+   ===================================================== */
 
 function openEvidence4() {
 
@@ -1729,15 +1724,12 @@ function openEvidence4() {
     ).scrollIntoView({
 
         behavior: "smooth",
-
         block: "center"
 
     });
 
 
-    progress.evidence004 =
-        true;
-
+    progress.evidence004 = true;
 
     saveProgress();
 
@@ -1749,9 +1741,20 @@ function openEvidence4() {
 }
 
 
-/* RESTORE PROGRESS */
+/* =====================================================
+   RESTORE CURRENT V2 PROGRESS
+   ===================================================== */
 
 function restoreProgress() {
+
+    /*
+       IMPORTANT:
+       We only read IRIS_DIGITAL_EVIDENCE_V2.
+
+       Therefore the old saved key from the previous
+       version cannot unlock everything automatically.
+    */
+
 
     if (!progress.identity) {
 
@@ -1823,7 +1826,9 @@ function restoreProgress() {
 }
 
 
-/* TOAST */
+/* =====================================================
+   TOAST
+   ===================================================== */
 
 function toast(message) {
 
@@ -1837,29 +1842,27 @@ function toast(message) {
         message;
 
 
-    element.classList.add(
-        "show"
-    );
+    element.classList.add("show");
 
 
-    setTimeout(() => {
+    setTimeout(function() {
 
-        element.classList.remove(
-            "show"
-        );
+        element.classList.remove("show");
 
     }, 2200);
 
 }
 
 
-/* ENTER KEY SUPPORT */
+/* =====================================================
+   ENTER KEY SUPPORT
+   ===================================================== */
 
 document
 .getElementById("answer1")
 .addEventListener(
     "keydown",
-    e => {
+    function(e) {
 
         if (e.key === "Enter") {
 
@@ -1877,7 +1880,7 @@ document
 .getElementById("answer2")
 .addEventListener(
     "keydown",
-    e => {
+    function(e) {
 
         if (e.key === "Enter") {
 
@@ -1893,7 +1896,7 @@ document
 .getElementById("passwordInput")
 .addEventListener(
     "keydown",
-    e => {
+    function(e) {
 
         if (e.key === "Enter") {
 
@@ -1905,7 +1908,11 @@ document
 );
 
 
-/* START */
+/* =====================================================
+   START
+   ===================================================== */
+
+loadProgress();
 
 restoreProgress();
 
