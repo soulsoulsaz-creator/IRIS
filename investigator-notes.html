@@ -1,1 +1,464 @@
+<!-- BLACK IRIS — INVESTIGATOR NOTES -->
 
+<div class="investigator-terminal">
+
+    <div class="terminal-top">
+        <div>
+            <span class="terminal-label">IRIS INTELLIGENCE AGENCY</span>
+            <span class="terminal-sub">OPERATION BLACK IRIS // INVESTIGATOR NOTES</span>
+        </div>
+
+        <div class="classification">
+            OMEGA<br>
+            CLASSIFIED
+        </div>
+    </div>
+
+    <div class="terminal-status">
+        <span class="status-light"></span>
+        SECURE ARCHIVE // ENCRYPTED VISUAL EVIDENCE DETECTED
+    </div>
+
+    <div class="evidence-panel">
+
+        <div class="panel-header">
+            <span>FILE: INVESTIGATOR_NOTES</span>
+            <span>STATUS: FRAGMENTED</span>
+        </div>
+
+        <div class="puzzle-section">
+
+            <div class="lock-symbol">◈</div>
+
+            <h1>RECONSTRUCT THE EVIDENCE</h1>
+
+            <p class="instruction">
+                The visual evidence has been fragmented.
+            </p>
+
+            <p class="instruction secondary">
+                Rearrange the encrypted image to restore the original file.
+            </p>
+
+            <div class="puzzle-container">
+
+                <iframe
+                    src="https://puzzel.org/fr/slidingpuzzle/play?p=-P-0lTwNIy9xexF1t4b8"
+                    title="BLACK IRIS Encrypted Evidence"
+                    allowfullscreen>
+                </iframe>
+
+            </div>
+
+            <div class="warning-line">
+                <span>⚠</span>
+                VISUAL RECONSTRUCTION REQUIRED
+            </div>
+
+        </div>
+
+        <div class="secure-section">
+
+            <div class="secure-divider"></div>
+
+            <div class="secure-status">
+                <span class="status-light"></span>
+                NEXT SECURITY LAYER AVAILABLE
+            </div>
+
+            <p>
+                Upon reconstruction of the visual evidence,
+                contact BLACK IRIS CENTRAL COMMAND for further authorization.
+            </p>
+
+            <button class="secure-button" onclick="openInquiry()">
+                INITIATE SECURE INQUIRY
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="terminal-footer">
+        BLACK IRIS // SECURE INVESTIGATIVE NETWORK
+        <span>CONNECTION ENCRYPTED</span>
+    </div>
+
+</div>
+
+
+<!-- SECURE INQUIRY MODAL -->
+
+<div id="secureInquiry" class="inquiry-overlay">
+
+    <div class="inquiry-terminal">
+
+        <div class="inquiry-header">
+            <span>BLACK IRIS // CENTRAL COMMAND</span>
+            <button onclick="closeInquiry()">×</button>
+        </div>
+
+        <div class="inquiry-content">
+
+            <div class="terminal-alert">
+                AUTHORIZATION SEQUENCE REQUIRED
+            </div>
+
+            <p>
+                Investigator Notes remain restricted under
+                BLACK IRIS security protocol.
+            </p>
+
+            <p>
+                Contact Central Command to obtain
+                authorization for the archived file.
+            </p>
+
+            <div class="command-line">
+                <span>&gt;</span> SECURE CHANNEL READY
+            </div>
+
+            <button class="email-button" onclick="contactBlackIris()">
+                CONTACT CENTRAL COMMAND
+            </button>
+
+            <button class="close-button" onclick="closeInquiry()">
+                ABORT
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+.investigator-terminal {
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at center, #111718 0%, #050708 65%);
+    color: #d5d9d8;
+    font-family: "Courier New", monospace;
+    padding: 30px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+}
+
+.investigator-terminal::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,.018) 0px,
+            rgba(255,255,255,.018) 1px,
+            transparent 1px,
+            transparent 4px
+        );
+}
+
+.terminal-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid #303536;
+    padding-bottom: 18px;
+    position: relative;
+}
+
+.terminal-label {
+    display: block;
+    font-size: 14px;
+    letter-spacing: 3px;
+}
+
+.terminal-sub {
+    display: block;
+    margin-top: 7px;
+    font-size: 10px;
+    color: #777;
+    letter-spacing: 2px;
+}
+
+.classification {
+    text-align: right;
+    font-size: 10px;
+    line-height: 1.7;
+    color: #777;
+    letter-spacing: 2px;
+}
+
+.terminal-status {
+    margin: 25px auto;
+    max-width: 1000px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #777;
+}
+
+.status-light {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #8b1a1a;
+    box-shadow: 0 0 10px #8b1a1a;
+    margin-right: 8px;
+}
+
+.evidence-panel {
+    max-width: 1000px;
+    margin: auto;
+    border: 1px solid #292e2f;
+    background: rgba(5,7,8,.9);
+    box-shadow: 0 0 35px rgba(0,0,0,.7);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 13px 18px;
+    border-bottom: 1px solid #292e2f;
+    font-size: 9px;
+    color: #666;
+    letter-spacing: 2px;
+}
+
+.puzzle-section {
+    text-align: center;
+    padding: 35px 25px 25px;
+}
+
+.lock-symbol {
+    font-size: 25px;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+.puzzle-section h1 {
+    font-size: 25px;
+    letter-spacing: 5px;
+    font-weight: normal;
+    margin: 0 0 20px;
+}
+
+.instruction {
+    margin: 6px auto;
+    color: #aaa;
+    font-size: 13px;
+}
+
+.instruction.secondary {
+    color: #666;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.puzzle-container {
+    width: 100%;
+    height: 600px;
+    margin: 30px auto 20px;
+    border: 1px solid #333;
+    background: #000;
+    overflow: hidden;
+}
+
+.puzzle-container iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.warning-line {
+    font-size: 9px;
+    color: #777;
+    letter-spacing: 2px;
+}
+
+.warning-line span {
+    color: #aaa;
+    margin-right: 7px;
+}
+
+.secure-section {
+    text-align: center;
+    padding: 25px 30px 35px;
+}
+
+.secure-divider {
+    height: 1px;
+    background: #242829;
+    margin-bottom: 25px;
+}
+
+.secure-status {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+.secure-section p {
+    max-width: 600px;
+    margin: 8px auto;
+    color: #777;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.secure-button,
+.email-button {
+    margin-top: 20px;
+    padding: 14px 24px;
+    background: #090b0c;
+    border: 1px solid #444;
+    color: #ccc;
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.secure-button:hover,
+.email-button:hover {
+    border-color: #aaa;
+    background: #151819;
+    box-shadow: 0 0 20px rgba(255,255,255,.06);
+}
+
+.terminal-footer {
+    max-width: 1000px;
+    margin: 20px auto 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 8px;
+    color: #444;
+    letter-spacing: 1px;
+}
+
+.inquiry-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.92);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+}
+
+.inquiry-terminal {
+    width: 90%;
+    max-width: 550px;
+    background: #080a0b;
+    border: 1px solid #444;
+    box-shadow: 0 0 50px #000;
+}
+
+.inquiry-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 18px;
+    border-bottom: 1px solid #333;
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+.inquiry-header button {
+    background: none;
+    border: none;
+    color: #777;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.inquiry-content {
+    padding: 30px;
+}
+
+.terminal-alert {
+    color: #aaa;
+    font-size: 11px;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+}
+
+.inquiry-content p {
+    color: #888;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.command-line {
+    margin-top: 25px;
+    padding: 12px;
+    background: #050606;
+    border: 1px solid #222;
+    color: #777;
+    font-size: 10px;
+}
+
+.command-line span {
+    color: #aaa;
+}
+
+.close-button {
+    display: block;
+    margin: 15px auto 0;
+    background: none;
+    border: none;
+    color: #555;
+    font-family: "Courier New", monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    cursor: pointer;
+}
+
+</style>
+
+
+<script>
+
+function openInquiry() {
+    document.getElementById("secureInquiry").style.display = "flex";
+}
+
+function closeInquiry() {
+    document.getElementById("secureInquiry").style.display = "none";
+}
+
+function contactBlackIris() {
+
+    const agencyEmail = "YOUR-BLACK-IRIS-EMAIL-HERE";
+
+    const subject =
+        "BLACK IRIS // INVESTIGATOR NOTES // AUTHORIZATION";
+
+    const body =
+`BLACK IRIS CENTRAL COMMAND,
+
+Investigator Notes have been accessed.
+
+The encrypted visual evidence has been reconstructed.
+
+Authorization is required to proceed with the archived file.
+
+Please provide further instructions.
+
+— Assigned Investigator`;
+
+    window.location.href =
+        "mailto:" +
+        agencyEmail +
+        "?subject=" +
+        encodeURIComponent(subject) +
+        "&body=" +
+        encodeURIComponent(body);
+}
+
+</script>
