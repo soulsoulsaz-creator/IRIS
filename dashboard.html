@@ -127,108 +127,170 @@ font-size:13px;
 
 <p>
 Welcome, Investigator.
+</p>
 
+<p>
 The following database contains every recovered document
 associated with Subject B-001. Some reports contain
 downloadable classified material recovered from agency
 servers after years of corruption.
+</p>
 
+<p>
 Proceed carefully.
 </p>
 
 </div>
 
+
 <div class="folder">
 
 <h2>📁 SUBJECT B-001</h2>
 
-<p>Primary classified dossier containing the first known information regarding the subject.</p>
+<p>
+Primary classified dossier containing the first known
+information regarding the subject.
+</p>
 
-<button onclick="location.href='subjectB001.html'">OPEN FILE</button>
+<button onclick="location.href='subjectB001.html'">
+OPEN FILE
+</button>
 
 </div>
+
 
 <div class="folder">
 
 <h2>📂 EVIDENCE LOCKER</h2>
 
-<p>Recovered personal evidence, letters and archived materials connected to Subject B-001.</p>
+<p>
+Recovered personal evidence, letters and archived materials
+connected to Subject B-001.
+</p>
 
-<button onclick="location.href='evidence001.html'">OPEN FILE</button>
+<button onclick="location.href='evidence001.html'">
+OPEN FILE
+</button>
 
 </div>
+
 
 <div class="folder">
 
 <h2>📂 WITNESS FILES</h2>
 
-<p>Recovered witness statements and investigator interviews.</p>
+<p>
+Recovered witness statements and investigator interviews.
+</p>
 
-<button onclick="location.href='witness.html'">OPEN FILE</button>
+<button onclick="location.href='witness.html'">
+OPEN FILE
+</button>
 
 </div>
+
 
 <div class="folder">
 
 <h2>📂 SURVEILLANCE DIVISION</h2>
 
-<p>Security camera analysis, recovered surveillance frames and downloadable classified reports.</p>
+<p>
+Security camera analysis, recovered surveillance frames
+and downloadable classified reports.
+</p>
 
-<button onclick="location.href='surveillance.html'">OPEN FILE</button>
+<button onclick="location.href='surveillance.html'">
+OPEN FILE
+</button>
 
 </div>
+
 
 <div class="folder">
 
 <h2>📂 PSYCHOLOGICAL PROFILE</h2>
 
-<p>Behavioral assessment and cognitive analysis of Subject B-001.</p>
+<p>
+Behavioral assessment and cognitive analysis of
+Subject B-001.
+</p>
 
-<button onclick="location.href='psychology.html'">OPEN FILE</button>
+<button onclick="location.href='psychology.html'">
+OPEN FILE
+</button>
 
 </div>
+
 
 <div class="folder">
 
 <h2>📂 TIMELINE RECONSTRUCTION</h2>
 
-<p>A chronological reconstruction of events before the disappearance and after the subject's return.</p>
+<p>
+A chronological reconstruction of events before the
+disappearance and after the subject's return.
+</p>
 
-<button onclick="location.href='timeline.html'">OPEN FILE</button>
+<button onclick="location.href='timeline.html'">
+OPEN FILE
+</button>
 
 </div>
+
 
 <div class="folder">
 
 <h2>📂 DIGITAL EVIDENCE</h2>
 
-<p>Recovered phone logs, messages, metadata and digital forensic analysis.</p>
+<p>
+Recovered phone logs, messages, metadata and digital
+forensic analysis.
+</p>
 
-<button onclick="location.href='digital-evidence.html'">OPEN FILE</button>
+<button onclick="location.href='digital-evidence.html'">
+OPEN FILE
+</button>
 
 </div>
+
+
+<!-- ==============================
+     INVESTIGATOR NOTES
+     ============================== -->
 
 <div class="folder">
 
 <h2>📂 INVESTIGATOR NOTES</h2>
 
-<p>Private notes left behind by previous investigators assigned to Operation BLACK IRIS.</p>
+<p>
+Private notes left behind by previous investigators
+assigned to Operation BLACK IRIS.
+</p>
 
-<button onclick="location.href='notes.html'">OPEN FILE</button>
+<button onclick="location.href='investigator-notes.html'">
+OPEN FILE
+</button>
 
 </div>
+
 
 <div class="folder">
 
 <h2>📂 FINAL ARCHIVE</h2>
 
-<p>Highest classified archive. Access only after reviewing all recovered material.</p>
+<p>
+Highest classified archive. Access only after reviewing
+all recovered material.
+</p>
 
-<button onclick="location.href='final.html'">OPEN FILE</button>
+<button onclick="location.href='final.html'">
+OPEN FILE
+</button>
 
 </div>
 
 </div>
+
 
 <div class="footer">
 
@@ -236,9 +298,11 @@ IRIS Intelligence Agency • OMEGA Clearance Required
 
 </div>
 
+
 <script>
 
-const agent = localStorage.getItem("agentName") || "Investigator";
+const agent =
+localStorage.getItem("agentName") || "Investigator";
 
 document.getElementById("agent").innerHTML =
 "Welcome back, Agent " + agent;
