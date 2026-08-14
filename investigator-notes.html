@@ -1,456 +1,1372 @@
-<!-- BLACK IRIS — INVESTIGATOR NOTES -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<div class="investigator-terminal">
-
-    <div class="terminal-top">
-        <div>
-            <span class="terminal-label">IRIS INTELLIGENCE AGENCY</span>
-            <span class="terminal-sub">OPERATION BLACK IRIS // INVESTIGATOR NOTES</span>
-        </div>
-
-        <div class="classification">
-            OMEGA<br>
-            CLASSIFIED
-        </div>
-    </div>
-
-    <div class="terminal-status">
-        <span class="status-light"></span>
-        SECURE ARCHIVE // ENCRYPTED VISUAL EVIDENCE DETECTED
-    </div>
-
-    <div class="evidence-panel">
-
-        <div class="panel-header">
-            <span>FILE: INVESTIGATOR_NOTES</span>
-            <span>STATUS: FRAGMENTED</span>
-        </div>
-
-        <div class="puzzle-section">
-
-            <div class="lock-symbol">◈</div>
-
-            <h1>RECONSTRUCT THE EVIDENCE</h1>
-
-            <p class="instruction">
-                The visual evidence has been fragmented.
-            </p>
-
-            <p class="instruction secondary">
-                Rearrange the encrypted image to restore the original file.
-            </p>
-
-            <div class="puzzle-container">
-
-                <iframe
-                    src="https://puzzel.org/fr/slidingpuzzle/play?p=-P-0lTwNIy9xexF1t4b8"
-                    title="BLACK IRIS Encrypted Evidence"
-                    allowfullscreen>
-                </iframe>
-
-            </div>
-
-            <div class="warning-line">
-                <span>⚠</span>
-                VISUAL RECONSTRUCTION REQUIRED
-            </div>
-
-        </div>
-
-        <div class="secure-section">
-
-            <div class="secure-divider"></div>
-
-            <div class="secure-status">
-                <span class="status-light"></span>
-                NEXT SECURITY LAYER AVAILABLE
-            </div>
-
-            <p>
-                Upon reconstruction of the visual evidence,
-                contact BLACK IRIS CENTRAL COMMAND for further authorization.
-            </p>
-
-            <button class="secure-button" onclick="openInquiry()">
-                INITIATE SECURE INQUIRY
-            </button>
-
-        </div>
-
-    </div>
-
-    <div class="terminal-footer">
-        BLACK IRIS // SECURE INVESTIGATIVE NETWORK
-        <span>CONNECTION ENCRYPTED</span>
-    </div>
-
-</div>
-
-
-<!-- SECURE INQUIRY MODAL -->
-
-<div id="secureInquiry" class="inquiry-overlay">
-
-    <div class="inquiry-terminal">
-
-        <div class="inquiry-header">
-            <span>BLACK IRIS // CENTRAL COMMAND</span>
-            <button onclick="closeInquiry()">×</button>
-        </div>
-
-        <div class="inquiry-content">
-
-            <div class="terminal-alert">
-                AUTHORIZATION SEQUENCE REQUIRED
-            </div>
-
-            <p>
-                Investigator Notes remain restricted under
-                BLACK IRIS security protocol.
-            </p>
-
-            <p>
-                Contact Central Command to obtain
-                authorization for the archived file.
-            </p>
-
-            <div class="command-line">
-                <span>&gt;</span> SECURE CHANNEL READY
-            </div>
-
-            <button class="email-button" onclick="contactBlackIris()">
-                CONTACT CENTRAL COMMAND
-            </button>
-
-            <button class="close-button" onclick="closeInquiry()">
-                ABORT
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
+<title>BLACK IRIS // Investigator Notes</title>
 
 <style>
 
-.investigator-terminal {
-    min-height: 100vh;
-    background:
-        radial-gradient(circle at center, #111718 0%, #050708 65%);
-    color: #d5d9d8;
-    font-family: "Courier New", monospace;
-    padding: 30px;
+* {
     box-sizing: border-box;
-    position: relative;
-    overflow: hidden;
 }
 
-.investigator-terminal::before {
+html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+body {
+    background: #050708;
+    color: #c9cece;
+    font-family: "Courier New", monospace;
+    overflow-x: hidden;
+}
+
+/* ================================
+   SCANLINES
+================================ */
+
+body::after {
     content: "";
-    position: absolute;
+    position: fixed;
     inset: 0;
     pointer-events: none;
+    z-index: 9999;
+
     background:
         repeating-linear-gradient(
             to bottom,
-            rgba(255,255,255,.018) 0px,
-            rgba(255,255,255,.018) 1px,
+            rgba(255,255,255,0.018) 0px,
+            rgba(255,255,255,0.018) 1px,
             transparent 1px,
             transparent 4px
         );
 }
 
-.terminal-top {
+/* ================================
+   MAIN TERMINAL
+================================ */
+
+.terminal {
+    min-height: 100vh;
+    padding: 22px;
+
+    background:
+        radial-gradient(
+            circle at 50% 20%,
+            #121718 0%,
+            #050708 65%
+        );
+}
+
+/* ================================
+   HEADER
+================================ */
+
+.header {
+    max-width: 1000px;
+    margin: auto;
+
+    border-bottom: 1px solid #292e2f;
+    padding-bottom: 16px;
+
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    border-bottom: 1px solid #303536;
-    padding-bottom: 18px;
-    position: relative;
 }
 
-.terminal-label {
-    display: block;
-    font-size: 14px;
+.agency {
+    font-size: 13px;
     letter-spacing: 3px;
 }
 
-.terminal-sub {
-    display: block;
+.file-name {
     margin-top: 7px;
+
     font-size: 10px;
-    color: #777;
+    color: #666;
+
     letter-spacing: 2px;
 }
 
-.classification {
+.classified {
     text-align: right;
-    font-size: 10px;
+
+    color: #777;
+    font-size: 9px;
+
     line-height: 1.7;
-    color: #777;
     letter-spacing: 2px;
 }
 
-.terminal-status {
-    margin: 25px auto;
+/* ================================
+   STATUS
+================================ */
+
+.status {
     max-width: 1000px;
-    font-size: 10px;
+    margin: 24px auto;
+
+    font-size: 9px;
+    color: #666;
+
     letter-spacing: 2px;
-    color: #777;
 }
 
-.status-light {
+.status-dot {
     display: inline-block;
+
     width: 7px;
     height: 7px;
-    border-radius: 50%;
+
     background: #8b1a1a;
-    box-shadow: 0 0 10px #8b1a1a;
+
+    border-radius: 50%;
+
+    box-shadow: 0 0 9px #8b1a1a;
+
     margin-right: 8px;
 }
 
-.evidence-panel {
+/* ================================
+   MAIN PANEL
+================================ */
+
+.panel {
     max-width: 1000px;
     margin: auto;
+
     border: 1px solid #292e2f;
-    background: rgba(5,7,8,.9);
-    box-shadow: 0 0 35px rgba(0,0,0,.7);
+
+    background: rgba(3,5,6,.92);
+
+    box-shadow:
+        0 0 35px rgba(0,0,0,.7);
 }
 
 .panel-header {
     display: flex;
     justify-content: space-between;
-    padding: 13px 18px;
+
+    padding: 13px 17px;
+
     border-bottom: 1px solid #292e2f;
+
+    color: #555;
+
     font-size: 9px;
-    color: #666;
     letter-spacing: 2px;
 }
+
+/* ================================
+   PUZZLE SECTION
+================================ */
 
 .puzzle-section {
     text-align: center;
-    padding: 35px 25px 25px;
+
+    padding: 35px 20px 30px;
 }
 
-.lock-symbol {
-    font-size: 25px;
+.symbol {
     color: #777;
+
+    font-size: 20px;
+
     margin-bottom: 15px;
 }
 
-.puzzle-section h1 {
-    font-size: 25px;
+h1 {
+    margin: 0;
+
+    font-size: clamp(19px, 5vw, 28px);
+
     letter-spacing: 5px;
+
     font-weight: normal;
-    margin: 0 0 20px;
 }
 
-.instruction {
-    margin: 6px auto;
-    color: #aaa;
-    font-size: 13px;
-}
+.instructions {
+    margin: 18px auto 25px;
 
-.instruction.secondary {
-    color: #666;
+    max-width: 650px;
+
+    color: #777;
+
     font-size: 11px;
-    letter-spacing: 1px;
+
+    line-height: 1.8;
 }
 
-.puzzle-container {
-    width: 100%;
-    height: 600px;
-    margin: 30px auto 20px;
+/* ================================
+   PUZZLE BOARD
+================================ */
+
+#puzzle {
+
+    width: min(90vw, 600px);
+
+    aspect-ratio: 1 / 1;
+
+    margin: 25px auto;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    grid-template-rows:
+        repeat(3, 1fr);
+
+    gap: 2px;
+
+    background: #020303;
+
     border: 1px solid #333;
-    background: #000;
+
+    padding: 2px;
+
+    touch-action: manipulation;
+}
+
+/* ================================
+   PUZZLE TILES
+================================ */
+
+.tile {
+
+    position: relative;
+
+    background-image:
+        url("evidence-puzzle.png");
+
+    background-size: 300% 300%;
+
+    cursor: pointer;
+
+    transition:
+        transform .12s ease;
+
     overflow: hidden;
 }
 
-.puzzle-container iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
+.tile:active {
+    transform: scale(.97);
 }
 
-.warning-line {
+/* EMPTY SPACE */
+
+.empty {
+
+    background:
+        #050708 !important;
+
+    cursor: default;
+}
+
+/* ================================
+   PUZZLE INFORMATION
+================================ */
+
+.puzzle-info {
+
+    color: #555;
+
     font-size: 9px;
-    color: #777;
+
     letter-spacing: 2px;
+
+    margin-top: 12px;
 }
 
-.warning-line span {
-    color: #aaa;
+.moves {
+    color: #888;
+}
+
+/* ================================
+   WARNING
+================================ */
+
+.warning {
+
+    font-size: 9px;
+
+    color: #666;
+
+    letter-spacing: 2px;
+
+    margin-top: 22px;
+}
+
+.warning span {
+    color: #999;
+
     margin-right: 7px;
 }
 
-.secure-section {
+/* ================================
+   SUCCESS SECTION
+================================ */
+
+#success {
+
+    display: none;
+
+    border-top: 1px solid #292e2f;
+
+    padding: 30px 20px;
+
     text-align: center;
-    padding: 25px 30px 35px;
+
+    animation:
+        appear .8s ease;
 }
 
-.secure-divider {
-    height: 1px;
-    background: #242829;
-    margin-bottom: 25px;
-}
+.success-icon {
 
-.secure-status {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: #777;
+    font-size: 24px;
+
     margin-bottom: 15px;
 }
 
-.secure-section p {
-    max-width: 600px;
-    margin: 8px auto;
-    color: #777;
-    font-size: 11px;
-    line-height: 1.7;
+#success h2 {
+
+    font-size: 18px;
+
+    font-weight: normal;
+
+    letter-spacing: 4px;
+
+    margin: 0 0 15px;
 }
 
-.secure-button,
-.email-button {
-    margin-top: 20px;
-    padding: 14px 24px;
-    background: #090b0c;
-    border: 1px solid #444;
-    color: #ccc;
-    font-family: "Courier New", monospace;
+.success-message {
+
+    color: #777;
+
     font-size: 10px;
+
+    line-height: 1.8;
+}
+
+/* ================================
+   SECURE BUTTON
+================================ */
+
+.secure-button {
+
+    display: none;
+
+    margin: 25px auto 0;
+
+    padding: 14px 24px;
+
+    background: #090b0c;
+
+    color: #bbb;
+
+    border: 1px solid #555;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 10px;
+
     letter-spacing: 2px;
+
     cursor: pointer;
+
     transition: .25s;
 }
 
-.secure-button:hover,
-.email-button:hover {
-    border-color: #aaa;
+.secure-button:hover {
+
     background: #151819;
-    box-shadow: 0 0 20px rgba(255,255,255,.06);
+
+    border-color: #aaa;
+
+    box-shadow:
+        0 0 18px
+        rgba(255,255,255,.07);
 }
 
-.terminal-footer {
+/* ================================
+   FOOTER
+================================ */
+
+.footer {
+
     max-width: 1000px;
-    margin: 20px auto 0;
+
+    margin: 18px auto;
+
     display: flex;
-    justify-content: space-between;
+
+    justify-content:
+        space-between;
+
+    color: #383d3e;
+
     font-size: 8px;
-    color: #444;
+
     letter-spacing: 1px;
 }
 
-.inquiry-overlay {
+/* ================================
+   SECURE INQUIRY MODAL
+================================ */
+
+#inquiry {
+
     position: fixed;
+
     inset: 0;
-    background: rgba(0,0,0,.92);
+
+    background:
+        rgba(0,0,0,.94);
+
     display: none;
+
     align-items: center;
+
     justify-content: center;
-    z-index: 99999;
+
+    z-index: 5000;
+
+    padding: 20px;
 }
 
-.inquiry-terminal {
-    width: 90%;
-    max-width: 550px;
+.modal {
+
+    width: min(550px, 100%);
+
     background: #080a0b;
+
     border: 1px solid #444;
-    box-shadow: 0 0 50px #000;
+
+    box-shadow:
+        0 0 50px #000;
 }
 
-.inquiry-header {
+.modal-header {
+
+    padding: 15px;
+
+    border-bottom:
+        1px solid #333;
+
     display: flex;
-    justify-content: space-between;
-    padding: 15px 18px;
-    border-bottom: 1px solid #333;
+
+    justify-content:
+        space-between;
+
     font-size: 10px;
+
     letter-spacing: 2px;
 }
 
-.inquiry-header button {
+.close {
+
+    border: 0;
+
     background: none;
-    border: none;
+
     color: #777;
+
     font-size: 20px;
+
     cursor: pointer;
 }
 
-.inquiry-content {
-    padding: 30px;
+.modal-content {
+
+    padding: 28px;
 }
 
-.terminal-alert {
+.alert {
+
     color: #aaa;
+
     font-size: 11px;
+
     letter-spacing: 2px;
+
     margin-bottom: 20px;
 }
 
-.inquiry-content p {
-    color: #888;
-    font-size: 12px;
-    line-height: 1.7;
-}
+.modal-content p {
 
-.command-line {
-    margin-top: 25px;
-    padding: 12px;
-    background: #050606;
-    border: 1px solid #222;
     color: #777;
-    font-size: 10px;
+
+    font-size: 11px;
+
+    line-height: 1.8;
 }
 
-.command-line span {
-    color: #aaa;
-}
+.command {
 
-.close-button {
-    display: block;
-    margin: 15px auto 0;
-    background: none;
-    border: none;
-    color: #555;
-    font-family: "Courier New", monospace;
+    margin-top: 20px;
+
+    padding: 12px;
+
+    background: #050606;
+
+    border: 1px solid #222;
+
+    color: #666;
+
     font-size: 9px;
+}
+
+.email-button {
+
+    display: block;
+
+    margin: 22px auto 0;
+
+    padding: 14px 22px;
+
+    background: #090b0c;
+
+    border: 1px solid #555;
+
+    color: #bbb;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 10px;
+
     letter-spacing: 2px;
+
     cursor: pointer;
 }
 
+.email-button:hover {
+
+    border-color: #aaa;
+
+    background: #151819;
+}
+
+/* ================================
+   ANIMATION
+================================ */
+
+@keyframes appear {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(12px);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+/* ================================
+   MOBILE
+================================ */
+
+@media (max-width: 600px) {
+
+    .terminal {
+        padding: 14px;
+    }
+
+    .header {
+        padding-bottom: 13px;
+    }
+
+    .agency {
+        font-size: 10px;
+    }
+
+    .classified {
+        font-size: 7px;
+    }
+
+    .panel-header {
+        font-size: 7px;
+    }
+
+    .puzzle-section {
+        padding: 28px 10px;
+    }
+
+    h1 {
+        letter-spacing: 3px;
+    }
+
+    .instructions {
+        font-size: 9px;
+    }
+
+    .footer {
+        font-size: 6px;
+    }
+}
+
 </style>
+</head>
+
+
+<body>
+
+<div class="terminal">
+
+    <!-- ==========================
+         HEADER
+    =========================== -->
+
+    <div class="header">
+
+        <div>
+
+            <div class="agency">
+                IRIS INTELLIGENCE AGENCY
+            </div>
+
+            <div class="file-name">
+                OPERATION BLACK IRIS //
+                INVESTIGATOR NOTES
+            </div>
+
+        </div>
+
+
+        <div class="classified">
+
+            OMEGA<br>
+            CLASSIFIED
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================
+         STATUS
+    =========================== -->
+
+    <div class="status">
+
+        <span class="status-dot"></span>
+
+        SECURE ARCHIVE //
+        ENCRYPTED VISUAL EVIDENCE DETECTED
+
+    </div>
+
+
+    <!-- ==========================
+         MAIN PANEL
+    =========================== -->
+
+    <div class="panel">
+
+
+        <div class="panel-header">
+
+            <span>
+                FILE: INVESTIGATOR_NOTES
+            </span>
+
+            <span>
+                STATUS: FRAGMENTED
+            </span>
+
+        </div>
+
+
+        <!-- ======================
+             PUZZLE
+        ======================= -->
+
+        <div class="puzzle-section">
+
+            <div class="symbol">
+                ◈
+            </div>
+
+
+            <h1>
+                RECONSTRUCT THE EVIDENCE
+            </h1>
+
+
+            <div class="instructions">
+
+                The visual evidence has been fragmented.<br>
+
+                Rearrange the encrypted image
+                to restore the original file.
+
+            </div>
+
+
+            <!-- CODED SLIDING PUZZLE -->
+
+            <div id="puzzle"></div>
+
+
+            <div class="puzzle-info">
+
+                MOVES:
+                <span
+                    id="moves"
+                    class="moves">
+                    0
+                </span>
+
+            </div>
+
+
+            <div class="warning">
+
+                <span>⚠</span>
+
+                VISUAL RECONSTRUCTION REQUIRED
+
+            </div>
+
+        </div>
+
+
+        <!-- ======================
+             SUCCESS
+        ======================= -->
+
+        <div id="success">
+
+            <div class="success-icon">
+                ◈
+            </div>
+
+
+            <h2>
+                VISUAL FILE RESTORED
+            </h2>
+
+
+            <div class="success-message">
+
+                Reconstruction verified.<br>
+
+                Secondary security layer detected.
+
+            </div>
+
+
+            <button
+                id="secureButton"
+                class="secure-button"
+                onclick="openInquiry()">
+
+                INITIATE SECURE INQUIRY
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================
+         FOOTER
+    =========================== -->
+
+    <div class="footer">
+
+        <span>
+            BLACK IRIS //
+            SECURE INVESTIGATIVE NETWORK
+        </span>
+
+        <span>
+            CONNECTION ENCRYPTED
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- ==============================
+     SECURE INQUIRY MODAL
+================================ -->
+
+<div id="inquiry">
+
+    <div class="modal">
+
+
+        <div class="modal-header">
+
+            <span>
+                BLACK IRIS // CENTRAL COMMAND
+            </span>
+
+
+            <button
+                class="close"
+                onclick="closeInquiry()">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <div class="modal-content">
+
+
+            <div class="alert">
+
+                AUTHORIZATION SEQUENCE REQUIRED
+
+            </div>
+
+
+            <p>
+
+                Investigator Notes remain restricted
+                under BLACK IRIS security protocol.
+
+            </p>
+
+
+            <p>
+
+                Contact Central Command to obtain
+                authorization for the archived file.
+
+            </p>
+
+
+            <div class="command">
+
+                &gt; SECURE CHANNEL READY
+
+            </div>
+
+
+            <button
+                class="email-button"
+                onclick="contactAgency()">
+
+                CONTACT CENTRAL COMMAND
+
+            </button>
+
+
+        </div>
+
+    </div>
+
+</div>
 
 
 <script>
 
-function openInquiry() {
-    document.getElementById("secureInquiry").style.display = "flex";
+/* ==========================================
+   BLACK IRIS
+   SLIDING PUZZLE ENGINE
+========================================== */
+
+
+/*
+    3 × 3 PUZZLE
+
+    1 2 3
+    4 5 6
+    7 8 _
+*/
+
+const puzzle =
+    document.getElementById("puzzle");
+
+const movesDisplay =
+    document.getElementById("moves");
+
+const SIZE = 3;
+
+const TOTAL =
+    SIZE * SIZE;
+
+
+let board = [];
+
+let moves = 0;
+
+let solved = false;
+
+
+/* ==========================================
+   CREATE SOLVED BOARD
+========================================== */
+
+function createSolvedBoard() {
+
+    board = [];
+
+    for (
+        let i = 1;
+        i < TOTAL;
+        i++
+    ) {
+
+        board.push(i);
+
+    }
+
+    /*
+        0 represents
+        the empty space.
+    */
+
+    board.push(0);
 }
+
+
+/* ==========================================
+   FIND EMPTY TILE
+========================================== */
+
+function emptyIndex() {
+
+    return board.indexOf(0);
+
+}
+
+
+/* ==========================================
+   FIND POSSIBLE MOVES
+========================================== */
+
+function getNeighbors(index) {
+
+    const row =
+        Math.floor(index / SIZE);
+
+    const col =
+        index % SIZE;
+
+
+    const neighbors = [];
+
+
+    if (row > 0) {
+
+        neighbors.push(
+            index - SIZE
+        );
+
+    }
+
+
+    if (row < SIZE - 1) {
+
+        neighbors.push(
+            index + SIZE
+        );
+
+    }
+
+
+    if (col > 0) {
+
+        neighbors.push(
+            index - 1
+        );
+
+    }
+
+
+    if (col < SIZE - 1) {
+
+        neighbors.push(
+            index + 1
+        );
+
+    }
+
+
+    return neighbors;
+}
+
+
+/* ==========================================
+   SHUFFLE
+========================================== */
+
+function shufflePuzzle() {
+
+    let previous = -1;
+
+
+    /*
+        Make 150 legitimate moves.
+
+        This guarantees the puzzle
+        remains solvable.
+    */
+
+    for (
+        let i = 0;
+        i < 150;
+        i++
+    ) {
+
+        const empty =
+            emptyIndex();
+
+
+        let possible =
+            getNeighbors(empty);
+
+
+        /*
+            Don't immediately undo
+            the previous shuffle move.
+        */
+
+        possible =
+            possible.filter(
+                index =>
+                    index !== previous
+            );
+
+
+        const chosen =
+            possible[
+                Math.floor(
+                    Math.random() *
+                    possible.length
+                )
+            ];
+
+
+        previous =
+            empty;
+
+
+        [
+            board[empty],
+            board[chosen]
+        ] =
+        [
+            board[chosen],
+            board[empty]
+        ];
+
+    }
+}
+
+
+/* ==========================================
+   DRAW PUZZLE
+========================================== */
+
+function drawPuzzle() {
+
+    puzzle.innerHTML = "";
+
+
+    board.forEach(
+        (piece, index) => {
+
+
+            const tile =
+                document.createElement("div");
+
+
+            tile.className =
+                "tile";
+
+
+            /*
+                EMPTY SPACE
+            */
+
+            if (piece === 0) {
+
+                tile.classList.add(
+                    "empty"
+                );
+
+            }
+
+
+            /*
+                IMAGE TILE
+            */
+
+            else {
+
+                const originalIndex =
+                    piece - 1;
+
+
+                const row =
+                    Math.floor(
+                        originalIndex /
+                        SIZE
+                    );
+
+
+                const col =
+                    originalIndex %
+                    SIZE;
+
+
+                /*
+                    Each tile displays
+                    its original part
+                    of the image.
+                */
+
+                tile.style.backgroundPosition =
+                    `${col * 50}% ${row * 50}%`;
+
+
+                tile.addEventListener(
+                    "click",
+                    () =>
+                        moveTile(index)
+                );
+
+            }
+
+
+            puzzle.appendChild(tile);
+
+        }
+    );
+
+
+    movesDisplay.textContent =
+        moves;
+}
+
+
+/* ==========================================
+   MOVE TILE
+========================================== */
+
+function moveTile(index) {
+
+    if (solved)
+        return;
+
+
+    const empty =
+        emptyIndex();
+
+
+    const neighbors =
+        getNeighbors(empty);
+
+
+    /*
+        Only tiles adjacent
+        to the empty space
+        can move.
+    */
+
+    if (
+        !neighbors.includes(index)
+    ) {
+
+        return;
+
+    }
+
+
+    [
+        board[index],
+        board[empty]
+    ] =
+    [
+        board[empty],
+        board[index]
+    ];
+
+
+    moves++;
+
+
+    drawPuzzle();
+
+
+    checkSolved();
+}
+
+
+/* ==========================================
+   CHECK SOLUTION
+========================================== */
+
+function checkSolved() {
+
+
+    for (
+        let i = 0;
+        i < TOTAL - 1;
+        i++
+    ) {
+
+        if (
+            board[i] !== i + 1
+        ) {
+
+            return;
+
+        }
+
+    }
+
+
+    if (
+        board[TOTAL - 1] !== 0
+    ) {
+
+        return;
+
+    }
+
+
+    solved = true;
+
+
+    /*
+        Give the player a tiny delay
+        before revealing the result.
+    */
+
+    setTimeout(
+        () => {
+
+            document
+                .getElementById(
+                    "success"
+                )
+                .style.display =
+                "block";
+
+
+            document
+                .getElementById(
+                    "secureButton"
+                )
+                .style.display =
+                "inline-block";
+
+
+            document
+                .getElementById(
+                    "success"
+                )
+                .scrollIntoView({
+                    behavior: "smooth"
+                });
+
+        },
+
+        500
+    );
+}
+
+
+/* ==========================================
+   INITIALIZE PUZZLE
+========================================== */
+
+createSolvedBoard();
+
+shufflePuzzle();
+
+drawPuzzle();
+
+
+/* ==========================================
+   SECURE INQUIRY
+========================================== */
+
+function openInquiry() {
+
+    document
+        .getElementById(
+            "inquiry"
+        )
+        .style.display =
+        "flex";
+}
+
 
 function closeInquiry() {
-    document.getElementById("secureInquiry").style.display = "none";
+
+    document
+        .getElementById(
+            "inquiry"
+        )
+        .style.display =
+        "none";
 }
 
-function contactBlackIris() {
 
-    const agencyEmail = "YOUR-BLACK-IRIS-EMAIL-HERE";
+/* ==========================================
+   BLACK IRIS EMAIL
+========================================== */
+
+function contactAgency() {
+
+
+    /*
+        YOUR BLACK IRIS EMAIL
+    */
+
+    const agencyEmail =
+        "black.iris.devision@gmail.com";
+
 
     const subject =
         "BLACK IRIS // INVESTIGATOR NOTES // AUTHORIZATION";
+
 
     const body =
 `BLACK IRIS CENTRAL COMMAND,
 
 Investigator Notes have been accessed.
 
-The encrypted visual evidence has been reconstructed.
+The encrypted visual evidence has been successfully reconstructed.
 
-Authorization is required to proceed with the archived file.
+Secondary authorization is required to proceed.
 
 Please provide further instructions.
 
 — Assigned Investigator`;
+
+
+    /*
+        Opens the user's email application
+        with the recipient, subject and
+        message already prepared.
+    */
 
     window.location.href =
         "mailto:" +
@@ -459,6 +1375,10 @@ Please provide further instructions.
         encodeURIComponent(subject) +
         "&body=" +
         encodeURIComponent(body);
+
 }
 
 </script>
+
+</body>
+</html>
