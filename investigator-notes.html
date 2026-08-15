@@ -53,6 +53,7 @@ body::after{
     padding-bottom:16px;
     display:flex;
     justify-content:space-between;
+    align-items:flex-start;
 }
 
 .agency{
@@ -148,7 +149,7 @@ h2{
 }
 
 /* =========================
-   IMAGE SLIDING PUZZLE
+   IMAGE PUZZLE
 ========================= */
 
 #puzzle{
@@ -189,6 +190,10 @@ h2{
 .moves{
     color:#aaa;
 }
+
+/* =========================
+   BUTTONS
+========================= */
 
 .button{
     margin-top:22px;
@@ -243,7 +248,60 @@ h2{
 }
 
 /* =========================
-   PHRASE SEQUENCES
+   PERMANENT INCOMPLETE
+========================= */
+
+#permanentIncomplete{
+    position:sticky;
+    top:12px;
+    z-index:100;
+    width:min(850px,100%);
+    margin:0 auto 35px;
+    padding:15px 20px;
+    border:1px solid #202526;
+    background:rgba(5,7,8,.96);
+    box-shadow:0 8px 25px rgba(0,0,0,.5);
+}
+
+.incomplete-label{
+    color:#414647;
+    font-size:8px;
+    letter-spacing:3px;
+    margin-bottom:9px;
+}
+
+.incomplete-word{
+    font-size:24px;
+    letter-spacing:4px;
+    color:#777;
+}
+
+.draggable-t{
+    display:inline-block;
+    color:#777;
+    cursor:grab;
+    user-select:none;
+    transition:.2s;
+}
+
+.draggable-t:hover{
+    color:#aaa;
+    text-shadow:0 0 8px rgba(255,255,255,.15);
+}
+
+.draggable-t.dragging{
+    opacity:.2;
+}
+
+.incomplete-hint{
+    margin-top:7px;
+    color:#303536;
+    font-size:7px;
+    letter-spacing:2px;
+}
+
+/* =========================
+   SEQUENCES
 ========================= */
 
 .sequence{
@@ -262,11 +320,19 @@ h2{
 }
 
 .word-line{
+    min-height:65px;
     display:flex;
     justify-content:center;
+    align-items:center;
     flex-wrap:wrap;
     gap:8px;
     margin:14px 0;
+    padding:8px;
+    border:1px solid transparent;
+}
+
+.word-line.drop-ready{
+    border-color:#383d3e;
 }
 
 .word{
@@ -287,6 +353,37 @@ h2{
 
 .word.dragging{
     opacity:.3;
+}
+
+/* =========================
+   T DROP SLOT
+========================= */
+
+#thirdDropLine{
+    min-height:70px;
+    border:1px dashed #292e2f;
+    transition:.25s;
+}
+
+#thirdDropLine.drag-over{
+    border-color:#555;
+    box-shadow:inset 0 0 20px rgba(255,255,255,.025);
+}
+
+.t-slot{
+    width:52px;
+    height:52px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border:1px dashed #383d3e;
+    color:#333;
+    font-size:22px;
+}
+
+.t-slot.filled{
+    border-color:#555;
+    color:#aaa;
 }
 
 /* =========================
@@ -346,8 +443,6 @@ h2{
     background:#666;
 }
 
-/* subtle differences */
-
 .eye.subtle1{
     transform:rotate(2deg);
 }
@@ -366,44 +461,12 @@ h2{
     height:29px;
 }
 
-.eye.subtle3::after{
-    transform:translate(-50%,-50%) translateX(2px);
-}
-
 /* =========================
-   INCOMPLETE / DRAG T
+   FINAL EYE
 ========================= */
 
-.incomplete-area{
-    margin:45px auto 10px;
-    padding:25px;
-    border-top:1px solid #1b1f20;
-}
-
-.incomplete-word{
-    display:inline-block;
-    font-size:24px;
-    letter-spacing:4px;
-    color:#777;
-    user-select:none;
-}
-
-.draggable-t{
-    display:inline-block;
-    cursor:grab;
-    color:#777;
-}
-
-.draggable-t:hover{
-    color:#aaa;
-}
-
-.draggable-t.dragging{
-    opacity:.2;
-}
-
 .final-eye{
-    margin-top:20px;
+    margin-top:25px;
     font-size:70px;
     letter-spacing:8px;
     color:#b00000;
@@ -482,6 +545,10 @@ h2{
         font-size:9px;
     }
 
+    .incomplete-word{
+        font-size:20px;
+    }
+
     .footer{
         font-size:6px;
     }
@@ -494,15 +561,10 @@ h2{
 <div class="terminal">
 
 <div class="header">
-
 <div>
-<div class="agency">
-IRIS INTELLIGENCE AGENCY
-</div>
-
+<div class="agency">IRIS INTELLIGENCE AGENCY</div>
 <div class="file-name">
-OPERATION BLACK IRIS //
-INVESTIGATOR NOTES
+OPERATION BLACK IRIS // INVESTIGATOR NOTES
 </div>
 </div>
 
@@ -510,7 +572,6 @@ INVESTIGATOR NOTES
 OMEGA<br>
 CLASSIFIED
 </div>
-
 </div>
 
 <div class="status">
@@ -527,10 +588,9 @@ SECURE ARCHIVE // VISUAL EVIDENCE DETECTED
 <span>BLACK IRIS</span>
 </div>
 
-
-<!-- =================================
-     STAGE 1 — IMAGE PUZZLE
-================================= -->
+<!-- =========================
+     IMAGE PUZZLE
+========================= -->
 
 <section id="puzzleStage" class="section">
 
@@ -546,8 +606,7 @@ Restore the original image.
 <div id="puzzle"></div>
 
 <div class="puzzle-info">
-MOVES:
-<span id="moves" class="moves">0</span>
+MOVES: <span id="moves" class="moves">0</span>
 </div>
 
 <div class="message">
@@ -556,10 +615,9 @@ MOVES:
 
 </section>
 
-
-<!-- =================================
+<!-- =========================
      PUZZLE SUCCESS
-================================= -->
+========================= -->
 
 <section id="successStage" class="section hidden">
 
@@ -578,10 +636,9 @@ CONTACT CENTRAL COMMAND
 
 </section>
 
-
-<!-- =================================
+<!-- =========================
      AGENCY
-================================= -->
+========================= -->
 
 <section id="agencyStage" class="section hidden">
 
@@ -590,12 +647,9 @@ CONTACT CENTRAL COMMAND
 <h1>CENTRAL COMMAND</h1>
 
 <div class="instructions">
-
 The reconstructed evidence requires
 external authorization.<br><br>
-
 Contact BLACK IRIS Central Command.
-
 </div>
 
 <div class="code-box">
@@ -624,10 +678,9 @@ EVIDENCE RECEIVED
 
 </section>
 
-
-<!-- =================================
+<!-- =========================
      CODE
-================================= -->
+========================= -->
 
 <section id="codeStage" class="section hidden">
 
@@ -636,12 +689,9 @@ EVIDENCE RECEIVED
 <h1>ARCHIVE ACCESS</h1>
 
 <div class="instructions">
-
 The recovered evidence contains an
 authorization sequence.<br><br>
-
 Enter the six-digit sequence.
-
 </div>
 
 <div class="code-box">
@@ -667,28 +717,47 @@ ACCESS ARCHIVE
 
 </section>
 
-
-<!-- =================================
-     INVESTIGATOR SEQUENCES
-================================= -->
+<!-- =========================
+     INVESTIGATOR NOTES
+     UNLOCKED AFTER 170301
+========================= -->
 
 <section id="sequenceStage" class="section hidden">
+
+<!-- THIS IS VISIBLE FROM THE START -->
+<div id="permanentIncomplete">
+
+<div class="incomplete-label">
+ARCHIVE STATUS
+</div>
+
+<div class="incomplete-word">
+INCOMPLE<span
+id="dragT"
+class="draggable-t"
+draggable="true">T</span>E
+</div>
+
+<div class="incomplete-hint">
+STATUS: INCOMPLETE
+</div>
+
+</div>
 
 <div class="symbol">◈</div>
 
 <h1>INVESTIGATOR NOTES</h1>
 
 <div class="instructions">
-
 Recovered fragments appear to contain
 three related transmissions.<br><br>
 
 Their order matters.
-
 </div>
 
-
-<!-- SEQUENCE 1 -->
+<!-- =========================
+     SEQUENCE 1
+========================= -->
 
 <div class="sequence">
 
@@ -696,7 +765,7 @@ Their order matters.
 TRANSMISSION // 01
 </div>
 
-<div id="seq1" class="word-line">
+<div id="seq1a" class="word-line">
 
 <div class="word" draggable="true">HERE</div>
 <div class="word" draggable="true">I</div>
@@ -704,7 +773,7 @@ TRANSMISSION // 01
 
 </div>
 
-<div class="word-line">
+<div id="seq1b" class="word-line">
 
 <div class="word" draggable="true">ME</div>
 <div class="word" draggable="true">YOU</div>
@@ -721,8 +790,9 @@ VERIFY TRANSMISSION
 
 </div>
 
-
-<!-- SEQUENCE 2 -->
+<!-- =========================
+     SEQUENCE 2
+========================= -->
 
 <div id="sequence2" class="sequence hidden">
 
@@ -755,10 +825,9 @@ VERIFY TRANSMISSION
 
 </div>
 
-
-<!-- =================================
+<!-- =========================
      EYE HUNT 1
-================================= -->
+========================= -->
 
 <div id="eyeHunt1" class="sequence hidden">
 
@@ -776,16 +845,25 @@ One image does not belong.
 
 </div>
 
-
-<!-- =================================
+<!-- =========================
      SEQUENCE 3
-================================= -->
+========================= -->
 
 <div id="sequence3" class="sequence hidden">
 
 <div class="sequence-label">
 TRANSMISSION // 03
 </div>
+
+<div class="instructions">
+The final transmission appears incomplete.
+</div>
+
+<!--
+    The T is NOT supplied here.
+    She must discover that the T
+    from INCOMPLETE belongs here.
+-->
 
 <div id="seq3a" class="word-line">
 
@@ -796,11 +874,18 @@ TRANSMISSION // 03
 
 </div>
 
-<div id="seq3b" class="word-line">
+<div id="thirdDropLine" class="word-line">
 
 <div class="word" draggable="true">SEE</div>
 <div class="word" draggable="true">ME</div>
-<div class="word" draggable="true">CAN'T</div>
+<div class="word" draggable="true">CAN'</div>
+<div
+id="tDropSlot"
+class="t-slot"
+>
+T
+</div>
+
 <div class="word" draggable="true">YOU</div>
 
 </div>
@@ -813,10 +898,9 @@ VERIFY TRANSMISSION
 
 </div>
 
-
-<!-- =================================
+<!-- =========================
      EYE HUNT 2
-================================= -->
+========================= -->
 
 <div id="eyeHunt2" class="sequence hidden">
 
@@ -835,10 +919,9 @@ Something here is slightly wrong.
 
 </div>
 
-
-<!-- =================================
-     INCOMPLETE
-================================= -->
+<!-- =========================
+     FINAL
+========================= -->
 
 <div id="finalStage" class="sequence hidden">
 
@@ -846,25 +929,7 @@ Something here is slightly wrong.
 ARCHIVE // STATUS
 </div>
 
-<div class="incomplete-area">
-
-<div class="incomplete-word"
-id="incompleteWord">
-
-INCOMPLE<span
-id="dragT"
-class="draggable-t"
-draggable="true">T</span>E
-
-</div>
-
-<div class="message">
-ARCHIVE STATUS: INCOMPLETE
-</div>
-
-</div>
-
-<div id="finalEye" class="hidden">
+<div id="finalReveal">
 
 <div class="final-eye">
 EYE
@@ -881,7 +946,6 @@ IT SEES YOU
 </section>
 
 </div>
-
 
 <div class="footer">
 
@@ -901,163 +965,195 @@ CONNECTION ENCRYPTED
 <script>
 
 /* =====================================
-   IMAGE PUZZLE
+   IMAGE SLIDING PUZZLE
 ===================================== */
 
-const puzzle=document.getElementById("puzzle");
-const movesDisplay=document.getElementById("moves");
+const puzzle =
+document.getElementById("puzzle");
 
-const SIZE=3;
-const TOTAL=9;
+const movesDisplay =
+document.getElementById("moves");
 
-let board=[];
-let moves=0;
-let solved=false;
+const SIZE = 3;
+const TOTAL = 9;
+
+let board = [];
+let moves = 0;
+let solved = false;
 
 function createSolvedBoard(){
 
-board=[];
+    board = [];
 
-for(let i=1;i<TOTAL;i++){
-board.push(i);
-}
+    for(let i=1;i<TOTAL;i++){
+        board.push(i);
+    }
 
-board.push(0);
-
+    board.push(0);
 }
 
 function emptyIndex(){
-return board.indexOf(0);
+    return board.indexOf(0);
 }
 
 function getNeighbors(index){
 
-const row=Math.floor(index/SIZE);
-const col=index%SIZE;
+    const row =
+    Math.floor(index / SIZE);
 
-const result=[];
+    const col =
+    index % SIZE;
 
-if(row>0) result.push(index-SIZE);
-if(row<SIZE-1) result.push(index+SIZE);
-if(col>0) result.push(index-1);
-if(col<SIZE-1) result.push(index+1);
+    const result = [];
 
-return result;
+    if(row > 0)
+        result.push(index - SIZE);
 
+    if(row < SIZE - 1)
+        result.push(index + SIZE);
+
+    if(col > 0)
+        result.push(index - 1);
+
+    if(col < SIZE - 1)
+        result.push(index + 1);
+
+    return result;
 }
 
 function shufflePuzzle(){
 
-let previous=-1;
+    let previous = -1;
 
-for(let i=0;i<150;i++){
+    for(let i=0;i<150;i++){
 
-const empty=emptyIndex();
+        const empty =
+        emptyIndex();
 
-const choices=getNeighbors(empty)
-.filter(x=>x!==previous);
+        const choices =
+        getNeighbors(empty)
+        .filter(x => x !== previous);
 
-const chosen=
-choices[Math.floor(Math.random()*choices.length)];
+        const chosen =
+        choices[
+            Math.floor(
+                Math.random() * choices.length
+            )
+        ];
 
-previous=empty;
+        previous = empty;
 
-[board[empty],board[chosen]]=
-[board[chosen],board[empty]];
-
-}
-
+        [
+            board[empty],
+            board[chosen]
+        ] =
+        [
+            board[chosen],
+            board[empty]
+        ];
+    }
 }
 
 function drawPuzzle(){
 
-puzzle.innerHTML="";
+    puzzle.innerHTML = "";
 
-board.forEach((piece,index)=>{
+    board.forEach((piece,index)=>{
 
-const tile=document.createElement("div");
+        const tile =
+        document.createElement("div");
 
-tile.className="tile";
+        tile.className = "tile";
 
-if(piece===0){
+        if(piece === 0){
 
-tile.classList.add("empty");
+            tile.classList.add("empty");
 
-}else{
+        }else{
 
-const original=piece-1;
+            const original =
+            piece - 1;
 
-const row=Math.floor(original/SIZE);
-const col=original%SIZE;
+            const row =
+            Math.floor(
+                original / SIZE
+            );
 
-tile.style.backgroundPosition=
-`${col*50}% ${row*50}%`;
+            const col =
+            original % SIZE;
 
-tile.addEventListener(
-"click",
-()=>moveTile(index)
-);
+            tile.style.backgroundPosition =
+            `${col * 50}% ${row * 50}%`;
 
-}
+            tile.addEventListener(
+                "click",
+                ()=>moveTile(index)
+            );
+        }
 
-puzzle.appendChild(tile);
+        puzzle.appendChild(tile);
 
-});
+    });
 
-movesDisplay.textContent=moves;
-
+    movesDisplay.textContent = moves;
 }
 
 function moveTile(index){
 
-if(solved)return;
+    if(solved)
+        return;
 
-const empty=emptyIndex();
+    const empty =
+    emptyIndex();
 
-if(!getNeighbors(empty).includes(index))
-return;
+    if(!getNeighbors(empty).includes(index))
+        return;
 
-[board[index],board[empty]]=
-[board[empty],board[index]];
+    [
+        board[index],
+        board[empty]
+    ] =
+    [
+        board[empty],
+        board[index]
+    ];
 
-moves++;
+    moves++;
 
-drawPuzzle();
-checkSolved();
+    drawPuzzle();
 
+    checkSolved();
 }
 
 function checkSolved(){
 
-for(let i=0;i<TOTAL-1;i++){
+    for(let i=0;i<TOTAL-1;i++){
 
-if(board[i]!==i+1)
-return;
+        if(board[i] !== i+1)
+            return;
+    }
 
-}
+    if(board[TOTAL-1] !== 0)
+        return;
 
-if(board[TOTAL-1]!==0)
-return;
+    solved = true;
 
-solved=true;
+    setTimeout(()=>{
 
-setTimeout(()=>{
+        document
+        .getElementById("puzzleStage")
+        .classList.add("hidden");
 
-document
-.getElementById("puzzleStage")
-.classList.add("hidden");
+        document
+        .getElementById("successStage")
+        .classList.remove("hidden");
 
-document
-.getElementById("successStage")
-.classList.remove("hidden");
+        document
+        .getElementById("statusText")
+        .textContent =
+        "STATUS: RECONSTRUCTION VERIFIED";
 
-document
-.getElementById("statusText")
-.textContent=
-"STATUS: RECONSTRUCTION VERIFIED";
-
-},500);
-
+    },500);
 }
 
 createSolvedBoard();
@@ -1071,30 +1167,29 @@ drawPuzzle();
 
 function openAgencyStage(){
 
-document
-.getElementById("successStage")
-.classList.add("hidden");
+    document
+    .getElementById("successStage")
+    .classList.add("hidden");
 
-document
-.getElementById("agencyStage")
-.classList.remove("hidden");
+    document
+    .getElementById("agencyStage")
+    .classList.remove("hidden");
 
-document
-.getElementById("statusText")
-.textContent=
-"STATUS: EXTERNAL AUTHORIZATION";
-
+    document
+    .getElementById("statusText")
+    .textContent =
+    "STATUS: EXTERNAL AUTHORIZATION";
 }
 
 function contactAgency(){
 
-const email=
-"black.iris.devision@gmail.com";
+    const email =
+    "black.iris.devision@gmail.com";
 
-const subject=
-"BLACK IRIS // INVESTIGATOR NOTES // AUTHORIZATION";
+    const subject =
+    "BLACK IRIS // INVESTIGATOR NOTES // AUTHORIZATION";
 
-const body=
+    const body =
 `BLACK IRIS CENTRAL COMMAND,
 
 The visual evidence has been successfully reconstructed.
@@ -1105,74 +1200,78 @@ Please provide the next evidence.
 
 — Assigned Investigator`;
 
-window.location.href=
-"mailto:"+email+
-"?subject="+encodeURIComponent(subject)+
-"&body="+encodeURIComponent(body);
-
+    window.location.href =
+    "mailto:" +
+    email +
+    "?subject=" +
+    encodeURIComponent(subject) +
+    "&body=" +
+    encodeURIComponent(body);
 }
 
 function showCodeStage(){
 
-document
-.getElementById("agencyStage")
-.classList.add("hidden");
+    document
+    .getElementById("agencyStage")
+    .classList.add("hidden");
 
-document
-.getElementById("codeStage")
-.classList.remove("hidden");
+    document
+    .getElementById("codeStage")
+    .classList.remove("hidden");
 
-document
-.getElementById("statusText")
-.textContent=
-"STATUS: AUTHORIZATION REQUIRED";
-
+    document
+    .getElementById("statusText")
+    .textContent =
+    "STATUS: AUTHORIZATION REQUIRED";
 }
 
 
 /* =====================================
-   CODE 170301
+   CODE
 ===================================== */
 
 function verifyCode(){
 
-const input=
-document.getElementById("codeInput");
+    const input =
+    document.getElementById("codeInput");
 
-const msg=
-document.getElementById("codeMessage");
+    const msg =
+    document.getElementById("codeMessage");
 
-if(input.value==="170301"){
+    if(input.value === "170301"){
 
-msg.textContent=
-"AUTHORIZATION ACCEPTED.";
+        msg.textContent =
+        "AUTHORIZATION ACCEPTED.";
 
-setTimeout(()=>{
+        setTimeout(()=>{
 
-document
-.getElementById("codeStage")
-.classList.add("hidden");
+            document
+            .getElementById("codeStage")
+            .classList.add("hidden");
 
-document
-.getElementById("sequenceStage")
-.classList.remove("hidden");
+            document
+            .getElementById("sequenceStage")
+            .classList.remove("hidden");
 
-document
-.getElementById("statusText")
-.textContent=
-"STATUS: INVESTIGATOR NOTES";
+            document
+            .getElementById("statusText")
+            .textContent =
+            "STATUS: INVESTIGATOR NOTES // ARCHIVE INCOMPLETE";
 
-},700);
+            window.scrollTo({
+                top:0,
+                behavior:"smooth"
+            });
 
-}else{
+        },700);
 
-msg.textContent=
-"ACCESS DENIED.";
+    }else{
 
-input.value="";
+        msg.textContent =
+        "ACCESS DENIED.";
 
-}
-
+        input.value = "";
+    }
 }
 
 document
@@ -1180,174 +1279,169 @@ document
 .addEventListener(
 "keydown",
 e=>{
-if(e.key==="Enter")verifyCode();
+    if(e.key === "Enter")
+        verifyCode();
 });
 
 
 /* =====================================
-   DRAGGABLE WORDS
+   WORD DRAGGING
 ===================================== */
 
-let dragged=null;
+let draggedWord = null;
 
 document.addEventListener(
 "dragstart",
 e=>{
 
-if(e.target.classList.contains("word")){
+    if(e.target.classList.contains("word")){
 
-dragged=e.target;
-e.target.classList.add("dragging");
+        draggedWord = e.target;
 
-}
+        e.target.classList.add("dragging");
 
+        e.dataTransfer.effectAllowed = "move";
+
+        e.dataTransfer.setData(
+            "text/plain",
+            e.target.textContent.trim()
+        );
+    }
 });
 
 document.addEventListener(
 "dragend",
 e=>{
 
-if(e.target.classList.contains("word")){
+    if(e.target.classList.contains("word")){
 
-e.target.classList.remove("dragging");
+        e.target.classList.remove("dragging");
 
-}
-
+        draggedWord = null;
+    }
 });
 
 document.addEventListener(
 "dragover",
 e=>{
 
-if(e.target.classList.contains("word"))
-e.preventDefault();
+    if(e.target.classList.contains("word")){
 
+        e.preventDefault();
+    }
 });
 
 document.addEventListener(
 "drop",
 e=>{
 
-if(
-e.target.classList.contains("word") &&
-dragged &&
-dragged!==e.target
-){
+    if(
+        e.target.classList.contains("word") &&
+        draggedWord &&
+        draggedWord !== e.target
+    ){
 
-e.preventDefault();
+        e.preventDefault();
 
-const parent=e.target.parentNode;
+        const parent =
+        e.target.parentNode;
 
-parent.insertBefore(
-dragged,
-e.target
-);
-
-}
-
+        parent.insertBefore(
+            draggedWord,
+            e.target
+        );
+    }
 });
 
 
 function words(id){
 
-return[
-...document
-.getElementById(id)
-.querySelectorAll(".word")
-]
-.map(x=>x.textContent.trim())
-.join(" ");
-
+    return [
+        ...document
+        .getElementById(id)
+        .querySelectorAll(".word")
+    ]
+    .map(x=>x.textContent.trim())
+    .join(" ");
 }
 
 
 /* =====================================
    SEQUENCE 1
-
-   I AM HERE
-   YOU CAN SEE ME
 ===================================== */
 
 function checkSequence1(){
 
-const first=words("seq1");
+    const first =
+    words("seq1a");
 
-const second=
-[...document
-.querySelectorAll(
-"#seq1 + .word-line .word"
-)]
-.map(x=>x.textContent.trim())
-.join(" ");
+    const second =
+    words("seq1b");
 
-if(
-first==="I AM HERE" &&
-second==="YOU CAN SEE ME"
-){
+    if(
+        first === "I AM HERE" &&
+        second === "YOU CAN SEE ME"
+    ){
 
-document
-.getElementById("seq1msg")
-.textContent=
-"TRANSMISSION 01 ACCEPTED.";
+        document
+        .getElementById("seq1msg")
+        .textContent =
+        "TRANSMISSION 01 ACCEPTED.";
 
-document
-.getElementById("sequence2")
-.classList.remove("hidden");
+        document
+        .getElementById("sequence2")
+        .classList.remove("hidden");
 
-document
-.getElementById("statusText")
-.textContent=
-"STATUS: TRANSMISSION 02";
+        document
+        .getElementById("statusText")
+        .textContent =
+        "STATUS: TRANSMISSION 02";
 
-}else{
+    }else{
 
-document
-.getElementById("seq1msg")
-.textContent=
-"SEQUENCE INCONSISTENT.";
-
-}
-
+        document
+        .getElementById("seq1msg")
+        .textContent =
+        "SEQUENCE INCONSISTENT.";
+    }
 }
 
 
 /* =====================================
    SEQUENCE 2
-
-   AM I HERE
-   CAN YOU SEE ME
 ===================================== */
 
 function checkSequence2(){
 
-const first=words("seq2a");
-const second=words("seq2b");
+    const first =
+    words("seq2a");
 
-if(
-first==="AM I HERE" &&
-second==="CAN YOU SEE ME"
-){
+    const second =
+    words("seq2b");
 
-document
-.getElementById("seq2msg")
-.textContent=
-"TRANSMISSION 02 ACCEPTED.";
+    if(
+        first === "AM I HERE" &&
+        second === "CAN YOU SEE ME"
+    ){
 
-document
-.getElementById("eyeHunt1")
-.classList.remove("hidden");
+        document
+        .getElementById("seq2msg")
+        .textContent =
+        "TRANSMISSION 02 ACCEPTED.";
 
-createEyeHunt1();
+        document
+        .getElementById("eyeHunt1")
+        .classList.remove("hidden");
 
-}else{
+        createEyeHunt1();
 
-document
-.getElementById("seq2msg")
-.textContent=
-"SEQUENCE INCONSISTENT.";
+    }else{
 
-}
-
+        document
+        .getElementById("seq2msg")
+        .textContent =
+        "SEQUENCE INCONSISTENT.";
+    }
 }
 
 
@@ -1357,281 +1451,357 @@ document
 
 function createEyeHunt1(){
 
-const grid=
-document.getElementById("eyeGrid1");
+    const grid =
+    document.getElementById("eyeGrid1");
 
-grid.innerHTML="";
+    grid.innerHTML = "";
 
-const correct=
-Math.floor(Math.random()*25);
+    const correct =
+    Math.floor(Math.random() * 25);
 
-for(let i=0;i<25;i++){
+    for(let i=0;i<25;i++){
 
-const button=
-document.createElement("button");
+        const button =
+        document.createElement("button");
 
-button.className="eye-choice";
+        button.className =
+        "eye-choice";
 
-const eye=
-document.createElement("div");
+        const eye =
+        document.createElement("div");
 
-eye.className="eye";
+        eye.className = "eye";
 
-if(i===correct){
+        if(i === correct){
 
-eye.classList.add("subtle1");
-button.dataset.correct="true";
+            eye.classList.add("subtle1");
 
-}
+            button.dataset.correct =
+            "true";
+        }
 
-button.appendChild(eye);
-grid.appendChild(button);
+        button.appendChild(eye);
 
-button.onclick=()=>{
+        grid.appendChild(button);
 
-if(button.dataset.correct==="true"){
+        button.onclick = ()=>{
 
-document
-.getElementById("eyeMsg1")
-.textContent=
-"VISUAL ANOMALY CONFIRMED.";
+            if(button.dataset.correct === "true"){
 
-document
-.getElementById("sequence3")
-.classList.remove("hidden");
+                document
+                .getElementById("eyeMsg1")
+                .textContent =
+                "VISUAL ANOMALY CONFIRMED.";
 
-document
-.getElementById("statusText")
-.textContent=
-"STATUS: TRANSMISSION 03";
+                document
+                .getElementById("sequence3")
+                .classList.remove("hidden");
 
-}else{
+                document
+                .getElementById("statusText")
+                .textContent =
+                "STATUS: TRANSMISSION 03";
 
-document
-.getElementById("eyeMsg1")
-.textContent=
-"NEGATIVE. LOOK AGAIN.";
+            }else{
 
-}
-
-};
-
-}
-
+                document
+                .getElementById("eyeMsg1")
+                .textContent =
+                "NEGATIVE. LOOK AGAIN.";
+            }
+        };
+    }
 }
 
 
 /* =====================================
    SEQUENCE 3
-
-   HERE I AM
-   YOU CAN'T SEE ME
 ===================================== */
 
 function checkSequence3(){
 
-const first=words("seq3a");
-const second=words("seq3b");
+    const first =
+    words("seq3a");
 
-if(
-first==="HERE I AM" &&
-second==="YOU CAN'T SEE ME"
-){
+    /*
+        The third line must become:
 
-document
-.getElementById("seq3msg")
-.textContent=
-"TRANSMISSION 03 ACCEPTED.";
+        YOU CAN'T SEE ME
 
-document
-.getElementById("eyeHunt2")
-.classList.remove("hidden");
+        BUT:
 
-createEyeHunt2();
+        CAN' + T
 
-}else{
+        means the T has to come
+        from INCOMPLETE.
+    */
 
-document
-.getElementById("seq3msg")
-.textContent=
-"SEQUENCE INCONSISTENT.";
+    const line =
+    document.getElementById("thirdDropLine");
 
-}
+    const regularWords =
+    [
+        ...line.querySelectorAll(".word")
+    ]
+    .map(x=>x.textContent.trim());
 
-}
+    const tPlaced =
+    line.dataset.tPlaced === "true";
 
+    if(
+        first === "HERE I AM" &&
+        tPlaced === true &&
+        regularWords.join(" ") === "SEE ME CAN'"
+    ){
 
-/* =====================================
-   EYE HUNT 2
-   MORE SUBTLE
-===================================== */
+        document
+        .getElementById("seq3msg")
+        .textContent =
+        "TRANSMISSION 03 ACCEPTED.";
 
-function createEyeHunt2(){
+        document
+        .getElementById("eyeHunt2")
+        .classList.remove("hidden");
 
-const grid=
-document.getElementById("eyeGrid2");
+        createEyeHunt2();
 
-grid.innerHTML="";
+        document
+        .getElementById("statusText")
+        .textContent =
+        "STATUS: VISUAL VERIFICATION";
 
-const correct=
-Math.floor(Math.random()*25);
+    }else{
 
-for(let i=0;i<25;i++){
+        document
+        .getElementById("seq3msg")
+        .textContent =
+        "SEQUENCE INCOMPLETE.";
 
-const button=
-document.createElement("button");
-
-button.className="eye-choice";
-
-const eye=
-document.createElement("div");
-
-eye.className="eye";
-
-if(i===correct){
-
-eye.classList.add("subtle2");
-button.dataset.correct="true";
-
-}
-
-button.appendChild(eye);
-grid.appendChild(button);
-
-button.onclick=()=>{
-
-if(button.dataset.correct==="true"){
-
-document
-.getElementById("eyeMsg2")
-.textContent=
-"SECOND ANOMALY CONFIRMED.";
-
-setTimeout(()=>{
-
-document
-.getElementById("finalStage")
-.classList.remove("hidden");
-
-document
-.getElementById("statusText")
-.textContent=
-"STATUS: ARCHIVE INCOMPLETE";
-
-document
-.getElementById("finalStage")
-.scrollIntoView({
-behavior:"smooth"
-});
-
-},600);
-
-}else{
-
-document
-.getElementById("eyeMsg2")
-.textContent=
-"NOTHING UNUSUAL.";
-
-}
-
-};
-
-}
-
+    }
 }
 
 
 /* =====================================
-   THE HIDDEN T
+   T DRAGGING
 ===================================== */
 
-const dragT=
+const dragT =
 document.getElementById("dragT");
 
-let tDragging=false;
+const thirdDropLine =
+document.getElementById("thirdDropLine");
+
+const tDropSlot =
+document.getElementById("tDropSlot");
+
 
 dragT.addEventListener(
 "dragstart",
 e=>{
 
-tDragging=true;
+    e.dataTransfer.effectAllowed =
+    "move";
 
-dragT.classList.add("dragging");
+    e.dataTransfer.setData(
+        "text/plain",
+        "BLACK_IRIS_T"
+    );
 
-e.dataTransfer.setData(
-"text/plain",
-"THE_T"
-);
-
+    dragT.classList.add("dragging");
 });
+
 
 dragT.addEventListener(
 "dragend",
 ()=>{
 
-tDragging=false;
-dragT.classList.remove("dragging");
+    dragT.classList.remove("dragging");
 
 });
 
 
-const incomplete=
-document.getElementById("incompleteWord");
-
-incomplete.addEventListener(
+thirdDropLine.addEventListener(
 "dragover",
 e=>{
-e.preventDefault();
+
+    e.preventDefault();
+
+    thirdDropLine.classList.add(
+        "drag-over"
+    );
 });
 
-incomplete.addEventListener(
+
+thirdDropLine.addEventListener(
+"dragleave",
+()=>{
+
+    thirdDropLine.classList.remove(
+        "drag-over"
+    );
+});
+
+
+thirdDropLine.addEventListener(
 "drop",
 e=>{
 
-e.preventDefault();
+    e.preventDefault();
 
-const data=
-e.dataTransfer.getData("text/plain");
+    thirdDropLine.classList.remove(
+        "drag-over"
+    );
 
-if(data==="THE_T"){
+    const data =
+    e.dataTransfer.getData(
+        "text/plain"
+    );
 
-revealFinalEye();
+    if(data !== "BLACK_IRIS_T")
+        return;
 
-}
+    /*
+        The T has been discovered.
+        Remove it from INCOMPLETE.
+    */
 
+    dragT.remove();
+
+    /*
+        Turn CAN' + T into
+        CAN'T visually.
+    */
+
+    tDropSlot.textContent = "T";
+    tDropSlot.classList.add("filled");
+
+    thirdDropLine.dataset.tPlaced =
+    "true";
+
+    document
+    .getElementById("statusText")
+    .textContent =
+    "STATUS: T FRAGMENT RECOVERED";
+
+    /*
+        The archive remains visibly
+        incomplete until the sequence
+        itself is verified.
+    */
+
+    document
+    .getElementById("seq3msg")
+    .textContent =
+    "FRAGMENT ACCEPTED. VERIFY TRANSMISSION.";
 });
+
+
+/* =====================================
+   EYE HUNT 2
+===================================== */
+
+function createEyeHunt2(){
+
+    const grid =
+    document.getElementById("eyeGrid2");
+
+    grid.innerHTML = "";
+
+    const correct =
+    Math.floor(Math.random() * 25);
+
+    for(let i=0;i<25;i++){
+
+        const button =
+        document.createElement("button");
+
+        button.className =
+        "eye-choice";
+
+        const eye =
+        document.createElement("div");
+
+        eye.className = "eye";
+
+        if(i === correct){
+
+            eye.classList.add("subtle2");
+
+            button.dataset.correct =
+            "true";
+        }
+
+        button.appendChild(eye);
+
+        grid.appendChild(button);
+
+        button.onclick = ()=>{
+
+            if(button.dataset.correct === "true"){
+
+                document
+                .getElementById("eyeMsg2")
+                .textContent =
+                "SECOND ANOMALY CONFIRMED.";
+
+                setTimeout(
+                    revealFinal,
+                    700
+                );
+
+            }else{
+
+                document
+                .getElementById("eyeMsg2")
+                .textContent =
+                "NOTHING UNUSUAL.";
+
+            }
+        };
+    }
+}
 
 
 /* =====================================
    FINAL REVEAL
 ===================================== */
 
-function revealFinalEye(){
+function revealFinal(){
 
-const area=
-document.querySelector(".incomplete-area");
+    const incomplete =
+    document.getElementById(
+        "permanentIncomplete"
+    );
 
-area.classList.add("glitch");
+    incomplete.classList.add(
+        "glitch"
+    );
 
-setTimeout(()=>{
+    setTimeout(()=>{
 
-area.innerHTML="";
+        incomplete.innerHTML = `
+            <div class="incomplete-label">
+                ARCHIVE STATUS
+            </div>
 
-document
-.getElementById("finalEye")
-.classList.remove("hidden");
+            <div class="final-eye">
+                EYE
+            </div>
 
-document
-.getElementById("statusText")
-.textContent=
-"STATUS: OBSERVED";
+            <div class="final-message">
+                IT SEES YOU
+            </div>
+        `;
 
-},550);
+        document
+        .getElementById("statusText")
+        .textContent =
+        "STATUS: OBSERVED";
 
+    },550);
 }
 
 </script>
 
 </body>
-</html>
+    </html>
