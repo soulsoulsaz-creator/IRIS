@@ -2,10 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0,
-               maximum-scale=1.0,user-scalable=no">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BLACK IRIS // Investigator Notes</title>
 
 <style>
@@ -48,11 +45,11 @@ body::after{
     padding:22px;
 
     background:
-        radial-gradient(
-            circle at 50% 20%,
-            #121718 0%,
-            #050708 65%
-        );
+    radial-gradient(
+        circle at 50% 20%,
+        #121718 0%,
+        #050708 65%
+    );
 }
 
 .header{
@@ -60,6 +57,7 @@ body::after{
     margin:auto;
 
     border-bottom:1px solid #292e2f;
+
     padding-bottom:16px;
 
     display:flex;
@@ -73,16 +71,21 @@ body::after{
 
 .file-name{
     margin-top:7px;
+
     font-size:10px;
     color:#666;
+
     letter-spacing:2px;
 }
 
 .classified{
     text-align:right;
+
     color:#777;
+
     font-size:9px;
     line-height:1.7;
+
     letter-spacing:2px;
 }
 
@@ -92,6 +95,7 @@ body::after{
 
     font-size:9px;
     color:#666;
+
     letter-spacing:2px;
 }
 
@@ -102,6 +106,7 @@ body::after{
     height:7px;
 
     background:#8b1a1a;
+
     border-radius:50%;
 
     box-shadow:0 0 9px #8b1a1a;
@@ -136,6 +141,7 @@ body::after{
 
 .section{
     text-align:center;
+
     padding:35px 20px;
 }
 
@@ -145,7 +151,9 @@ body::after{
 
 .symbol{
     color:#777;
+
     font-size:20px;
+
     margin-bottom:15px;
 }
 
@@ -155,12 +163,15 @@ h1{
     font-size:clamp(19px,5vw,28px);
 
     letter-spacing:5px;
+
     font-weight:normal;
 }
 
 h2{
     font-size:17px;
+
     font-weight:normal;
+
     letter-spacing:4px;
 }
 
@@ -172,50 +183,13 @@ h2{
     color:#777;
 
     font-size:10px;
+
     line-height:1.8;
 }
 
-.button{
-    margin-top:22px;
-
-    padding:13px 22px;
-
-    background:#090b0c;
-
-    color:#aaa;
-
-    border:1px solid #555;
-
-    font-family:"Courier New",monospace;
-
-    font-size:9px;
-    letter-spacing:2px;
-
-    cursor:pointer;
-}
-
-.button:hover{
-    border-color:#aaa;
-    color:#ddd;
-    background:#151819;
-}
-
-.message{
-    min-height:18px;
-
-    margin-top:15px;
-
-    color:#777;
-
-    font-size:9px;
-
-    letter-spacing:1px;
-}
-
-
-/* =========================
+/* =================================================
    IMAGE PUZZLE
-========================= */
+================================================= */
 
 #puzzle{
     width:min(90vw,600px);
@@ -254,6 +228,7 @@ h2{
 
 .empty{
     background:#050708!important;
+
     cursor:default;
 }
 
@@ -269,10 +244,53 @@ h2{
     color:#aaa;
 }
 
+/* =================================================
+   BUTTONS
+================================================= */
 
-/* =========================
+.button{
+    margin-top:22px;
+
+    padding:13px 22px;
+
+    background:#090b0c;
+
+    color:#aaa;
+
+    border:1px solid #555;
+
+    font-family:"Courier New",monospace;
+
+    font-size:9px;
+
+    letter-spacing:2px;
+
+    cursor:pointer;
+}
+
+.button:hover{
+    border-color:#aaa;
+
+    color:#ddd;
+
+    background:#151819;
+}
+
+.message{
+    min-height:18px;
+
+    margin-top:15px;
+
+    color:#777;
+
+    font-size:9px;
+
+    letter-spacing:1px;
+}
+
+/* =================================================
    CODE
-========================= */
+================================================= */
 
 .code-box{
     width:min(500px,100%);
@@ -288,6 +306,7 @@ h2{
 
 .code-input{
     width:260px;
+
     max-width:90%;
 
     padding:14px;
@@ -309,10 +328,9 @@ h2{
     outline:none;
 }
 
-
-/* =========================
+/* =================================================
    SEQUENCES
-========================= */
+================================================= */
 
 .sequence{
     width:min(850px,100%);
@@ -350,11 +368,13 @@ h2{
 
 .word{
     min-width:88px;
+
     height:52px;
 
     display:flex;
 
     align-items:center;
+
     justify-content:center;
 
     border:1px solid #3b4041;
@@ -372,30 +392,27 @@ h2{
     user-select:none;
 
     touch-action:none;
-
-    transition:
-        transform .15s,
-        opacity .15s,
-        border-color .15s;
 }
 
 .word.dragging{
-    opacity:.35;
-
-    transform:scale(.96);
+    opacity:.3;
 }
 
-.word.selected{
+.word.touch-dragging{
+    position:relative;
+
+    z-index:1000;
+
+    opacity:.75;
+
+    transform:scale(1.05);
+
     border-color:#aaa;
-
-    box-shadow:
-        0 0 12px rgba(255,255,255,.08);
 }
 
-
-/* =========================
+/* =================================================
    EYE HUNT
-========================= */
+================================================= */
 
 .eye-grid{
     width:min(760px,100%);
@@ -435,9 +452,7 @@ h2{
 
     border:2px solid #555;
 
-    border-radius:
-        75% 12%
-        75% 12%;
+    border-radius:75% 12% 75% 12%;
 
     transform:rotate(-1deg);
 }
@@ -490,9 +505,7 @@ h2{
 }
 
 .eye.subtle2{
-    border-radius:
-        72% 14%
-        78% 10%;
+    border-radius:72% 14% 78% 10%;
 }
 
 .eye.subtle2::before{
@@ -500,29 +513,22 @@ h2{
     height:29px;
 }
 
-
-/* =========================
+/* =================================================
    FINAL INCOMPLETE
-========================= */
+================================================= */
 
-#finalStage{
+.final-area{
     position:relative;
+
+    min-height:260px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
 
     overflow:hidden;
-
-    min-height:330px;
-}
-
-.incomplete-area{
-    position:relative;
-
-    margin:45px auto 10px;
-
-    min-height:150px;
-
-    padding:35px 10px;
-
-    border-top:1px solid #1b1f20;
 }
 
 .incomplete-word{
@@ -534,15 +540,17 @@ h2{
 
     align-items:center;
 
-    gap:0;
+    gap:1px;
 
-    font-size:clamp(24px,7vw,42px);
+    font-size:34px;
 
-    letter-spacing:5px;
+    letter-spacing:4px;
 
     color:#777;
 
     user-select:none;
+
+    z-index:5;
 }
 
 .incomplete-letter{
@@ -550,361 +558,248 @@ h2{
 
     position:relative;
 
-    transition:
-        color .2s,
-        text-shadow .2s;
+    transition:none;
 }
 
-
-/* Falling animation for INCOMPLETE */
+/*
+    ONLY THE INCOMPLETE LETTERS FALL.
+    Nothing else on the page gets this class.
+*/
 
 .incomplete-letter.fall{
-    animation:
-        letterFall
-        .85s
-        cubic-bezier(.55,.05,.75,.2)
-        forwards;
+    animation:letterFall 1.5s cubic-bezier(.55,.05,.7,.2) forwards;
 }
-
-.incomplete-letter:nth-child(1){
-    animation-delay:.00s;
-}
-
-.incomplete-letter:nth-child(2){
-    animation-delay:.05s;
-}
-
-.incomplete-letter:nth-child(3){
-    animation-delay:.10s;
-}
-
-.incomplete-letter:nth-child(4){
-    animation-delay:.15s;
-}
-
-.incomplete-letter:nth-child(5){
-    animation-delay:.20s;
-}
-
-.incomplete-letter:nth-child(6){
-    animation-delay:.25s;
-}
-
-.incomplete-letter:nth-child(7){
-    animation-delay:.30s;
-}
-
-.incomplete-letter:nth-child(8){
-    animation-delay:.35s;
-}
-
-.incomplete-letter:nth-child(9){
-    animation-delay:.40s;
-}
-
-.incomplete-letter:nth-child(10){
-    animation-delay:.45s;
-}
-
 
 @keyframes letterFall{
 
-0%{
-    transform:
-        translateY(0)
-        rotate(0deg);
+    0%{
+        transform:translateY(0) rotate(0deg);
+        opacity:1;
+    }
 
-    opacity:1;
+    35%{
+        transform:translateY(45px) rotate(7deg);
+        opacity:1;
+    }
+
+    100%{
+        transform:translateY(420px) rotate(30deg);
+        opacity:0;
+    }
 }
 
-30%{
-    transform:
-        translateY(12px)
-        rotate(3deg);
-
-    opacity:1;
-}
-
-100%{
-    transform:
-        translateY(180px)
-        rotate(20deg);
-
-    opacity:0;
-}
-}
-
-
-/* =========================
-   T INTERACTION
-========================= */
+/* T */
 
 .clickable-t{
     cursor:pointer;
 
     color:#999;
 
-    position:relative;
+    text-shadow:
+        0 0 5px rgba(180,180,180,.15);
 
-    z-index:20;
-
-    transition:
-        color .2s,
-        text-shadow .2s;
+    transition:.2s;
 }
 
 .clickable-t:hover{
     color:#ddd;
 
     text-shadow:
-        0 0 10px rgba(255,255,255,.3);
+        0 0 12px rgba(255,255,255,.25);
 }
 
+.clickable-t::after{
+    content:"";
 
-/*
-First click:
-INCOMPL falls away.
-ETE remains.
-T falls to lower position.
-*/
-
-.incomple-falling{
-    animation:
-        shortFall
-        .8s
-        cubic-bezier(.55,.05,.75,.2)
-        forwards;
-}
-
-@keyframes shortFall{
-
-0%{
-    transform:translateY(0) rotate(0deg);
-    opacity:1;
-}
-
-100%{
-    transform:
-        translateY(180px)
-        rotate(15deg);
-
-    opacity:0;
-}
-}
-
-.t-falling{
-    animation:
-        tFall
-        1s
-        cubic-bezier(.55,.05,.75,.2)
-        forwards;
-}
-
-@keyframes tFall{
-
-0%{
-    transform:
-        translateY(0)
-        rotate(0deg)
-        scale(1);
-}
-
-50%{
-    transform:
-        translateY(90px)
-        rotate(20deg)
-        scale(1.1);
-}
-
-100%{
-    transform:
-        translateY(210px)
-        rotate(35deg)
-        scale(1);
-}
-
-}
-
-
-/* ETE */
-
-.ete-remain{
-    color:#777;
-
-    animation:
-        emerge
-        .8s
-        ease
-        forwards;
-}
-
-@keyframes emerge{
-
-0%{
-    opacity:0;
-    transform:scale(.8);
-}
-
-100%{
-    opacity:1;
-    transform:scale(1);
-}
-
-}
-
-
-/* Fallen T */
-
-.fallen-t{
     position:absolute;
 
     left:50%;
-    top:80px;
+
+    bottom:-24px;
 
     transform:translateX(-50%);
 
-    font-size:38px;
+    width:4px;
+    height:4px;
 
-    color:#888;
+    border-radius:50%;
 
-    cursor:pointer;
+    background:#555;
 
-    z-index:50;
-
-    opacity:0;
-
-    animation:
-        fallenTAppear
-        .4s
-        ease
-        forwards;
+    opacity:.5;
 }
 
-@keyframes fallenTAppear{
+/* =================================================
+   HIDDEN EYE
+================================================= */
 
-from{
-    opacity:0;
-}
-
-to{
-    opacity:1;
-}
-
-}
-
-.fallen-t:hover{
-    color:#ddd;
-
-    text-shadow:
-        0 0 15px #777;
-}
-
-
-/* =========================
-   FINAL EYE
-========================= */
-
-.final-eye-background{
+.hidden-eye-container{
     position:absolute;
 
-    left:50%;
-    top:50%;
+    inset:0;
 
-    transform:
-        translate(-50%,-50%)
-        scale(.3);
+    display:flex;
 
-    font-family:Arial,sans-serif;
+    align-items:center;
 
-    font-size:240px;
-
-    color:#430000;
-
-    opacity:0;
-
-    text-shadow:
-        0 0 25px #8b0000,
-        0 0 70px #500000,
-        0 0 120px rgba(160,0,0,.7);
+    justify-content:center;
 
     pointer-events:none;
 
     z-index:1;
 }
 
-.final-eye-background.reveal{
-    animation:
-        eyeReveal
-        1.5s
-        ease
-        forwards;
+.big-eye{
+    position:relative;
+
+    width:min(80vw,520px);
+
+    height:min(40vw,260px);
+
+    border:5px solid rgba(120,0,0,.7);
+
+    border-radius:75% 12% 75% 12%;
+
+    transform:rotate(-1deg) scale(.2);
+
+    opacity:0;
+
+    filter:
+        drop-shadow(0 0 15px rgba(180,0,0,.5))
+        drop-shadow(0 0 45px rgba(180,0,0,.3));
+}
+
+.big-eye::before{
+    content:"";
+
+    position:absolute;
+
+    width:42%;
+
+    aspect-ratio:1;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    border:5px solid rgba(120,0,0,.8);
+
+    border-radius:50%;
+}
+
+.big-eye::after{
+    content:"";
+
+    position:absolute;
+
+    width:12%;
+
+    aspect-ratio:1;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    border-radius:50%;
+
+    background:#8b0000;
+
+    box-shadow:
+        0 0 20px #900,
+        0 0 50px rgba(180,0,0,.7);
+}
+
+.big-eye.reveal{
+    animation:eyeReveal 2s ease-out forwards;
 }
 
 @keyframes eyeReveal{
 
-0%{
-    opacity:0;
+    0%{
+        opacity:0;
 
-    transform:
-        translate(-50%,-50%)
+        transform:
+        rotate(-1deg)
         scale(.2);
-}
+    }
 
-60%{
-    opacity:.55;
-}
+    45%{
+        opacity:.8;
 
-100%{
-    opacity:.28;
+        transform:
+        rotate(-1deg)
+        scale(1.08);
+    }
 
-    transform:
-        translate(-50%,-50%)
+    100%{
+        opacity:.65;
+
+        transform:
+        rotate(-1deg)
         scale(1);
+    }
 }
 
-}
+/* =================================================
+   EYE WORD
+================================================= */
 
-
-.final-eye-front{
+.eye-word{
     position:relative;
 
     z-index:10;
 
-    font-family:"Courier New",monospace;
+    font-size:clamp(55px,15vw,120px);
 
-    font-size:clamp(55px,15vw,110px);
+    letter-spacing:15px;
 
-    letter-spacing:12px;
+    color:#a00000;
 
-    color:#b00000;
+    opacity:0;
 
     text-shadow:
         0 0 10px #600,
-        0 0 30px rgba(180,0,0,.7);
+        0 0 25px rgba(180,0,0,.7);
 
-    animation:
-        pulse
-        1s
-        infinite
-        alternate;
+    transform:scale(.7);
 }
 
-@keyframes pulse{
-
-from{
-    opacity:.45;
+.eye-word.reveal{
+    animation:eyeWordReveal 1.2s ease-out forwards;
 }
 
-to{
-    opacity:1;
-}
+@keyframes eyeWordReveal{
 
+    0%{
+        opacity:0;
+
+        transform:
+        scale(.7);
+    }
+
+    60%{
+        opacity:1;
+
+        transform:
+        scale(1.12);
+    }
+
+    100%{
+        opacity:1;
+
+        transform:
+        scale(1);
+    }
 }
 
 .final-message{
     position:relative;
 
-    z-index:10;
+    z-index:20;
+
+    margin-top:20px;
 
     color:#555;
 
@@ -912,45 +807,59 @@ to{
 
     letter-spacing:3px;
 
-    margin-top:15px;
+    opacity:0;
+}
+
+.final-message.show{
+    animation:fadeMessage 1s ease forwards;
+}
+
+@keyframes fadeMessage{
+
+    from{
+        opacity:0;
+    }
+
+    to{
+        opacity:1;
+    }
 }
 
 .glitch{
-    animation:
-        glitch
-        .55s
-        linear;
+    animation:glitch .55s linear;
 }
 
 @keyframes glitch{
 
-0%{
-    transform:translateX(0);
-    opacity:1;
+    0%{
+        transform:translateX(0);
+        opacity:1;
+    }
+
+    20%{
+        transform:translateX(-7px);
+        opacity:.5;
+    }
+
+    40%{
+        transform:translateX(7px);
+        opacity:.8;
+    }
+
+    60%{
+        transform:translateX(-4px);
+        opacity:.4;
+    }
+
+    100%{
+        transform:translateX(0);
+        opacity:1;
+    }
 }
 
-20%{
-    transform:translateX(-7px);
-    opacity:.5;
-}
-
-40%{
-    transform:translateX(7px);
-    opacity:.8;
-}
-
-60%{
-    transform:translateX(-4px);
-    opacity:.4;
-}
-
-100%{
-    transform:translateX(0);
-    opacity:1;
-}
-
-}
-
+/* =================================================
+   FOOTER
+================================================= */
 
 .footer{
     max-width:1000px;
@@ -967,7 +876,6 @@ to{
 
     letter-spacing:1px;
 }
-
 
 @media(max-width:600px){
 
@@ -1007,15 +915,19 @@ to{
         font-size:9px;
     }
 
+    .incomplete-word{
+        font-size:28px;
+
+        letter-spacing:2px;
+    }
+
     .footer{
         font-size:6px;
     }
-
 }
 
 </style>
 </head>
-
 
 <body>
 
@@ -1070,14 +982,11 @@ BLACK IRIS
 </div>
 
 
-<!-- =========================
-STAGE 1
-========================= -->
+<!-- =================================================
+     STAGE 1
+================================================= -->
 
-<section
-id="puzzleStage"
-class="section"
->
+<section id="puzzleStage" class="section">
 
 <div class="symbol">
 ◈
@@ -1104,22 +1013,17 @@ MOVES:
 </div>
 
 <div class="message">
-
 ⚠ VISUAL RECONSTRUCTION REQUIRED
-
 </div>
 
 </section>
 
 
-<!-- =========================
-PUZZLE SUCCESS
-========================= -->
+<!-- =================================================
+     PUZZLE SUCCESS
+================================================= -->
 
-<section
-id="successStage"
-class="section hidden"
->
+<section id="successStage" class="section hidden">
 
 <div class="symbol">
 ◈
@@ -1140,20 +1044,19 @@ A secondary channel has been detected.
 class="button"
 onclick="openAgencyStage()"
 >
+
 CONTACT CENTRAL COMMAND
+
 </button>
 
 </section>
 
 
-<!-- =========================
-AGENCY
-========================= -->
+<!-- =================================================
+     AGENCY
+================================================= -->
 
-<section
-id="agencyStage"
-class="section hidden"
->
+<section id="agencyStage" class="section hidden">
 
 <div class="symbol">
 ◈
@@ -1186,7 +1089,9 @@ black.iris.devision@gmail.com
 class="button"
 onclick="contactAgency()"
 >
+
 SEND SECURE INQUIRY
+
 </button>
 
 <div class="message">
@@ -1199,20 +1104,19 @@ Await Agency response before continuing.
 class="button"
 onclick="showCodeStage()"
 >
+
 EVIDENCE RECEIVED
+
 </button>
 
 </section>
 
 
-<!-- =========================
-CODE
-========================= -->
+<!-- =================================================
+     CODE
+================================================= -->
 
-<section
-id="codeStage"
-class="section hidden"
->
+<section id="codeStage" class="section hidden">
 
 <div class="symbol">
 ◈
@@ -1249,7 +1153,9 @@ placeholder="------"
 class="button"
 onclick="verifyCode()"
 >
+
 ACCESS ARCHIVE
+
 </button>
 
 <div
@@ -1262,9 +1168,9 @@ class="message"
 </section>
 
 
-<!-- =========================
-SEQUENCES
-========================= -->
+<!-- =================================================
+     INVESTIGATOR NOTES
+================================================= -->
 
 <section
 id="sequenceStage"
@@ -1289,7 +1195,9 @@ Their order matters.
 </div>
 
 
-<!-- SEQUENCE 1 -->
+<!-- =================================================
+     SEQUENCE 1
+================================================= -->
 
 <div class="sequence">
 
@@ -1298,25 +1206,25 @@ TRANSMISSION // 01
 </div>
 
 <div
+id="seq1"
 class="word-line"
-data-sequence="1a"
 >
 
-<div class="word">HERE</div>
 <div class="word">I</div>
 <div class="word">AM</div>
+<div class="word">HERE</div>
 
 </div>
 
 <div
+id="seq1b"
 class="word-line"
-data-sequence="1b"
 >
 
-<div class="word">ME</div>
 <div class="word">YOU</div>
-<div class="word">SEE</div>
 <div class="word">CAN</div>
+<div class="word">SEE</div>
+<div class="word">ME</div>
 
 </div>
 
@@ -1324,7 +1232,9 @@ data-sequence="1b"
 class="button"
 onclick="checkSequence1()"
 >
+
 VERIFY TRANSMISSION
+
 </button>
 
 <div
@@ -1335,7 +1245,9 @@ class="message"
 </div>
 
 
-<!-- SEQUENCE 2 -->
+<!-- =================================================
+     SEQUENCE 2
+================================================= -->
 
 <div
 id="sequence2"
@@ -1347,25 +1259,25 @@ TRANSMISSION // 02
 </div>
 
 <div
+id="seq2a"
 class="word-line"
-data-sequence="2a"
 >
 
-<div class="word">HERE</div>
 <div class="word">AM</div>
 <div class="word">I</div>
+<div class="word">HERE</div>
 
 </div>
 
 <div
+id="seq2b"
 class="word-line"
-data-sequence="2b"
 >
 
-<div class="word">SEE</div>
-<div class="word">ME</div>
 <div class="word">CAN</div>
 <div class="word">YOU</div>
+<div class="word">SEE</div>
+<div class="word">ME</div>
 
 </div>
 
@@ -1373,7 +1285,9 @@ data-sequence="2b"
 class="button"
 onclick="checkSequence2()"
 >
+
 VERIFY TRANSMISSION
+
 </button>
 
 <div
@@ -1384,7 +1298,9 @@ class="message"
 </div>
 
 
-<!-- EYE HUNT 1 -->
+<!-- =================================================
+     EYE HUNT 1
+================================================= -->
 
 <div
 id="eyeHunt1"
@@ -1396,7 +1312,9 @@ VISUAL CHECK // 01
 </div>
 
 <div class="instructions">
+
 One image does not belong.
+
 </div>
 
 <div
@@ -1412,11 +1330,16 @@ class="message"
 </div>
 
 
-<!-- =========================
-SEQUENCE 3
-IMPORTANT:
-NO EXTRA SEE
-========================= -->
+<!-- =================================================
+     SEQUENCE 3
+     
+     EXACTLY:
+     
+     I AM HERE
+     YOU CAN'T SEE ME
+     
+     NO EXTRA SEE
+================================================= -->
 
 <div
 id="sequence3"
@@ -1428,11 +1351,10 @@ TRANSMISSION // 03
 </div>
 
 <div
+id="seq3a"
 class="word-line"
-data-sequence="3a"
 >
 
-<div class="word">SEE</div>
 <div class="word">I</div>
 <div class="word">AM</div>
 <div class="word">HERE</div>
@@ -1440,14 +1362,14 @@ data-sequence="3a"
 </div>
 
 <div
+id="seq3b"
 class="word-line"
-data-sequence="3b"
 >
 
+<div class="word">YOU</div>
+<div class="word">CAN'T</div>
 <div class="word">SEE</div>
 <div class="word">ME</div>
-<div class="word">CAN'T</div>
-<div class="word">YOU</div>
 
 </div>
 
@@ -1455,7 +1377,9 @@ data-sequence="3b"
 class="button"
 onclick="checkSequence3()"
 >
+
 VERIFY TRANSMISSION
+
 </button>
 
 <div
@@ -1466,9 +1390,9 @@ class="message"
 </div>
 
 
-<!-- =========================
-EYE HUNT 2
-========================= -->
+<!-- =================================================
+     EYE HUNT 2
+================================================= -->
 
 <div
 id="eyeHunt2"
@@ -1500,9 +1424,9 @@ class="message"
 </div>
 
 
-<!-- =========================
-FINAL
-========================= -->
+<!-- =================================================
+     FINAL
+================================================= -->
 
 <div
 id="finalStage"
@@ -1513,15 +1437,31 @@ class="sequence hidden"
 ARCHIVE // STATUS
 </div>
 
+<div class="instructions">
+
+Something remains incomplete.
+
+</div>
+
+<div class="final-area">
+
+<!-- Hidden eye behind the letters -->
+
+<div class="hidden-eye-container">
 
 <div
-class="incomplete-area"
-id="incompleteArea"
->
+id="bigEye"
+class="big-eye"
+></div>
+
+</div>
+
+
+<!-- THE ONLY WORD THAT FALLS -->
 
 <div
-class="incomplete-word"
 id="incompleteWord"
+class="incomplete-word"
 >
 
 <span class="incomplete-letter">
@@ -1557,11 +1497,12 @@ E
 </span>
 
 <span
+id="clickableT"
 class="incomplete-letter clickable-t"
-id="mainT"
-onclick="firstTClick()"
 >
+
 T
+
 </span>
 
 <span class="incomplete-letter">
@@ -1571,47 +1512,26 @@ E
 </div>
 
 
-<div
-id="archiveStatus"
-class="message"
->
-
-ARCHIVE STATUS: INCOMPLETE
-
-</div>
-
+<!-- EYE -->
 
 <div
-id="fallenT"
-class="fallen-t hidden"
-onclick="secondTClick()"
->
-T
-</div>
-
-
-<div
-id="finalEyeBackground"
-class="final-eye-background"
->
-◉
-</div>
-
-
-<div
-id="finalEyeContent"
-class="hidden"
+id="eyeWord"
+class="eye-word"
 >
 
-<div class="final-eye-front">
 EYE
-</div>
 
-<div class="final-message">
-IT SEES YOU
 </div>
 
 </div>
+
+
+<div
+id="finalMessage"
+class="final-message"
+>
+
+IT WAS NEVER INCOMPLETE
 
 </div>
 
@@ -1650,10 +1570,13 @@ const movesDisplay =
 document.getElementById("moves");
 
 const SIZE = 3;
+
 const TOTAL = 9;
 
 let board = [];
+
 let moves = 0;
+
 let solved = false;
 
 
@@ -1662,25 +1585,30 @@ function createSolvedBoard(){
     board = [];
 
     for(let i=1;i<TOTAL;i++){
+
         board.push(i);
+
     }
 
     board.push(0);
+
 }
 
 
 function emptyIndex(){
+
     return board.indexOf(0);
+
 }
 
 
 function getNeighbors(index){
 
     const row =
-        Math.floor(index / SIZE);
+    Math.floor(index / SIZE);
 
     const col =
-        index % SIZE;
+    index % SIZE;
 
     const result = [];
 
@@ -1697,6 +1625,7 @@ function getNeighbors(index){
         result.push(index + 1);
 
     return result;
+
 }
 
 
@@ -1707,19 +1636,18 @@ function shufflePuzzle(){
     for(let i=0;i<150;i++){
 
         const empty =
-            emptyIndex();
+        emptyIndex();
 
         const choices =
-            getNeighbors(empty)
-            .filter(x => x !== previous);
+        getNeighbors(empty)
+        .filter(x => x !== previous);
 
         const chosen =
-            choices[
-                Math.floor(
-                    Math.random() *
-                    choices.length
-                )
-            ];
+        choices[
+            Math.floor(
+                Math.random() * choices.length
+            )
+        ];
 
         previous = empty;
 
@@ -1731,7 +1659,9 @@ function shufflePuzzle(){
             board[chosen],
             board[empty]
         ];
+
     }
+
 }
 
 
@@ -1739,46 +1669,44 @@ function drawPuzzle(){
 
     puzzle.innerHTML = "";
 
-    board.forEach(
-        (piece,index)=>{
+    board.forEach((piece,index)=>{
 
-            const tile =
-                document.createElement("div");
+        const tile =
+        document.createElement("div");
 
-            tile.className = "tile";
+        tile.className = "tile";
 
-            if(piece === 0){
+        if(piece === 0){
 
-                tile.classList.add("empty");
+            tile.classList.add("empty");
 
-            }else{
+        }else{
 
-                const original =
-                    piece - 1;
+            const original =
+            piece - 1;
 
-                const row =
-                    Math.floor(
-                        original / SIZE
-                    );
+            const row =
+            Math.floor(original / SIZE);
 
-                const col =
-                    original % SIZE;
+            const col =
+            original % SIZE;
 
-                tile.style.backgroundPosition =
-                    `${col*50}% ${row*50}%`;
+            tile.style.backgroundPosition =
+            `${col * 50}% ${row * 50}%`;
 
-                tile.addEventListener(
-                    "click",
-                    ()=>moveTile(index)
-                );
-            }
+            tile.addEventListener(
+                "click",
+                ()=>moveTile(index)
+            );
 
-            puzzle.appendChild(tile);
         }
-    );
 
-    movesDisplay.textContent =
-        moves;
+        puzzle.appendChild(tile);
+
+    });
+
+    movesDisplay.textContent = moves;
+
 }
 
 
@@ -1788,12 +1716,9 @@ function moveTile(index){
         return;
 
     const empty =
-        emptyIndex();
+    emptyIndex();
 
-    if(
-        !getNeighbors(empty)
-        .includes(index)
-    )
+    if(!getNeighbors(empty).includes(index))
         return;
 
     [
@@ -1810,6 +1735,7 @@ function moveTile(index){
     drawPuzzle();
 
     checkSolved();
+
 }
 
 
@@ -1819,6 +1745,7 @@ function checkSolved(){
 
         if(board[i] !== i+1)
             return;
+
     }
 
     if(board[TOTAL-1] !== 0)
@@ -1839,14 +1766,17 @@ function checkSolved(){
         document
         .getElementById("statusText")
         .textContent =
-            "STATUS: RECONSTRUCTION VERIFIED";
+        "STATUS: RECONSTRUCTION VERIFIED";
 
     },500);
+
 }
 
 
 createSolvedBoard();
+
 shufflePuzzle();
+
 drawPuzzle();
 
 
@@ -1867,17 +1797,18 @@ function openAgencyStage(){
     document
     .getElementById("statusText")
     .textContent =
-        "STATUS: EXTERNAL AUTHORIZATION";
+    "STATUS: EXTERNAL AUTHORIZATION";
+
 }
 
 
 function contactAgency(){
 
     const email =
-        "black.iris.devision@gmail.com";
+    "black.iris.devision@gmail.com";
 
     const subject =
-        "BLACK IRIS // INVESTIGATOR NOTES // AUTHORIZATION";
+    "BLACK IRIS // INVESTIGATOR NOTES // AUTHORIZATION";
 
     const body =
 `BLACK IRIS CENTRAL COMMAND,
@@ -1891,12 +1822,13 @@ Please provide the next evidence.
 — Assigned Investigator`;
 
     window.location.href =
-        "mailto:" +
-        email +
-        "?subject=" +
-        encodeURIComponent(subject) +
-        "&body=" +
-        encodeURIComponent(body);
+    "mailto:" +
+    email +
+    "?subject=" +
+    encodeURIComponent(subject) +
+    "&body=" +
+    encodeURIComponent(body);
+
 }
 
 
@@ -1913,26 +1845,27 @@ function showCodeStage(){
     document
     .getElementById("statusText")
     .textContent =
-        "STATUS: AUTHORIZATION REQUIRED";
+    "STATUS: AUTHORIZATION REQUIRED";
+
 }
 
 
 /* =====================================================
-   CODE
+   CODE 170301
 ===================================================== */
 
 function verifyCode(){
 
     const input =
-        document.getElementById("codeInput");
+    document.getElementById("codeInput");
 
     const msg =
-        document.getElementById("codeMessage");
+    document.getElementById("codeMessage");
 
     if(input.value === "170301"){
 
         msg.textContent =
-            "AUTHORIZATION ACCEPTED.";
+        "AUTHORIZATION ACCEPTED.";
 
         setTimeout(()=>{
 
@@ -1947,17 +1880,19 @@ function verifyCode(){
             document
             .getElementById("statusText")
             .textContent =
-                "STATUS: INVESTIGATOR NOTES";
+            "STATUS: INVESTIGATOR NOTES";
 
         },700);
 
     }else{
 
         msg.textContent =
-            "ACCESS DENIED.";
+        "ACCESS DENIED.";
 
         input.value = "";
+
     }
+
 }
 
 
@@ -1974,214 +1909,169 @@ document
 
 /* =====================================================
    MOBILE-FRIENDLY WORD DRAGGING
-===================================================== */
+   =====================================================
 
-/*
-   Uses pointer events instead of relying only on
-   HTML5 drag/drop, which is unreliable on many phones.
+   Uses Pointer Events so the sequence can be
+   rearranged with a finger on mobile as well
+   as a mouse.
 */
 
 let draggedWord = null;
-let startX = 0;
-let startY = 0;
-let dragging = false;
 
 
-function setupWordDragging(){
+document.querySelectorAll(".word")
+.forEach(word => {
 
-    document
-    .querySelectorAll(".word")
-    .forEach(word=>{
+    word.addEventListener(
+        "pointerdown",
+        startWordDrag
+    );
 
-        word.addEventListener(
-            "pointerdown",
-            startWordDrag
-        );
-
-    });
-}
+});
 
 
 function startWordDrag(e){
 
-    if(
-        !e.currentTarget.closest(
-            "#sequenceStage"
-        )
-    )
+    if(e.button !== undefined &&
+       e.pointerType === "mouse" &&
+       e.button !== 0){
+
         return;
+
+    }
 
     draggedWord = e.currentTarget;
 
-    startX = e.clientX;
-    startY = e.clientY;
-
-    dragging = false;
+    draggedWord.classList.add(
+        "touch-dragging"
+    );
 
     draggedWord.setPointerCapture(
         e.pointerId
     );
 
-    draggedWord.classList.add("selected");
-}
-
-
-document.addEventListener(
-    "pointermove",
-    e=>{
+    const moveHandler = event => {
 
         if(!draggedWord)
             return;
-
-        const dx =
-            e.clientX - startX;
-
-        const dy =
-            e.clientY - startY;
-
-        if(
-            !dragging &&
-            Math.sqrt(dx*dx + dy*dy) > 8
-        ){
-
-            dragging = true;
-
-            draggedWord.classList.add(
-                "dragging"
-            );
-        }
-
-        if(dragging){
-
-            e.preventDefault();
-
-            const element =
-                document.elementFromPoint(
-                    e.clientX,
-                    e.clientY
-                );
-
-            const target =
-                element ?
-                element.closest(".word") :
-                null;
-
-            document
-            .querySelectorAll(".word")
-            .forEach(w=>{
-                w.style.borderColor =
-                    "#3b4041";
-            });
-
-            if(
-                target &&
-                target !== draggedWord
-            ){
-
-                target.style.borderColor =
-                    "#aaa";
-            }
-        }
-
-    },
-    {passive:false}
-);
-
-
-document.addEventListener(
-    "pointerup",
-    e=>{
-
-        if(!draggedWord)
-            return;
-
-        const source =
-            draggedWord;
-
-        const element =
-            document.elementFromPoint(
-                e.clientX,
-                e.clientY
-            );
 
         const target =
-            element ?
-            element.closest(".word") :
-            null;
+        document.elementFromPoint(
+            event.clientX,
+            event.clientY
+        );
 
-        document
-        .querySelectorAll(".word")
-        .forEach(w=>{
-            w.style.borderColor =
-                "#3b4041";
-        });
+        const wordTarget =
+        target &&
+        target.closest(".word");
 
         if(
-            dragging &&
-            target &&
-            target !== source
+            wordTarget &&
+            wordTarget !== draggedWord
         ){
 
             const parent =
-                source.parentNode;
+            wordTarget.parentNode;
 
             const rect =
-                target.getBoundingClientRect();
+            wordTarget.getBoundingClientRect();
 
-            const before =
-                e.clientX <
-                rect.left +
-                rect.width / 2;
-
-            if(before){
+            if(
+                event.clientX <
+                rect.left + rect.width / 2
+            ){
 
                 parent.insertBefore(
-                    source,
-                    target
+                    draggedWord,
+                    wordTarget
                 );
 
             }else{
 
                 parent.insertBefore(
-                    source,
-                    target.nextSibling
+                    draggedWord,
+                    wordTarget.nextSibling
                 );
+
             }
+
         }
 
-        source.classList.remove(
-            "dragging",
-            "selected"
+    };
+
+
+    const endHandler = event => {
+
+        if(draggedWord){
+
+            draggedWord.classList.remove(
+                "touch-dragging"
+            );
+
+            try{
+
+                draggedWord.releasePointerCapture(
+                    event.pointerId
+                );
+
+            }catch(err){}
+
+        }
+
+        document.removeEventListener(
+            "pointermove",
+            moveHandler
+        );
+
+        document.removeEventListener(
+            "pointerup",
+            endHandler
+        );
+
+        document.removeEventListener(
+            "pointercancel",
+            endHandler
         );
 
         draggedWord = null;
-        dragging = false;
 
-    }
-);
+    };
 
 
-setupWordDragging();
+    document.addEventListener(
+        "pointermove",
+        moveHandler
+    );
+
+    document.addEventListener(
+        "pointerup",
+        endHandler
+    );
+
+    document.addEventListener(
+        "pointercancel",
+        endHandler
+    );
+
+}
 
 
 /* =====================================================
-   GET SEQUENCE
+   GET WORDS
 ===================================================== */
 
-function getSequence(name){
-
-    const line =
-        document.querySelector(
-            `[data-sequence="${name}"]`
-        );
+function words(id){
 
     return [
-        ...line.querySelectorAll(".word")
+        ...document
+        .getElementById(id)
+        .querySelectorAll(".word")
     ]
-    .map(x =>
-        x.textContent.trim()
+    .map(
+        x => x.textContent.trim()
     )
     .join(" ");
+
 }
 
 
@@ -2192,10 +2082,10 @@ function getSequence(name){
 function checkSequence1(){
 
     const first =
-        getSequence("1a");
+    words("seq1");
 
     const second =
-        getSequence("1b");
+    words("seq1b");
 
     if(
         first === "I AM HERE" &&
@@ -2205,7 +2095,7 @@ function checkSequence1(){
         document
         .getElementById("seq1msg")
         .textContent =
-            "TRANSMISSION 01 ACCEPTED.";
+        "TRANSMISSION 01 ACCEPTED.";
 
         document
         .getElementById("sequence2")
@@ -2214,15 +2104,17 @@ function checkSequence1(){
         document
         .getElementById("statusText")
         .textContent =
-            "STATUS: TRANSMISSION 02";
+        "STATUS: TRANSMISSION 02";
 
     }else{
 
         document
         .getElementById("seq1msg")
         .textContent =
-            "SEQUENCE INCONSISTENT.";
+        "SEQUENCE INCONSISTENT.";
+
     }
+
 }
 
 
@@ -2233,10 +2125,10 @@ function checkSequence1(){
 function checkSequence2(){
 
     const first =
-        getSequence("2a");
+    words("seq2a");
 
     const second =
-        getSequence("2b");
+    words("seq2b");
 
     if(
         first === "AM I HERE" &&
@@ -2246,7 +2138,7 @@ function checkSequence2(){
         document
         .getElementById("seq2msg")
         .textContent =
-            "TRANSMISSION 02 ACCEPTED.";
+        "TRANSMISSION 02 ACCEPTED.";
 
         document
         .getElementById("eyeHunt1")
@@ -2259,8 +2151,10 @@ function checkSequence2(){
         document
         .getElementById("seq2msg")
         .textContent =
-            "SEQUENCE INCONSISTENT.";
+        "SEQUENCE INCONSISTENT.";
+
     }
+
 }
 
 
@@ -2271,34 +2165,28 @@ function checkSequence2(){
 function createEyeHunt1(){
 
     const grid =
-        document.getElementById(
-            "eyeGrid1"
-        );
+    document.getElementById("eyeGrid1");
 
     grid.innerHTML = "";
 
     const correct =
-        Math.floor(
-            Math.random() * 25
-        );
+    Math.floor(
+        Math.random() * 25
+    );
 
     for(let i=0;i<25;i++){
 
         const button =
-            document.createElement(
-                "button"
-            );
+        document.createElement("button");
 
         button.className =
-            "eye-choice";
+        "eye-choice";
 
         const eye =
-            document.createElement(
-                "div"
-            );
+        document.createElement("div");
 
         eye.className =
-            "eye";
+        "eye";
 
         if(i === correct){
 
@@ -2307,7 +2195,8 @@ function createEyeHunt1(){
             );
 
             button.dataset.correct =
-                "true";
+            "true";
+
         }
 
         button.appendChild(eye);
@@ -2324,7 +2213,7 @@ function createEyeHunt1(){
                 document
                 .getElementById("eyeMsg1")
                 .textContent =
-                    "VISUAL ANOMALY CONFIRMED.";
+                "VISUAL ANOMALY CONFIRMED.";
 
                 document
                 .getElementById("sequence3")
@@ -2333,278 +2222,324 @@ function createEyeHunt1(){
                 document
                 .getElementById("statusText")
                 .textContent =
-                    "STATUS: TRANSMISSION 03";
+                "STATUS: TRANSMISSION 03";
+
+                document
+                .getElementById("sequence3")
+                .scrollIntoView({
+                    behavior:"smooth",
+                    block:"center"
+                });
 
             }else{
 
                 document
                 .getElementById("eyeMsg1")
                 .textContent =
-                    "NEGATIVE. LOOK AGAIN.";
+                "NEGATIVE. LOOK AGAIN.";
+
             }
+
         };
+
     }
+
 }
 
 
 /* =====================================================
    SEQUENCE 3
-===================================================== */
+=====================================================
 
-/*
-   CORRECT:
+   EXACT CORRECT ANSWER:
 
-   HERE I AM
+   I AM HERE
+
    YOU CAN'T SEE ME
 
-   ONLY ONE "SEE".
+   IMPORTANT:
+   THERE IS ONLY ONE "SEE"
+   AND IT IS IN THE SECOND LINE.
 */
 
 function checkSequence3(){
 
     const first =
-        getSequence("3a");
+    words("seq3a");
 
     const second =
-        getSequence("3b");
+    words("seq3b");
 
     if(
-        first === "HERE I AM" &&
+        first === "I AM HERE" &&
         second === "YOU CAN'T SEE ME"
     ){
 
         document
         .getElementById("seq3msg")
         .textContent =
-            "TRANSMISSION 03 ACCEPTED.";
+        "TRANSMISSION 03 ACCEPTED.";
+
+        document
+        .getElementById("eyeHunt2")
+        .classList.remove("hidden");
+
+        createEyeHunt2();
 
         document
         .getElementById("statusText")
         .textContent =
-            "STATUS: ARCHIVE INCOMPLETE";
+        "STATUS: VISUAL CHECK 02";
 
-        setTimeout(()=>{
-
-            document
-            .getElementById("finalStage")
-            .classList.remove("hidden");
-
-            document
-            .getElementById("finalStage")
-            .scrollIntoView({
-                behavior:"smooth"
-            });
-
-            startIncompleteFall();
-
-        },700);
+        document
+        .getElementById("eyeHunt2")
+        .scrollIntoView({
+            behavior:"smooth",
+            block:"center"
+        });
 
     }else{
 
         document
         .getElementById("seq3msg")
         .textContent =
-            "SEQUENCE INCONSISTENT.";
-    }
-}
+        "SEQUENCE INCONSISTENT.";
 
-
-/* =====================================================
-   INCOMPLETE FALL
-===================================================== */
-
-function startIncompleteFall(){
-
-    const letters =
-        document
-        .querySelectorAll(
-            "#incompleteWord .incomplete-letter"
-        );
-
-    /*
-       ONLY the letters of INCOMPLETE
-       receive the falling animation.
-    */
-
-    letters.forEach(letter=>{
-
-        letter.classList.add("fall");
-
-    });
-
-}
-
-
-/* =====================================================
-   FIRST T CLICK
-===================================================== */
-
-let firstTUsed = false;
-
-
-function firstTClick(){
-
-    if(firstTUsed)
-        return;
-
-    firstTUsed = true;
-
-    const word =
-        document.getElementById(
-            "incompleteWord"
-        );
-
-    const letters =
-        [
-            ...word.querySelectorAll(
-                ".incomplete-letter"
-            )
-        ];
-
-    /*
-       INCOMPL = indexes 0-6
-       E       = index 7
-       T       = index 8
-       E       = index 9
-
-       INCOMPL falls away.
-
-       ETE remains.
-
-       T becomes a separate
-       clickable fallen T.
-    */
-
-    for(let i=0;i<=6;i++){
-
-        letters[i]
-        .classList.add(
-            "incomple-falling"
-        );
     }
 
-    const t =
-        document.getElementById(
-            "mainT"
-        );
-
-    const finalE =
-        letters[9];
-
-    const firstE =
-        letters[7];
-
-    /*
-       Keep E + E around the T area,
-       then transform visual result into ETE.
-    */
-
-    setTimeout(()=>{
-
-        letters[0].style.display="none";
-        letters[1].style.display="none";
-        letters[2].style.display="none";
-        letters[3].style.display="none";
-        letters[4].style.display="none";
-        letters[5].style.display="none";
-        letters[6].style.display="none";
-
-        t.style.display="none";
-
-        firstE.textContent="E";
-        finalE.textContent="E";
-
-        firstE.classList.add(
-            "ete-remain"
-        );
-
-        finalE.classList.add(
-            "ete-remain"
-        );
-
-        /*
-           Put a fallen T underneath.
-        */
-
-        const fallen =
-            document.getElementById(
-                "fallenT"
-            );
-
-        fallen.classList.remove(
-            "hidden"
-        );
-
-        document
-        .getElementById("archiveStatus")
-        .textContent =
-            "ARCHIVE STATUS: ANOMALY";
-
-    },850);
 }
 
 
 /* =====================================================
-   SECOND T CLICK
+   EYE HUNT 2
 ===================================================== */
 
-function secondTClick(){
+function createEyeHunt2(){
 
-    const fallen =
-        document.getElementById(
-            "fallenT"
-        );
+    const grid =
+    document.getElementById("eyeGrid2");
 
-    fallen.style.pointerEvents =
-        "none";
+    grid.innerHTML = "";
 
-    fallen.classList.add(
-        "t-falling"
+    const correct =
+    Math.floor(
+        Math.random() * 25
     );
 
-    document
-    .getElementById("archiveStatus")
-    .textContent =
-        "ARCHIVE STATUS: BREACH";
+    for(let i=0;i<25;i++){
 
+        const button =
+        document.createElement("button");
+
+        button.className =
+        "eye-choice";
+
+        const eye =
+        document.createElement("div");
+
+        eye.className =
+        "eye";
+
+        if(i === correct){
+
+            eye.classList.add(
+                "subtle2"
+            );
+
+            button.dataset.correct =
+            "true";
+
+        }
+
+        button.appendChild(eye);
+
+        grid.appendChild(button);
+
+        button.onclick = ()=>{
+
+            if(
+                button.dataset.correct ===
+                "true"
+            ){
+
+                document
+                .getElementById("eyeMsg2")
+                .textContent =
+                "SECOND ANOMALY CONFIRMED.";
+
+                showFinalStage();
+
+            }else{
+
+                document
+                .getElementById("eyeMsg2")
+                .textContent =
+                "NOTHING UNUSUAL.";
+
+            }
+
+        };
+
+    }
+
+}
+
+
+/* =====================================================
+   FINAL STAGE
+===================================================== */
+
+function showFinalStage(){
+
+    const final =
+    document.getElementById("finalStage");
+
+    final.classList.remove("hidden");
+
+    document
+    .getElementById("statusText")
+    .textContent =
+    "STATUS: ARCHIVE INCOMPLETE";
+
+    final.scrollIntoView({
+        behavior:"smooth",
+        block:"center"
+    });
+
+    /*
+       IMPORTANT:
+
+       ONLY .incomplete-letter elements
+       receive the falling animation.
+
+       Nothing else on the page moves.
+    */
 
     setTimeout(()=>{
 
-        /*
-           Reveal the background eye.
-        */
-
-        document
-        .getElementById(
-            "finalEyeBackground"
-        )
-        .classList.add(
-            "reveal"
+        const letters =
+        document.querySelectorAll(
+            ".incomplete-letter:not(#clickableT)"
         );
 
+        letters.forEach(
+            (letter,index)=>{
 
-        /*
-           Reveal the word EYE.
-        */
+                setTimeout(()=>{
 
-        document
-        .getElementById(
-            "finalEyeContent"
-        )
-        .classList.remove(
-            "hidden"
+                    letter.classList.add(
+                        "fall"
+                    );
+
+                },index * 90);
+
+            }
         );
 
+    },700);
 
-        document
-        .getElementById(
-            "statusText"
-        )
-        .textContent =
-            "STATUS: OBSERVED";
-
-    },650);
 }
+
+
+/* =====================================================
+   CLICKABLE T
+===================================================== */
+
+const clickableT =
+document.getElementById("clickableT");
+
+let tClicked = false;
+
+
+clickableT.addEventListener(
+    "click",
+    ()=>{
+
+        if(tClicked)
+            return;
+
+        tClicked = true;
+
+        /*
+           T falls by itself.
+        */
+
+        clickableT.animate(
+            [
+                {
+                    transform:
+                    "translateY(0) rotate(0deg)",
+                    opacity:1
+                },
+
+                {
+                    transform:
+                    "translateY(80px) rotate(10deg)",
+                    opacity:1
+                },
+
+                {
+                    transform:
+                    "translateY(500px) rotate(35deg)",
+                    opacity:0
+                }
+            ],
+            {
+                duration:1600,
+                easing:"cubic-bezier(.55,.05,.7,.2)",
+                fill:"forwards"
+            }
+        );
+
+
+        /*
+           Reveal the Eye after T falls.
+        */
+
+        setTimeout(()=>{
+
+            const bigEye =
+            document.getElementById(
+                "bigEye"
+            );
+
+            const eyeWord =
+            document.getElementById(
+                "eyeWord"
+            );
+
+            const finalMessage =
+            document.getElementById(
+                "finalMessage"
+            );
+
+
+            bigEye.classList.add(
+                "reveal"
+            );
+
+
+            setTimeout(()=>{
+
+                eyeWord.classList.add(
+                    "reveal"
+                );
+
+                finalMessage.classList.add(
+                    "show"
+                );
+
+                document
+                .getElementById("statusText")
+                .textContent =
+                "STATUS: OBSERVED";
+
+            },650);
+
+        },1600);
+
+    }
+);
 
 </script>
 
