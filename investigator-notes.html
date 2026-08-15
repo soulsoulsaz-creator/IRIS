@@ -2,11 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
 
 <title>BLACK IRIS // Investigator Notes</title>
 
 <style>
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
 *{
     box-sizing:border-box;
 }
@@ -31,7 +39,8 @@ body::after{
     pointer-events:none;
     z-index:9999;
 
-    background:repeating-linear-gradient(
+    background:
+    repeating-linear-gradient(
         to bottom,
         rgba(255,255,255,.018) 0px,
         rgba(255,255,255,.018) 1px,
@@ -45,12 +54,21 @@ body::after{
     padding:22px;
 
     background:
-        radial-gradient(
-            circle at 50% 20%,
-            #121718 0%,
-            #050708 65%
-        );
+    radial-gradient(
+        circle at 50% 20%,
+        #121718 0%,
+        #050708 65%
+    );
 }
+
+.hidden{
+    display:none !important;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
 
 .header{
     max-width:1000px;
@@ -84,6 +102,11 @@ body::after{
     letter-spacing:2px;
 }
 
+
+/* =========================================================
+   STATUS
+========================================================= */
+
 .status{
     max-width:1000px;
     margin:24px auto;
@@ -107,6 +130,11 @@ body::after{
     margin-right:8px;
 }
 
+
+/* =========================================================
+   PANEL
+========================================================= */
+
 .panel{
     max-width:1000px;
     margin:auto;
@@ -115,7 +143,8 @@ body::after{
 
     background:rgba(3,5,6,.94);
 
-    box-shadow:0 0 35px rgba(0,0,0,.7);
+    box-shadow:
+        0 0 35px rgba(0,0,0,.7);
 }
 
 .panel-header{
@@ -137,10 +166,6 @@ body::after{
     padding:35px 20px;
 }
 
-.hidden{
-    display:none!important;
-}
-
 .symbol{
     color:#777;
     font-size:20px;
@@ -150,10 +175,10 @@ body::after{
 h1{
     margin:0;
 
-    font-size:clamp(19px,5vw,28px);
+    font-size:
+        clamp(19px,5vw,28px);
 
     letter-spacing:5px;
-
     font-weight:normal;
 }
 
@@ -171,68 +196,18 @@ h2{
     color:#777;
 
     font-size:10px;
-
     line-height:1.8;
 }
 
-/* ==========================================
-   IMAGE PUZZLE
-========================================== */
+.message{
+    min-height:18px;
 
-#puzzle{
-    width:min(90vw,600px);
+    margin-top:15px;
 
-    aspect-ratio:1/1;
+    color:#777;
 
-    margin:25px auto;
-
-    display:grid;
-
-    grid-template-columns:repeat(3,1fr);
-    grid-template-rows:repeat(3,1fr);
-
-    gap:2px;
-
-    background:#020303;
-
-    border:1px solid #333;
-
-    padding:2px;
-
-    touch-action:manipulation;
-}
-
-.tile{
-    position:relative;
-
-    background-image:url("evidence-puzzle.png");
-
-    background-size:300% 300%;
-
-    cursor:pointer;
-
-    transition:.12s;
-
-    overflow:hidden;
-}
-
-.tile:active{
-    transform:scale(.97);
-}
-
-.empty{
-    background:#050708!important;
-    cursor:default;
-}
-
-.puzzle-info{
-    color:#555;
     font-size:9px;
-    letter-spacing:2px;
-}
-
-.moves{
-    color:#aaa;
+    letter-spacing:1px;
 }
 
 .button{
@@ -261,23 +236,82 @@ h2{
     background:#151819;
 }
 
-.message{
-    min-height:18px;
 
-    margin-top:15px;
+/* =========================================================
+   IMAGE SLIDING PUZZLE
+========================================================= */
 
-    color:#777;
+#puzzle{
+
+    width:min(90vw,600px);
+
+    aspect-ratio:1/1;
+
+    margin:25px auto;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    grid-template-rows:
+        repeat(3,1fr);
+
+    gap:2px;
+
+    background:#020303;
+
+    border:1px solid #333;
+
+    padding:2px;
+
+    touch-action:manipulation;
+}
+
+.tile{
+    position:relative;
+
+    background-image:
+        url("evidence-puzzle.png");
+
+    background-size:300% 300%;
+
+    cursor:pointer;
+
+    transition:
+        transform .12s ease;
+
+    overflow:hidden;
+}
+
+.tile:active{
+    transform:scale(.97);
+}
+
+.empty{
+    background:#050708 !important;
+    cursor:default;
+}
+
+.puzzle-info{
+    color:#555;
 
     font-size:9px;
 
-    letter-spacing:1px;
+    letter-spacing:2px;
 }
 
-/* ==========================================
+.moves{
+    color:#aaa;
+}
+
+
+/* =========================================================
    CODE
-========================================== */
+========================================================= */
 
 .code-box{
+
     width:min(500px,100%);
 
     margin:25px auto;
@@ -290,7 +324,9 @@ h2{
 }
 
 .code-input{
+
     width:260px;
+
     max-width:90%;
 
     padding:14px;
@@ -301,7 +337,9 @@ h2{
 
     color:#ddd;
 
-    font-family:"Courier New",monospace;
+    font-family:
+        "Courier New",
+        monospace;
 
     text-align:center;
 
@@ -312,11 +350,13 @@ h2{
     outline:none;
 }
 
-/* ==========================================
+
+/* =========================================================
    SEQUENCES
-========================================== */
+========================================================= */
 
 .sequence{
+
     width:min(850px,100%);
 
     margin:28px auto;
@@ -329,6 +369,7 @@ h2{
 }
 
 .sequence-label{
+
     color:#555;
 
     font-size:8px;
@@ -339,6 +380,7 @@ h2{
 }
 
 .word-line{
+
     display:flex;
 
     justify-content:center;
@@ -348,17 +390,18 @@ h2{
     gap:8px;
 
     margin:14px 0;
-
-    min-height:52px;
 }
 
 .word{
+
     min-width:88px;
+
     height:52px;
 
     display:flex;
 
     align-items:center;
+
     justify-content:center;
 
     border:1px solid #3b4041;
@@ -379,40 +422,39 @@ h2{
 
     touch-action:none;
 
-    -webkit-touch-callout:none;
-
     transition:
-        transform .12s,
-        border-color .12s,
-        opacity .12s;
+        transform .12s ease,
+        border-color .15s ease,
+        opacity .15s ease;
 }
 
-.word:active{
-    cursor:grabbing;
+.word:hover{
+    border-color:#777;
 }
 
 .word.dragging{
-    opacity:.35;
 
-    transform:scale(1.06);
+    opacity:.3;
 
-    border-color:#888;
-
-    z-index:100;
+    transform:scale(.96);
 }
 
-.word.drop-target{
+.word.touch-selected{
+
     border-color:#aaa;
 
     box-shadow:
-        0 0 14px rgba(255,255,255,.08);
+        0 0 12px
+        rgba(255,255,255,.08);
 }
 
-/* ==========================================
+
+/* =========================================================
    EYE HUNT
-========================================== */
+========================================================= */
 
 .eye-grid{
+
     width:min(760px,100%);
 
     margin:25px auto;
@@ -421,7 +463,8 @@ h2{
 
     display:grid;
 
-    grid-template-columns:repeat(5,1fr);
+    grid-template-columns:
+        repeat(5,1fr);
 
     gap:18px;
 
@@ -431,6 +474,7 @@ h2{
 }
 
 .eye-choice{
+
     border:0;
 
     background:none;
@@ -441,9 +485,11 @@ h2{
 }
 
 .eye{
+
     position:relative;
 
     width:76px;
+
     height:42px;
 
     margin:auto;
@@ -459,11 +505,13 @@ h2{
 }
 
 .eye::before{
+
     content:"";
 
     position:absolute;
 
     width:27px;
+
     height:27px;
 
     left:50%;
@@ -480,11 +528,13 @@ h2{
 }
 
 .eye::after{
+
     content:"";
 
     position:absolute;
 
     width:6px;
+
     height:6px;
 
     left:50%;
@@ -498,7 +548,8 @@ h2{
     background:#666;
 }
 
-/* subtle anomalies */
+
+/* SUBTLE DIFFERENCES */
 
 .eye.subtle1{
     transform:rotate(2deg);
@@ -519,171 +570,358 @@ h2{
     height:29px;
 }
 
-/* ==========================================
-   INCOMPLETE
-========================================== */
+.eye.subtle3{
+    transform:
+        rotate(-1deg)
+        scaleX(.94);
+}
 
-.incomplete-area{
+.eye.subtle3::after{
+    transform:
+        translate(-50%,-50%)
+        translateX(2px);
+}
+
+
+/* =========================================================
+   INCOMPLETE FINAL WORD
+========================================================= */
+
+.final-area{
+
+    width:min(700px,100%);
+
     margin:45px auto 10px;
 
-    padding:25px;
+    padding:30px 20px;
 
     border-top:1px solid #1b1f20;
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+.incomplete-title{
+
+    color:#444;
+
+    font-size:8px;
+
+    letter-spacing:3px;
+
+    margin-bottom:25px;
 }
 
 .incomplete-word{
-    display:inline-block;
 
-    font-size:24px;
+    display:inline-flex;
 
-    letter-spacing:4px;
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:
+        clamp(35px,10vw,72px);
+
+    letter-spacing:6px;
 
     color:#777;
 
     user-select:none;
-
-    -webkit-user-select:none;
 }
 
-.draggable-t{
-    display:inline-flex;
+.final-letter{
 
-    align-items:center;
-    justify-content:center;
+    display:inline-block;
 
-    cursor:grab;
-
-    color:#777;
-
-    touch-action:none;
-
-    min-width:25px;
+    position:relative;
 
     transition:
-        color .15s,
-        transform .15s,
-        opacity .15s;
+        color .2s,
+        text-shadow .2s;
 }
 
-.draggable-t:hover{
-    color:#aaa;
+.final-t{
+
+    cursor:pointer;
+
+    color:#888;
+
+    z-index:20;
+
+    touch-action:manipulation;
 }
 
-.draggable-t.dragging{
-    opacity:.25;
+.final-t:hover{
 
-    transform:scale(1.15);
+    color:#ccc;
+
+    text-shadow:
+        0 0 12px
+        rgba(255,255,255,.15);
 }
 
-.t-drop-zone{
-    margin:25px auto 0;
 
-    width:170px;
+/* =========================================================
+   FALLING T
+========================================================= */
 
-    min-height:55px;
+.final-t.falling{
 
-    border:1px dashed #292e2f;
+    animation:
+        tFall 1.35s
+        cubic-bezier(.2,.75,.25,1)
+        forwards;
+}
 
-    color:#393d3e;
+@keyframes tFall{
+
+    0%{
+        transform:
+            translateY(0)
+            rotate(0deg);
+
+        opacity:1;
+    }
+
+    12%{
+        transform:
+            translateY(-10px)
+            rotate(-5deg);
+    }
+
+    100%{
+
+        transform:
+            translateY(360px)
+            rotate(25deg);
+
+        opacity:0;
+    }
+}
+
+
+/* =========================================================
+   EYE REVEAL
+========================================================= */
+
+.eye-reveal{
+
+    position:absolute;
+
+    inset:0;
 
     display:flex;
 
     align-items:center;
+
     justify-content:center;
 
-    font-size:8px;
+    pointer-events:none;
 
-    letter-spacing:2px;
+    opacity:0;
 
-    transition:.2s;
+    transition:
+        opacity 1s ease;
+
+    z-index:1;
 }
 
-.t-drop-zone.active{
-    border-color:#777;
+.eye-reveal.visible{
 
-    color:#777;
+    opacity:1;
+}
+
+
+/* giant background eye */
+
+.background-eye{
+
+    position:absolute;
+
+    width:
+        min(75vw,520px);
+
+    height:
+        min(42vw,300px);
+
+    border:
+        7px solid
+        rgba(90,90,90,.18);
+
+    border-radius:
+        75% 12% 75% 12%;
+
+    transform:
+        rotate(-2deg);
 
     box-shadow:
-        0 0 15px rgba(255,255,255,.05);
+        0 0 50px
+        rgba(100,0,0,.12);
+
+    opacity:.7;
 }
 
-.final-eye{
-    margin-top:20px;
+.background-eye::before{
 
-    font-size:70px;
+    content:"";
 
-    letter-spacing:8px;
+    position:absolute;
+
+    width:38%;
+
+    aspect-ratio:1;
+
+    left:50%;
+    top:50%;
+
+    transform:
+        translate(-50%,-50%);
+
+    border:
+        5px solid
+        rgba(100,100,100,.18);
+
+    border-radius:50%;
+}
+
+.background-eye::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:13%;
+
+    aspect-ratio:1;
+
+    left:50%;
+    top:50%;
+
+    transform:
+        translate(-50%,-50%);
+
+    border-radius:50%;
+
+    background:
+        rgba(160,0,0,.35);
+
+    box-shadow:
+        0 0 25px
+        rgba(150,0,0,.4);
+}
+
+
+/* =========================================================
+   EYE WORD
+========================================================= */
+
+.eye-word{
+
+    position:relative;
+
+    z-index:5;
+
+    font-size:
+        clamp(55px,15vw,120px);
+
+    letter-spacing:
+        15px;
 
     color:#b00000;
 
     text-shadow:
         0 0 10px #600,
-        0 0 30px rgba(180,0,0,.7);
+        0 0 35px
+        rgba(180,0,0,.7);
 
-    animation:pulse 1s infinite alternate;
+    opacity:0;
+
+    transform:
+        scale(.7);
+
+    transition:
+        opacity 1s ease,
+        transform 1s ease;
 }
 
-.final-message{
-    color:#555;
+.eye-word.visible{
 
-    font-size:9px;
+    opacity:1;
 
-    letter-spacing:3px;
-
-    margin-top:15px;
+    transform:
+        scale(1);
 }
+
+
+/* =========================================================
+   GLITCH
+========================================================= */
 
 .glitch{
-    animation:glitch .55s linear;
+
+    animation:
+        glitch .55s linear;
 }
 
 @keyframes glitch{
 
     0%{
         transform:translateX(0);
-        opacity:1;
     }
 
     20%{
-        transform:translateX(-7px);
-        opacity:.5;
+        transform:translateX(-8px);
     }
 
     40%{
-        transform:translateX(7px);
-        opacity:.8;
+        transform:translateX(8px);
     }
 
     60%{
         transform:translateX(-4px);
-        opacity:.4;
+    }
+
+    80%{
+        transform:translateX(4px);
     }
 
     100%{
         transform:translateX(0);
-        opacity:1;
     }
 }
 
-@keyframes pulse{
+.final-message{
 
-    from{
-        opacity:.45;
-    }
+    margin-top:25px;
 
-    to{
-        opacity:1;
-    }
+    color:#555;
+
+    font-size:9px;
+
+    letter-spacing:3px;
+
+    position:relative;
+
+    z-index:10;
 }
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
 
 .footer{
+
     max-width:1000px;
 
     margin:18px auto;
 
     display:flex;
 
-    justify-content:space-between;
+    justify-content:
+        space-between;
 
     color:#383d3e;
 
@@ -692,9 +930,10 @@ h2{
     letter-spacing:1px;
 }
 
-/* ==========================================
+
+/* =========================================================
    MOBILE
-========================================== */
+========================================================= */
 
 @media(max-width:600px){
 
@@ -714,23 +953,33 @@ h2{
         font-size:7px;
     }
 
+    .section{
+        padding:
+            28px 10px;
+    }
+
     .eye-grid{
-        grid-template-columns:repeat(3,1fr);
+
+        grid-template-columns:
+            repeat(3,1fr);
 
         gap:8px;
     }
 
     .eye{
+
         width:55px;
         height:32px;
     }
 
     .eye::before{
+
         width:21px;
         height:21px;
     }
 
     .word{
+
         min-width:70px;
 
         height:48px;
@@ -742,10 +991,8 @@ h2{
         font-size:6px;
     }
 
-    .incomplete-word{
-        font-size:21px;
-    }
 }
+
 </style>
 </head>
 
@@ -754,9 +1001,9 @@ h2{
 
 <div class="terminal">
 
-<!-- ==========================================
+<!-- ======================================================
      HEADER
-========================================== -->
+====================================================== -->
 
 <div class="header">
 
@@ -781,20 +1028,25 @@ h2{
 </div>
 
 
-<!-- ==========================================
+<!-- ======================================================
      STATUS
-========================================== -->
+====================================================== -->
 
 <div class="status">
 
     <span class="status-dot"></span>
 
     <span id="statusText">
-        SECURE ARCHIVE // VISUAL EVIDENCE DETECTED
+        SECURE ARCHIVE //
+        VISUAL EVIDENCE DETECTED
     </span>
 
 </div>
 
+
+<!-- ======================================================
+     MAIN PANEL
+====================================================== -->
 
 <div class="panel">
 
@@ -811,9 +1063,9 @@ h2{
 </div>
 
 
-<!-- ==========================================
-     STAGE 1
-========================================== -->
+<!-- ======================================================
+     STAGE 1 — IMAGE PUZZLE
+====================================================== -->
 
 <section
     id="puzzleStage"
@@ -840,7 +1092,9 @@ h2{
     <div class="puzzle-info">
 
         MOVES:
-        <span id="moves" class="moves">
+        <span
+            id="moves"
+            class="moves">
             0
         </span>
 
@@ -855,9 +1109,9 @@ h2{
 </section>
 
 
-<!-- ==========================================
-     IMAGE SUCCESS
-========================================== -->
+<!-- ======================================================
+     STAGE 1 SUCCESS
+====================================================== -->
 
 <section
     id="successStage"
@@ -890,9 +1144,9 @@ h2{
 </section>
 
 
-<!-- ==========================================
+<!-- ======================================================
      AGENCY
-========================================== -->
+====================================================== -->
 
 <section
     id="agencyStage"
@@ -917,19 +1171,19 @@ h2{
 
     <div class="code-box">
 
-        <div style="
+        <div
+            style="
             color:#777;
-            font-size:10px;
-        ">
+            font-size:10px;">
 
             SECURE CHANNEL
 
         </div>
 
-        <div style="
+        <div
+            style="
             margin-top:15px;
-            color:#aaa;
-        ">
+            color:#aaa;">
 
             black.iris.devision@gmail.com
 
@@ -962,9 +1216,9 @@ h2{
 </section>
 
 
-<!-- ==========================================
-     CODE
-========================================== -->
+<!-- ======================================================
+     CODE 170301
+====================================================== -->
 
 <section
     id="codeStage"
@@ -980,8 +1234,8 @@ h2{
 
     <div class="instructions">
 
-        The recovered evidence contains an
-        authorization sequence.<br><br>
+        The recovered evidence contains
+        an authorization sequence.<br><br>
 
         Enter the six-digit sequence.
 
@@ -996,8 +1250,7 @@ h2{
             inputmode="numeric"
             maxlength="6"
             autocomplete="off"
-            placeholder="------"
-        >
+            placeholder="------">
 
         <br>
 
@@ -1019,9 +1272,9 @@ h2{
 </section>
 
 
-<!-- ==========================================
+<!-- ======================================================
      INVESTIGATOR NOTES
-========================================== -->
+====================================================== -->
 
 <section
     id="sequenceStage"
@@ -1045,72 +1298,48 @@ h2{
     </div>
 
 
-    <!-- ======================================
-         INCOMPLETE IS PRESENT FROM THE START
-    ======================================= -->
+    <!-- ==================================================
+         INCOMPLETE IS ALREADY PRESENT
+    ================================================== -->
 
-    <div class="sequence">
+    <div
+        id="incompletePreview"
+        class="final-area">
 
-        <div class="sequence-label">
+        <div class="incomplete-title">
             ARCHIVE // STATUS
         </div>
 
-        <div class="incomplete-area">
+        <div class="incomplete-word">
 
-            <div
-                id="incompleteWord"
-                class="incomplete-word">
+            INCOMPLE
 
-                INCOMPLE
+            <span
+                id="finalT"
+                class="final-letter final-t"
+                role="button"
+                tabindex="0">
 
-                <span
-                    id="dragT"
-                    class="draggable-t">
+                T
 
-                    T
+            </span>
 
-                </span>
-
-                E
-
-            </div>
-
-            <div class="message">
-
-                ARCHIVE STATUS: INCOMPLETE
-
-            </div>
-
-            <div
-                id="tDropZone"
-                class="t-drop-zone">
-
-                —
-
-            </div>
+            E
 
         </div>
 
-        <div
-            id="finalEye"
-            class="hidden">
+        <div class="message">
 
-            <div class="final-eye">
-                EYE
-            </div>
-
-            <div class="final-message">
-                IT SEES YOU
-            </div>
+            ARCHIVE STATUS: INCOMPLETE
 
         </div>
 
     </div>
 
 
-    <!-- ======================================
+    <!-- ==================================================
          SEQUENCE 1
-    ======================================= -->
+    ================================================== -->
 
     <div class="sequence">
 
@@ -1122,15 +1351,18 @@ h2{
             id="seq1a"
             class="word-line">
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 HERE
             </div>
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 I
             </div>
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 AM
             </div>
 
@@ -1140,20 +1372,24 @@ h2{
             id="seq1b"
             class="word-line">
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 ME
             </div>
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
+                CAN
+            </div>
+
+            <div class="word"
+                 draggable="true">
                 YOU
             </div>
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 SEE
-            </div>
-
-            <div class="word">
-                CAN
             </div>
 
         </div>
@@ -1174,9 +1410,9 @@ h2{
     </div>
 
 
-    <!-- ======================================
+    <!-- ==================================================
          SEQUENCE 2
-    ======================================= -->
+    ================================================== -->
 
     <div
         id="sequence2"
@@ -1190,15 +1426,18 @@ h2{
             id="seq2a"
             class="word-line">
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 HERE
             </div>
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 AM
             </div>
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 I
             </div>
 
@@ -1208,19 +1447,23 @@ h2{
             id="seq2b"
             class="word-line">
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 SEE
             </div>
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 ME
             </div>
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 CAN
             </div>
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 YOU
             </div>
 
@@ -1242,9 +1485,9 @@ h2{
     </div>
 
 
-    <!-- ======================================
+    <!-- ==================================================
          EYE HUNT 1
-    ======================================= -->
+    ================================================== -->
 
     <div
         id="eyeHunt1"
@@ -1273,9 +1516,9 @@ h2{
     </div>
 
 
-    <!-- ======================================
+    <!-- ==================================================
          SEQUENCE 3
-    ======================================= -->
+    ================================================== -->
 
     <div
         id="sequence3"
@@ -1289,19 +1532,23 @@ h2{
             id="seq3a"
             class="word-line">
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 SEE
             </div>
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 I
             </div>
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 AM
             </div>
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 HERE
             </div>
 
@@ -1311,19 +1558,23 @@ h2{
             id="seq3b"
             class="word-line">
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 SEE
             </div>
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 ME
             </div>
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 CAN'T
             </div>
 
-            <div class="word">
+            <div class="word"
+                 draggable="true">
                 YOU
             </div>
 
@@ -1345,9 +1596,9 @@ h2{
     </div>
 
 
-    <!-- ======================================
+    <!-- ==================================================
          EYE HUNT 2
-    ======================================= -->
+    ================================================== -->
 
     <div
         id="eyeHunt2"
@@ -1377,15 +1628,92 @@ h2{
 
     </div>
 
+
+    <!-- ==================================================
+         FINAL INCOMPLETE AREA
+    ================================================== -->
+
+    <div
+        id="finalArea"
+        class="final-area hidden">
+
+        <div class="incomplete-title">
+            ARCHIVE // STATUS
+        </div>
+
+        <div
+            id="finalWord"
+            class="incomplete-word">
+
+            INCOMPLE
+
+            <span
+                id="finalT2"
+                class="final-letter final-t"
+                role="button"
+                tabindex="0">
+
+                T
+
+            </span>
+
+            E
+
+        </div>
+
+        <div
+            id="finalStatus"
+            class="message">
+
+            ARCHIVE STATUS: INCOMPLETE
+
+        </div>
+
+
+        <!-- BACKGROUND EYE -->
+
+        <div
+            id="eyeReveal"
+            class="eye-reveal">
+
+            <div
+                class="background-eye">
+            </div>
+
+            <div
+                id="eyeWord"
+                class="eye-word">
+
+                EYE
+
+            </div>
+
+        </div>
+
+        <div
+            id="finalMessage"
+            class="final-message hidden">
+
+            IT SEES YOU
+
+        </div>
+
+    </div>
+
 </section>
 
 </div>
 
 
+<!-- ======================================================
+     FOOTER
+====================================================== -->
+
 <div class="footer">
 
     <span>
-        BLACK IRIS // SECURE INVESTIGATIVE NETWORK
+        BLACK IRIS //
+        SECURE INVESTIGATIVE NETWORK
     </span>
 
     <span>
@@ -1399,9 +1727,9 @@ h2{
 
 <script>
 
-/* =====================================================
+/* =========================================================
    IMAGE PUZZLE
-===================================================== */
+========================================================= */
 
 const puzzle =
     document.getElementById("puzzle");
@@ -1422,7 +1750,9 @@ function createSolvedBoard(){
     board = [];
 
     for(let i=1;i<TOTAL;i++){
+
         board.push(i);
+
     }
 
     board.push(0);
@@ -1530,7 +1860,7 @@ function drawPuzzle(){
 
             tile.addEventListener(
                 "click",
-                ()=>moveTile(index)
+                () => moveTile(index)
             );
         }
 
@@ -1579,6 +1909,7 @@ function checkSolved(){
 
         if(board[i] !== i+1)
             return;
+
     }
 
     if(board[TOTAL-1] !== 0)
@@ -1589,16 +1920,16 @@ function checkSolved(){
     setTimeout(()=>{
 
         document
-            .getElementById("puzzleStage")
-            .classList.add("hidden");
+        .getElementById("puzzleStage")
+        .classList.add("hidden");
 
         document
-            .getElementById("successStage")
-            .classList.remove("hidden");
+        .getElementById("successStage")
+        .classList.remove("hidden");
 
         document
-            .getElementById("statusText")
-            .textContent =
+        .getElementById("statusText")
+        .textContent =
             "STATUS: RECONSTRUCTION VERIFIED";
 
     },500);
@@ -1610,23 +1941,23 @@ shufflePuzzle();
 drawPuzzle();
 
 
-/* =====================================================
+/* =========================================================
    AGENCY
-===================================================== */
+========================================================= */
 
 function openAgencyStage(){
 
     document
-        .getElementById("successStage")
-        .classList.add("hidden");
+    .getElementById("successStage")
+    .classList.add("hidden");
 
     document
-        .getElementById("agencyStage")
-        .classList.remove("hidden");
+    .getElementById("agencyStage")
+    .classList.remove("hidden");
 
     document
-        .getElementById("statusText")
-        .textContent =
+    .getElementById("statusText")
+    .textContent =
         "STATUS: EXTERNAL AUTHORIZATION";
 }
 
@@ -1663,57 +1994,63 @@ Please provide the next evidence.
 function showCodeStage(){
 
     document
-        .getElementById("agencyStage")
-        .classList.add("hidden");
+    .getElementById("agencyStage")
+    .classList.add("hidden");
 
     document
-        .getElementById("codeStage")
-        .classList.remove("hidden");
+    .getElementById("codeStage")
+    .classList.remove("hidden");
 
     document
-        .getElementById("statusText")
-        .textContent =
+    .getElementById("statusText")
+    .textContent =
         "STATUS: AUTHORIZATION REQUIRED";
 }
 
 
-/* =====================================================
+/* =========================================================
    CODE 170301
-===================================================== */
+========================================================= */
 
 function verifyCode(){
 
     const input =
         document.getElementById("codeInput");
 
-    const msg =
+    const message =
         document.getElementById("codeMessage");
 
     if(input.value === "170301"){
 
-        msg.textContent =
+        message.textContent =
             "AUTHORIZATION ACCEPTED.";
 
         setTimeout(()=>{
 
             document
-                .getElementById("codeStage")
-                .classList.add("hidden");
+            .getElementById("codeStage")
+            .classList.add("hidden");
 
             document
-                .getElementById("sequenceStage")
-                .classList.remove("hidden");
+            .getElementById("sequenceStage")
+            .classList.remove("hidden");
 
             document
-                .getElementById("statusText")
-                .textContent =
+            .getElementById("statusText")
+            .textContent =
                 "STATUS: INVESTIGATOR NOTES";
+
+            document
+            .getElementById("incompletePreview")
+            .scrollIntoView({
+                behavior:"smooth"
+            });
 
         },700);
 
     }else{
 
-        msg.textContent =
+        message.textContent =
             "ACCESS DENIED.";
 
         input.value = "";
@@ -1722,266 +2059,234 @@ function verifyCode(){
 
 
 document
-    .getElementById("codeInput")
-    .addEventListener(
-        "keydown",
-        e=>{
-            if(e.key === "Enter")
-                verifyCode();
+.getElementById("codeInput")
+.addEventListener(
+    "keydown",
+    e => {
+
+        if(e.key === "Enter")
+            verifyCode();
+
+    }
+);
+
+
+/* =========================================================
+   TOUCH + MOUSE WORD REORDERING
+========================================================= */
+
+let draggedWord = null;
+let touchWord = null;
+
+
+/* ---------- DESKTOP DRAG ---------- */
+
+document.addEventListener(
+    "dragstart",
+    e => {
+
+        if(
+            e.target.classList.contains("word")
+        ){
+
+            draggedWord = e.target;
+
+            e.target.classList.add(
+                "dragging"
+            );
+
         }
+
+    }
+);
+
+
+document.addEventListener(
+    "dragend",
+    e => {
+
+        if(
+            e.target.classList.contains("word")
+        ){
+
+            e.target.classList.remove(
+                "dragging"
+            );
+
+            draggedWord = null;
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    "dragover",
+    e => {
+
+        if(
+            e.target.classList.contains("word")
+        ){
+
+            e.preventDefault();
+
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    "drop",
+    e => {
+
+        if(
+            e.target.classList.contains("word") &&
+            draggedWord &&
+            draggedWord !== e.target
+        ){
+
+            e.preventDefault();
+
+            swapWords(
+                draggedWord,
+                e.target
+            );
+        }
+
+    }
+);
+
+
+/* ---------- TOUCH ---------- */
+
+document.addEventListener(
+    "touchstart",
+    e => {
+
+        const word =
+            e.target.closest(".word");
+
+        if(!word)
+            return;
+
+        touchWord = word;
+
+        word.classList.add(
+            "touch-selected"
+        );
+
+    },
+    {passive:true}
+);
+
+
+document.addEventListener(
+    "touchend",
+    e => {
+
+        if(!touchWord)
+            return;
+
+        const touch =
+            e.changedTouches[0];
+
+        const element =
+            document.elementFromPoint(
+                touch.clientX,
+                touch.clientY
+            );
+
+        const target =
+            element
+            ? element.closest(".word")
+            : null;
+
+        if(
+            target &&
+            target !== touchWord
+        ){
+
+            swapWords(
+                touchWord,
+                target
+            );
+
+        }
+
+        touchWord.classList.remove(
+            "touch-selected"
+        );
+
+        touchWord = null;
+
+    },
+    {passive:true}
+);
+
+
+function swapWords(a,b){
+
+    if(!a || !b)
+        return;
+
+    const parentA =
+        a.parentNode;
+
+    const parentB =
+        b.parentNode;
+
+    if(parentA !== parentB)
+        return;
+
+    const marker =
+        document.createElement("span");
+
+    parentA.insertBefore(
+        marker,
+        a
     );
 
-
-/* =====================================================
-   MOBILE + DESKTOP POINTER DRAG SYSTEM
-===================================================== */
-
-let activeDrag = null;
-let dragStartX = 0;
-let dragStartY = 0;
-let currentTarget = null;
-
-
-function getWordFromPoint(x,y){
-
-    const element =
-        document.elementFromPoint(x,y);
-
-    if(!element)
-        return null;
-
-    return element.closest(".word");
-}
-
-
-function clearDropTarget(){
-
-    document
-        .querySelectorAll(".drop-target")
-        .forEach(el=>{
-            el.classList.remove("drop-target");
-        });
-
-    currentTarget = null;
-}
-
-
-function swapWords(source,target){
-
-    if(!source || !target)
-        return;
-
-    if(source === target)
-        return;
-
-    const parent =
-        target.parentNode;
-
-    const sourceNext =
-        source.nextSibling;
-
-    const targetNext =
-        target.nextSibling;
-
-    if(
-        sourceNext === target
-    ){
-
-        parent.insertBefore(
-            target,
-            source
-        );
-
-        return;
-    }
-
-    if(
-        targetNext === source
-    ){
-
-        parent.insertBefore(
-            source,
-            target
-        );
-
-        return;
-    }
-
-    parent.insertBefore(
-        source,
-        target
+    parentA.insertBefore(
+        a,
+        b
     );
 
-    if(sourceNext){
-
-        parent.insertBefore(
-            target,
-            sourceNext
-        );
-
-    }else{
-
-        parent.appendChild(target);
-
-    }
-}
-
-
-function pointerDown(e){
-
-    const word =
-        e.target.closest(".word");
-
-    if(!word)
-        return;
-
-    if(
-        e.pointerType === "mouse" &&
-        e.button !== 0
-    )
-        return;
-
-    activeDrag = word;
-
-    dragStartX = e.clientX;
-    dragStartY = e.clientY;
-
-    activeDrag.classList.add("dragging");
-
-    try{
-        activeDrag.setPointerCapture(
-            e.pointerId
-        );
-    }catch(err){}
-
-    e.preventDefault();
-}
-
-
-function pointerMove(e){
-
-    if(!activeDrag)
-        return;
-
-    e.preventDefault();
-
-    const target =
-        getWordFromPoint(
-            e.clientX,
-            e.clientY
-        );
-
-    clearDropTarget();
-
-    if(
-        target &&
-        target !== activeDrag
-    ){
-
-        currentTarget = target;
-
-        target.classList.add(
-            "drop-target"
-        );
-    }
-}
-
-
-function pointerUp(e){
-
-    if(!activeDrag)
-        return;
-
-    e.preventDefault();
-
-    const source =
-        activeDrag;
-
-    const target =
-        getWordFromPoint(
-            e.clientX,
-            e.clientY
-        );
-
-    source.classList.remove(
-        "dragging"
+    parentA.insertBefore(
+        b,
+        marker
     );
 
-    clearDropTarget();
-
-    if(
-        target &&
-        target !== source
-    ){
-
-        swapWords(
-            source,
-            target
-        );
-    }
-
-    try{
-        source.releasePointerCapture(
-            e.pointerId
-        );
-    }catch(err){}
-
-    activeDrag = null;
+    marker.remove();
 }
 
 
-document.addEventListener(
-    "pointerdown",
-    pointerDown,
-    {passive:false}
-);
-
-document.addEventListener(
-    "pointermove",
-    pointerMove,
-    {passive:false}
-);
-
-document.addEventListener(
-    "pointerup",
-    pointerUp,
-    {passive:false}
-);
-
-document.addEventListener(
-    "pointercancel",
-    pointerUp,
-    {passive:false}
-);
-
-
-/* =====================================================
-   GET WORDS
-===================================================== */
-
-function words(id){
+function getWords(id){
 
     return [
         ...document
-            .getElementById(id)
-            .querySelectorAll(".word")
+        .getElementById(id)
+        .querySelectorAll(".word")
     ]
-    .map(x=>x.textContent.trim())
+    .map(
+        word =>
+            word.textContent.trim()
+    )
     .join(" ");
 }
 
 
-/* =====================================================
+/* =========================================================
    SEQUENCE 1
-===================================================== */
+========================================================= */
 
 function checkSequence1(){
 
     const first =
-        words("seq1a");
+        getWords("seq1a");
 
     const second =
-        words("seq1b");
+        getWords("seq1b");
 
     if(
         first === "I AM HERE" &&
@@ -1989,41 +2294,47 @@ function checkSequence1(){
     ){
 
         document
-            .getElementById("seq1msg")
-            .textContent =
+        .getElementById("seq1msg")
+        .textContent =
             "TRANSMISSION 01 ACCEPTED.";
 
         document
-            .getElementById("sequence2")
-            .classList.remove("hidden");
+        .getElementById("sequence2")
+        .classList.remove("hidden");
 
         document
-            .getElementById("statusText")
-            .textContent =
+        .getElementById("statusText")
+        .textContent =
             "STATUS: TRANSMISSION 02";
+
+        document
+        .getElementById("sequence2")
+        .scrollIntoView({
+            behavior:"smooth"
+        });
 
     }else{
 
         document
-            .getElementById("seq1msg")
-            .textContent =
+        .getElementById("seq1msg")
+        .textContent =
             "SEQUENCE INCONSISTENT.";
 
     }
 }
 
 
-/* =====================================================
+/* =========================================================
    SEQUENCE 2
-===================================================== */
+========================================================= */
 
 function checkSequence2(){
 
     const first =
-        words("seq2a");
+        getWords("seq2a");
 
     const second =
-        words("seq2b");
+        getWords("seq2b");
 
     if(
         first === "AM I HERE" &&
@@ -2031,35 +2342,41 @@ function checkSequence2(){
     ){
 
         document
-            .getElementById("seq2msg")
-            .textContent =
+        .getElementById("seq2msg")
+        .textContent =
             "TRANSMISSION 02 ACCEPTED.";
 
         document
-            .getElementById("eyeHunt1")
-            .classList.remove("hidden");
+        .getElementById("eyeHunt1")
+        .classList.remove("hidden");
 
         createEyeHunt1();
 
         document
-            .getElementById("statusText")
-            .textContent =
+        .getElementById("statusText")
+        .textContent =
             "STATUS: VISUAL CHECK 01";
+
+        document
+        .getElementById("eyeHunt1")
+        .scrollIntoView({
+            behavior:"smooth"
+        });
 
     }else{
 
         document
-            .getElementById("seq2msg")
-            .textContent =
+        .getElementById("seq2msg")
+        .textContent =
             "SEQUENCE INCONSISTENT.";
 
     }
 }
 
 
-/* =====================================================
+/* =========================================================
    EYE HUNT 1
-===================================================== */
+========================================================= */
 
 function createEyeHunt1(){
 
@@ -2078,17 +2395,13 @@ function createEyeHunt1(){
     for(let i=0;i<25;i++){
 
         const button =
-            document.createElement(
-                "button"
-            );
+            document.createElement("button");
 
         button.className =
             "eye-choice";
 
         const eye =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
         eye.className = "eye";
 
@@ -2106,7 +2419,7 @@ function createEyeHunt1(){
 
         grid.appendChild(button);
 
-        button.onclick = ()=>{
+        button.onclick = () => {
 
             if(
                 button.dataset.correct ===
@@ -2114,30 +2427,30 @@ function createEyeHunt1(){
             ){
 
                 document
-                    .getElementById("eyeMsg1")
-                    .textContent =
+                .getElementById("eyeMsg1")
+                .textContent =
                     "VISUAL ANOMALY CONFIRMED.";
 
                 document
-                    .getElementById("sequence3")
-                    .classList.remove("hidden");
+                .getElementById("sequence3")
+                .classList.remove("hidden");
 
                 document
-                    .getElementById("statusText")
-                    .textContent =
+                .getElementById("statusText")
+                .textContent =
                     "STATUS: TRANSMISSION 03";
 
                 document
-                    .getElementById("sequence3")
-                    .scrollIntoView({
-                        behavior:"smooth"
-                    });
+                .getElementById("sequence3")
+                .scrollIntoView({
+                    behavior:"smooth"
+                });
 
             }else{
 
                 document
-                    .getElementById("eyeMsg1")
-                    .textContent =
+                .getElementById("eyeMsg1")
+                .textContent =
                     "NEGATIVE. LOOK AGAIN.";
 
             }
@@ -2148,17 +2461,17 @@ function createEyeHunt1(){
 }
 
 
-/* =====================================================
+/* =========================================================
    SEQUENCE 3
-===================================================== */
+========================================================= */
 
 function checkSequence3(){
 
     const first =
-        words("seq3a");
+        getWords("seq3a");
 
     const second =
-        words("seq3b");
+        getWords("seq3b");
 
     if(
         first === "HERE I AM" &&
@@ -2166,41 +2479,41 @@ function checkSequence3(){
     ){
 
         document
-            .getElementById("seq3msg")
-            .textContent =
+        .getElementById("seq3msg")
+        .textContent =
             "TRANSMISSION 03 ACCEPTED.";
 
         document
-            .getElementById("eyeHunt2")
-            .classList.remove("hidden");
+        .getElementById("eyeHunt2")
+        .classList.remove("hidden");
 
         createEyeHunt2();
 
         document
-            .getElementById("statusText")
-            .textContent =
+        .getElementById("statusText")
+        .textContent =
             "STATUS: VISUAL CHECK 02";
 
         document
-            .getElementById("eyeHunt2")
-            .scrollIntoView({
-                behavior:"smooth"
-            });
+        .getElementById("eyeHunt2")
+        .scrollIntoView({
+            behavior:"smooth"
+        });
 
     }else{
 
         document
-            .getElementById("seq3msg")
-            .textContent =
+        .getElementById("seq3msg")
+        .textContent =
             "SEQUENCE INCONSISTENT.";
 
     }
 }
 
 
-/* =====================================================
+/* =========================================================
    EYE HUNT 2
-===================================================== */
+========================================================= */
 
 function createEyeHunt2(){
 
@@ -2219,17 +2532,13 @@ function createEyeHunt2(){
     for(let i=0;i<25;i++){
 
         const button =
-            document.createElement(
-                "button"
-            );
+            document.createElement("button");
 
         button.className =
             "eye-choice";
 
         const eye =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
         eye.className = "eye";
 
@@ -2247,7 +2556,7 @@ function createEyeHunt2(){
 
         grid.appendChild(button);
 
-        button.onclick = ()=>{
+        button.onclick = () => {
 
             if(
                 button.dataset.correct ===
@@ -2255,49 +2564,34 @@ function createEyeHunt2(){
             ){
 
                 document
-                    .getElementById("eyeMsg2")
-                    .textContent =
+                .getElementById("eyeMsg2")
+                .textContent =
                     "SECOND ANOMALY CONFIRMED.";
 
-                document
+                setTimeout(()=>{
+
+                    document
+                    .getElementById("finalArea")
+                    .classList.remove("hidden");
+
+                    document
                     .getElementById("statusText")
                     .textContent =
-                    "STATUS: ARCHIVE INCOMPLETE";
+                        "STATUS: ARCHIVE INCOMPLETE";
 
-                /*
-                    IMPORTANT:
-                    The INCOMPLETE word was
-                    already visible from the
-                    moment Investigator Notes
-                    opened.
-
-                    We only make the drop zone
-                    slightly more responsive
-                    after the eye hunt.
-                */
-
-                const zone =
-                    document.getElementById(
-                        "tDropZone"
-                    );
-
-                zone.textContent =
-                    "—";
-
-                document
-                    .querySelector(
-                        "#incompleteWord"
-                    )
+                    document
+                    .getElementById("finalArea")
                     .scrollIntoView({
-                        behavior:"smooth",
-                        block:"center"
+                        behavior:"smooth"
                     });
+
+                },600);
 
             }else{
 
                 document
-                    .getElementById("eyeMsg2")
-                    .textContent =
+                .getElementById("eyeMsg2")
+                .textContent =
                     "NOTHING UNUSUAL.";
 
             }
@@ -2308,165 +2602,182 @@ function createEyeHunt2(){
 }
 
 
-/* =====================================================
-   DRAGGABLE T
-===================================================== */
+/* =========================================================
+   FINAL T
+========================================================= */
 
-const dragT =
-    document.getElementById(
-        "dragT"
-    );
+function activateFinalT(){
 
-const tDropZone =
-    document.getElementById(
-        "tDropZone"
-    );
+    const t =
+        document.getElementById("finalT2");
 
-let draggingT = false;
+    if(
+        t.classList.contains("falling")
+    )
+        return;
 
-
-dragT.addEventListener(
-    "pointerdown",
-    e=>{
-
-        draggingT = true;
-
-        dragT.classList.add(
-            "dragging"
-        );
-
-        try{
-            dragT.setPointerCapture(
-                e.pointerId
-            );
-        }catch(err){}
-
-        e.preventDefault();
-    },
-    {passive:false}
-);
-
-
-dragT.addEventListener(
-    "pointermove",
-    e=>{
-
-        if(!draggingT)
-            return;
-
-        e.preventDefault();
-
-        const rect =
-            tDropZone.getBoundingClientRect();
-
-        const inside =
-            e.clientX >= rect.left &&
-            e.clientX <= rect.right &&
-            e.clientY >= rect.top &&
-            e.clientY <= rect.bottom;
-
-        if(inside){
-
-            tDropZone.classList.add(
-                "active"
-            );
-
-        }else{
-
-            tDropZone.classList.remove(
-                "active"
-            );
-
-        }
-
-    },
-    {passive:false}
-);
-
-
-dragT.addEventListener(
-    "pointerup",
-    e=>{
-
-        if(!draggingT)
-            return;
-
-        e.preventDefault();
-
-        const rect =
-            tDropZone.getBoundingClientRect();
-
-        const inside =
-            e.clientX >= rect.left &&
-            e.clientX <= rect.right &&
-            e.clientY >= rect.top &&
-            e.clientY <= rect.bottom;
-
-        dragT.classList.remove(
-            "dragging"
-        );
-
-        tDropZone.classList.remove(
-            "active"
-        );
-
-        draggingT = false;
-
-        if(inside){
-
-            revealFinalEye();
-
-        }
-
-        try{
-            dragT.releasePointerCapture(
-                e.pointerId
-            );
-        }catch(err){}
-
-    },
-    {passive:false}
-);
-
-
-/* =====================================================
-   FINAL REVEAL
-===================================================== */
-
-function revealFinalEye(){
-
-    const area =
-        document.querySelector(
-            ".incomplete-area"
-        );
-
-    area.classList.add(
-        "glitch"
-    );
+    t.classList.add("falling");
 
     document
-        .getElementById("statusText")
-        .textContent =
-        "STATUS: OBSERVED";
+    .getElementById("finalArea")
+    .classList.add("glitch");
+
+    document
+    .getElementById("statusText")
+    .textContent =
+        "STATUS: VISUAL ANOMALY";
 
     setTimeout(()=>{
 
-        area.innerHTML = "";
+        revealEye();
+
+    },850);
+}
+
+
+/* =========================================================
+   T CLICK
+========================================================= */
+
+document
+.getElementById("finalT")
+.addEventListener(
+    "click",
+    () => {
+
+        /*
+         The first visible INCOMPLETE
+         is only the preview at the top.
+         Once the final stage is reached,
+         the real interactive T is used.
+        */
 
         document
-            .getElementById("finalEye")
-            .classList.remove("hidden");
+        .getElementById("finalArea")
+        .scrollIntoView({
+            behavior:"smooth"
+        });
 
-        document
-            .getElementById("finalEye")
-            .scrollIntoView({
-                behavior:"smooth",
-                block:"center"
-            });
+    }
+);
 
-    },550);
+
+/* Actual final T */
+
+document
+.getElementById("finalT2")
+.addEventListener(
+    "click",
+    activateFinalT
+);
+
+
+/* Keyboard accessibility */
+
+document
+.getElementById("finalT2")
+.addEventListener(
+    "keydown",
+    e => {
+
+        if(
+            e.key === "Enter" ||
+            e.key === " "
+        ){
+
+            e.preventDefault();
+
+            activateFinalT();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   FINAL EYE REVEAL
+========================================================= */
+
+function revealEye(){
+
+    const word =
+        document.getElementById(
+            "finalWord"
+        );
+
+    const status =
+        document.getElementById(
+            "finalStatus"
+        );
+
+    const eyeReveal =
+        document.getElementById(
+            "eyeReveal"
+        );
+
+    const eyeWord =
+        document.getElementById(
+            "eyeWord"
+        );
+
+    const finalMessage =
+        document.getElementById(
+            "finalMessage"
+        );
+
+    /*
+       Remove the incomplete word.
+       The background eye is then revealed.
+    */
+
+    word.innerHTML =
+        '<span class="eye-word" id="eyeWord">EYE</span>';
+
+    status.textContent =
+        "ARCHIVE STATUS: OBSERVED";
+
+    eyeReveal.classList.add(
+        "visible"
+    );
+
+    setTimeout(()=>{
+
+        const newEyeWord =
+            document.getElementById(
+                "eyeWord"
+            );
+
+        newEyeWord.classList.add(
+            "visible"
+        );
+
+    },150);
+
+    setTimeout(()=>{
+
+        finalMessage
+        .classList.remove("hidden");
+
+        finalMessage
+        .textContent =
+            "IT SEES YOU";
+
+    },1100);
+
+    document
+    .getElementById("statusText")
+    .textContent =
+        "STATUS: OBSERVED";
 
 }
+
+
+/* =========================================================
+   IMPORTANT:
+   Move the initial preview T out of the way after
+   the final stage becomes active.
+========================================================= */
 
 </script>
 
