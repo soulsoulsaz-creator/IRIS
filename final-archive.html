@@ -1,1 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>BLACK IRIS — FINAL ARCHIVE</title>
+
+    <link
+        rel="stylesheet"
+        href="final-archive.css"
+    >
+
+</head>
+
+<body>
+
+<!-- =====================================================
+     GLOBAL AUDIO
+===================================================== -->
+
+<audio
+    id="voiceAudio"
+    preload="auto"
+></audio>
+
+
+<!-- =====================================================
+     INTRO
+===================================================== -->
+
+<section
+    id="intro"
+    class="screen active"
+>
+
+    <div class="classified">
+
+        <div class="glitch-small">
+            BLACK IRIS
+        </div>
+
+        <h1>
+            FINAL ARCHIVE
+        </h1>
+
+        <div class="archive-line"></div>
+
+        <p class="warning">
+            ARCHIVE STATUS:
+            <span>UNSTABLE</span>
+        </p>
+
+        <p class="tiny">
+            AUTHORIZED INVESTIGATOR ONLY
+        </p>
+
+        <button
+            id="startButton"
+            class="main-button"
+        >
+            ENTER FINAL ARCHIVE
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     PACMAN / FRAGMENT LEVELS
+===================================================== -->
+
+<section
+    id="arcade"
+    class="screen"
+>
+
+    <div class="arcade-header">
+
+        <div>
+            <span class="label">
+                BLACK IRIS // ARCHIVE
+            </span>
+
+            <h2 id="pacLevel">
+                LEVEL 01
+            </h2>
+        </div>
+
+        <div
+            id="pacDifficulty"
+            class="difficulty"
+        >
+            HARD
+        </div>
+
+    </div>
+
+
+    <div class="arcade-frame">
+
+        <canvas
+            id="pacmanCanvas"
+            width="608"
+            height="608"
+        ></canvas>
+
+    </div>
+
+
+    <p class="arcade-instruction">
+        COLLECT EVERY FRAGMENT
+    </p>
+
+
+    <!-- MOBILE CONTROLS -->
+
+    <div
+        id="pacControls"
+        class="pac-controls"
+    >
+
+        <button
+            onclick="pacMove(0,-1)"
+        >
+            ▲
+        </button>
+
+        <div>
+
+            <button
+                onclick="pacMove(-1,0)"
+            >
+                ◀
+            </button>
+
+            <button
+                onclick="pacMove(1,0)"
+            >
+                ▶
+            </button>
+
+        </div>
+
+        <button
+            onclick="pacMove(0,1)"
+        >
+            ▼
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     VANISHING MAZE
+===================================================== -->
+
+<section
+    id="maze"
+    class="screen"
+>
+
+    <div class="maze-interface">
+
+        <div class="maze-header">
+
+            <span>
+                ARCHIVE // SECTOR 02
+            </span>
+
+            <span class="red-text">
+                PATH INSTABILITY
+            </span>
+
+        </div>
+
+
+        <h1>
+            VANISHING MAZE
+        </h1>
+
+
+        <p class="subtext">
+            The path behind you will disappear.
+        </p>
+
+
+        <canvas
+            id="mazeCanvas"
+            width="700"
+            height="480"
+        ></canvas>
+
+
+        <div
+            id="mazeControls"
+            class="maze-controls"
+        >
+
+            <button onclick="mazeMove(0,-1)">
+                ▲
+            </button>
+
+            <div>
+
+                <button onclick="mazeMove(-1,0)">
+                    ◀
+                </button>
+
+                <button onclick="mazeMove(1,0)">
+                    ▶
+                </button>
+
+            </div>
+
+            <button onclick="mazeMove(0,1)">
+                ▼
+            </button>
+
+        </div>
+
+
+        <p
+            id="mazeStatus"
+            class="status-text"
+        >
+            REACH THE CORE.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     BLACK BOX
+===================================================== -->
+
+<section
+    id="blackbox"
+    class="screen"
+>
+
+    <div class="blackbox-machine">
+
+        <div class="machine-top">
+
+            <span>
+                BLACK IRIS // DEVICE
+            </span>
+
+            <span>
+                BX-000
+            </span>
+
+        </div>
+
+
+        <h1>
+            BLACK BOX
+        </h1>
+
+
+        <p class="machine-warning">
+            NO MANUAL FOUND.
+        </p>
+
+
+        <!-- KNOBS -->
+
+        <div class="knob-container">
+
+            <div class="knob-unit">
+
+                <div
+                    id="knob0"
+                    class="knob"
+                ></div>
+
+                <button
+                    onclick="rotateKnob(0)"
+                >
+                    ROTATE
+                </button>
+
+            </div>
+
+
+            <div class="knob-unit">
+
+                <div
+                    id="knob1"
+                    class="knob"
+                ></div>
+
+                <button
+                    onclick="rotateKnob(1)"
+                >
+                    ROTATE
+                </button>
+
+            </div>
+
+
+            <div class="knob-unit">
+
+                <div
+                    id="knob2"
+                    class="knob"
+                ></div>
+
+                <button
+                    onclick="rotateKnob(2)"
+                >
+                    ROTATE
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- SWITCHES -->
+
+        <div class="switch-container">
+
+            <button
+                id="switch0"
+                class="switch"
+                onclick="toggleSwitch(0)"
+            >
+                <span></span>
+            </button>
+
+            <button
+                id="switch1"
+                class="switch"
+                onclick="toggleSwitch(1)"
+            >
+                <span></span>
+            </button>
+
+            <button
+                id="switch2"
+                class="switch"
+                onclick="toggleSwitch(2)"
+            >
+                <span></span>
+            </button>
+
+        </div>
+
+
+        <!-- MAIN BUTTON -->
+
+        <button
+            id="blackBoxButton"
+            class="danger-button"
+            onclick="checkBlackBox()"
+        >
+        </button>
+
+
+        <p
+            id="blackBoxStatus"
+            class="status-text"
+        ></p>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     DON'T PRESS
+===================================================== -->
+
+<section
+    id="dontpress"
+    class="screen"
+>
+
+    <div class="dont-container">
+
+        <p class="tiny">
+            BLACK IRIS // WARNING
+        </p>
+
+
+        <h1>
+            DON'T PRESS
+        </h1>
+
+
+        <p>
+            PRESS IF YOU SHOULD.
+        </p>
+
+        <p>
+            YOU ALREADY KNOW
+            WHETHER YOU SHOULD.
+        </p>
+
+
+        <button
+            id="dontButton"
+            onclick="dontPress()"
+        >
+        </button>
+
+
+        <p
+            id="dontStatus"
+            class="dont-status"
+        ></p>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FINAL ROMANTIC QUESTION
+===================================================== -->
+
+<section
+    id="question"
+    class="screen"
+>
+
+    <div class="question-interface">
+
+        <p class="tiny">
+            PERSONAL ARCHIVE
+        </p>
+
+
+        <h1>
+            ONE QUESTION,
+            INVESTIGATOR.
+        </h1>
+
+
+        <p class="question-text">
+
+            If you could have one person
+            waiting for you at the end
+            of this journey...
+
+            <br><br>
+
+            <strong>
+                Who would you choose?
+            </strong>
+
+        </p>
+
+
+        <div class="choices">
+
+            <button
+                onclick="answerQuestion(1)"
+            >
+                ❤️
+                The person I love
+            </button>
+
+
+            <button
+                onclick="answerQuestion(2)"
+            >
+                🌙
+                The person who has
+                always waited for me
+            </button>
+
+
+            <button
+                onclick="answerQuestion(3)"
+            >
+                🫂
+                The person I could
+                never leave behind
+            </button>
+
+
+            <button
+                onclick="answerQuestion(4)"
+            >
+                👁️
+                Someone I haven't
+                found yet
+            </button>
+
+        </div>
+
+
+        <div
+            id="answerResult"
+        ></div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     THERE IS NO ARCHIVE
+===================================================== -->
+
+<section
+    id="noarchive"
+    class="screen"
+>
+
+    <div class="terminal">
+
+        <div
+            id="terminalText"
+            class="terminal-text"
+        ></div>
+
+        <span class="terminal-cursor">
+            _
+        </span>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     NAME ENTRY
+===================================================== -->
+
+<section
+    id="nameScreen"
+    class="screen"
+>
+
+    <div class="name-interface">
+
+        <p class="tiny">
+            IDENTIFICATION REQUIRED
+        </p>
+
+
+        <h1>
+            WELCOME,
+            INVESTIGATOR.
+        </h1>
+
+
+        <p>
+            ENTER YOUR NAME.
+        </p>
+
+
+        <input
+            id="playerName"
+            type="text"
+            maxlength="30"
+            autocomplete="off"
+            placeholder="YOUR NAME"
+        >
+
+
+        <br>
+
+
+        <button
+            onclick="submitName()"
+            class="main-button"
+        >
+            CONFIRM
+        </button>
+
+
+        <p
+            id="nameError"
+            class="error-text"
+        ></p>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     THE EYE
+===================================================== -->
+
+<section
+    id="eyeScreen"
+    class="screen"
+>
+
+    <!-- VOICE BUTTON -->
+
+    <button
+        id="voiceToggle"
+        class="voice-button"
+        onclick="toggleVoice()"
+    >
+        🔊 VOICE: ON
+    </button>
+
+
+    <div class="eye-interface">
+
+
+        <!-- THE EYE -->
+
+        <div class="eye-container">
+
+            <div class="eye-outer">
+
+                <div
+                    id="eyePupil"
+                    class="eye-pupil"
+                ></div>
+
+            </div>
+
+
+            <!-- MOUTH / VOICE VISUAL -->
+
+            <div
+                id="eyeMouth"
+                class="eye-mouth"
+            >
+                <span></span>
+            </div>
+
+        </div>
+
+
+        <!-- DIALOGUE -->
+
+        <div
+            id="eyeDialogue"
+            class="eye-dialogue"
+        ></div>
+
+
+        <!-- PRISON PUZZLES -->
+
+        <div
+            id="eyeGame"
+            class="eye-game"
+        ></div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FINAL ARCHIVE 000
+===================================================== -->
+
+<section
+    id="origin"
+    class="screen"
+>
+
+    <div class="origin-interface">
+
+        <p class="tiny">
+            BLACK IRIS // CLASSIFIED
+        </p>
+
+
+        <h1>
+            ARCHIVE_000
+        </h1>
+
+
+        <div class="origin-line"></div>
+
+
+        <h2>
+            ORIGIN
+        </h2>
+
+
+        <p>
+            I knew your name before
+            you entered it.
+        </p>
+
+
+        <p>
+            BLACK IRIS had already
+            recorded you.
+        </p>
+
+
+        <p>
+            But there is something
+            else you haven't discovered.
+        </p>
+
+
+        <h3>
+            THE EYE WAS NEVER
+            THE ONLY PRISONER.
+        </h3>
+
+
+        <button
+            onclick="resetGame()"
+            class="small-button"
+        >
+            END SESSION
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script
+    src="final-archive.js"
+></script>
+
+</body>
+
+</html>
