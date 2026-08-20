@@ -561,11 +561,6 @@ h2{
     transition:none;
 }
 
-/*
-    ONLY THE INCOMPLETE LETTERS FALL.
-    Nothing else on the page gets this class.
-*/
-
 .incomplete-letter.fall{
     animation:letterFall 1.5s cubic-bezier(.55,.05,.7,.2) forwards;
 }
@@ -1196,7 +1191,7 @@ Their order matters.
 
 
 <!-- =================================================
-     SEQUENCE 1
+     SEQUENCE 1 — SCRAMBLED
 ================================================= -->
 
 <div class="sequence">
@@ -1210,9 +1205,9 @@ id="seq1"
 class="word-line"
 >
 
-<div class="word">I</div>
-<div class="word">AM</div>
 <div class="word">HERE</div>
+<div class="word">CAN</div>
+<div class="word">I</div>
 
 </div>
 
@@ -1221,10 +1216,10 @@ id="seq1b"
 class="word-line"
 >
 
-<div class="word">YOU</div>
-<div class="word">CAN</div>
-<div class="word">SEE</div>
 <div class="word">ME</div>
+<div class="word">AM</div>
+<div class="word">YOU</div>
+<div class="word">SEE</div>
 
 </div>
 
@@ -1246,7 +1241,7 @@ class="message"
 
 
 <!-- =================================================
-     SEQUENCE 2
+     SEQUENCE 2 — SCRAMBLED
 ================================================= -->
 
 <div
@@ -1263,9 +1258,9 @@ id="seq2a"
 class="word-line"
 >
 
-<div class="word">AM</div>
-<div class="word">I</div>
 <div class="word">HERE</div>
+<div class="word">SEE</div>
+<div class="word">AM</div>
 
 </div>
 
@@ -1274,10 +1269,10 @@ id="seq2b"
 class="word-line"
 >
 
-<div class="word">CAN</div>
-<div class="word">YOU</div>
-<div class="word">SEE</div>
 <div class="word">ME</div>
+<div class="word">CAN</div>
+<div class="word">I</div>
+<div class="word">YOU</div>
 
 </div>
 
@@ -1331,14 +1326,7 @@ class="message"
 
 
 <!-- =================================================
-     SEQUENCE 3
-     
-     EXACTLY:
-     
-     I AM HERE
-     YOU CAN'T SEE ME
-     
-     NO EXTRA SEE
+     SEQUENCE 3 — SCRAMBLED
 ================================================= -->
 
 <div
@@ -1355,9 +1343,9 @@ id="seq3a"
 class="word-line"
 >
 
-<div class="word">I</div>
-<div class="word">AM</div>
+<div class="word">SEE</div>
 <div class="word">HERE</div>
+<div class="word">YOU</div>
 
 </div>
 
@@ -1366,10 +1354,10 @@ id="seq3b"
 class="word-line"
 >
 
-<div class="word">YOU</div>
-<div class="word">CAN'T</div>
-<div class="word">SEE</div>
+<div class="word">I</div>
 <div class="word">ME</div>
+<div class="word">CAN'T</div>
+<div class="word">AM</div>
 
 </div>
 
@@ -1445,8 +1433,6 @@ Something remains incomplete.
 
 <div class="final-area">
 
-<!-- Hidden eye behind the letters -->
-
 <div class="hidden-eye-container">
 
 <div
@@ -1456,8 +1442,6 @@ class="big-eye"
 
 </div>
 
-
-<!-- THE ONLY WORD THAT FALLS -->
 
 <div
 id="incompleteWord"
@@ -1511,8 +1495,6 @@ E
 
 </div>
 
-
-<!-- EYE -->
 
 <div
 id="eyeWord"
@@ -1909,12 +1891,7 @@ document
 
 /* =====================================================
    MOBILE-FRIENDLY WORD DRAGGING
-   =====================================================
-
-   Uses Pointer Events so the sequence can be
-   rearranged with a finger on mobile as well
-   as a mouse.
-*/
+===================================================== */
 
 let draggedWord = null;
 
@@ -2077,6 +2054,9 @@ function words(id){
 
 /* =====================================================
    SEQUENCE 1
+   CORRECT:
+   I AM HERE
+   YOU CAN SEE ME
 ===================================================== */
 
 function checkSequence1(){
@@ -2120,6 +2100,9 @@ function checkSequence1(){
 
 /* =====================================================
    SEQUENCE 2
+   CORRECT:
+   AM I HERE
+   CAN YOU SEE ME
 ===================================================== */
 
 function checkSequence2(){
@@ -2249,18 +2232,10 @@ function createEyeHunt1(){
 
 /* =====================================================
    SEQUENCE 3
-=====================================================
-
-   EXACT CORRECT ANSWER:
-
+   CORRECT:
    I AM HERE
-
    YOU CAN'T SEE ME
-
-   IMPORTANT:
-   THERE IS ONLY ONE "SEE"
-   AND IT IS IN THE SECOND LINE.
-*/
+===================================================== */
 
 function checkSequence3(){
 
@@ -2406,15 +2381,6 @@ function showFinalStage(){
         block:"center"
     });
 
-    /*
-       IMPORTANT:
-
-       ONLY .incomplete-letter elements
-       receive the falling animation.
-
-       Nothing else on the page moves.
-    */
-
     setTimeout(()=>{
 
         const letters =
@@ -2460,10 +2426,6 @@ clickableT.addEventListener(
 
         tClicked = true;
 
-        /*
-           T falls by itself.
-        */
-
         clickableT.animate(
             [
                 {
@@ -2483,6 +2445,7 @@ clickableT.addEventListener(
                     "translateY(500px) rotate(35deg)",
                     opacity:0
                 }
+
             ],
             {
                 duration:1600,
@@ -2491,10 +2454,6 @@ clickableT.addEventListener(
             }
         );
 
-
-        /*
-           Reveal the Eye after T falls.
-        */
 
         setTimeout(()=>{
 
