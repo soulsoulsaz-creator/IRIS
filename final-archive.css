@@ -1,1332 +1,557 @@
-/* =========================================================
-   BLACK IRIS — FINAL ARCHIVE
-   VISUAL SYSTEM
-   ========================================================= */
-
-* {
-    box-sizing: border-box;
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
-html,
-body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #020204;
-    color: #eeeeee;
-    font-family:
-        "Courier New",
-        Courier,
-        monospace;
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    background:#020204;
+    color:#ddd;
+    font-family:"Courier New",monospace;
+    overflow:hidden;
 }
 
-body {
-    user-select: none;
+body{
+    user-select:none;
 }
 
-
-/* =========================================================
-   GENERAL SCREENS
-   ========================================================= */
-
-.screen {
-    position: fixed;
-    inset: 0;
-
-    display: none;
-
-    align-items: center;
-    justify-content: center;
-
-    padding: 20px;
-
-    overflow: hidden;
+button,input{
+    font-family:inherit;
 }
 
-.screen.active {
-    display: flex;
+button{
+    cursor:pointer;
 }
 
-
-/* =========================================================
-   GENERAL TEXT
-   ========================================================= */
-
-h1,
-h2,
-h3,
-p {
-    margin-top: 0;
-}
-
-h1 {
-    letter-spacing: 6px;
-}
-
-h2 {
-    letter-spacing: 4px;
-}
-
-.tiny {
-    font-size: 11px;
-    letter-spacing: 3px;
-    color: #666670;
-}
-
-.red-text {
-    color: #d71932;
-}
-
-.warning {
-    color: #777780;
-}
-
-.warning span {
-    color: #d71932;
-}
-
-.subtext {
-    color: #777780;
-}
-
-.status-text {
-    min-height: 25px;
-    color: #777780;
-}
-
-
-/* =========================================================
-   BUTTONS
-   ========================================================= */
-
-button {
-    font-family: inherit;
-    cursor: pointer;
-}
-
-.main-button {
-    margin-top: 30px;
-
-    padding: 14px 25px;
-
-    background: #0b0b10;
-
-    color: #eeeeee;
-
-    border: 1px solid #555560;
-
-    letter-spacing: 2px;
-
-    transition:
-        background .2s,
-        border-color .2s,
-        transform .2s;
-}
-
-.main-button:hover {
-    background: #17171d;
-    border-color: #eeeeee;
-}
-
-.main-button:active {
-    transform: scale(.97);
-}
-
-.small-button {
-    margin-top: 35px;
-
-    padding: 9px 15px;
-
-    background: transparent;
-
-    color: #55555f;
-
-    border: 1px solid #33333a;
-
-    font-size: 10px;
-}
-
-
-/* =========================================================
-   INTRO
-   ========================================================= */
-
-#intro {
+#game{
+    width:100%;
+    height:100vh;
+    position:relative;
+    overflow:hidden;
     background:
-        radial-gradient(
-            circle at center,
-            #17171d 0%,
-            #08080b 35%,
-            #020204 75%
-        );
+        radial-gradient(circle,#15151c 0%,#050507 50%,#000 100%);
 }
 
-.classified {
-    width: min(700px, 90vw);
-
-    padding: 50px;
-
-    text-align: center;
-
-    border: 1px solid #303038;
-
-    background: rgba(5, 5, 8, .8);
-
-    box-shadow:
-        0 0 80px rgba(0, 0, 0, .9),
-        inset 0 0 50px rgba(255, 255, 255, .015);
+.screen{
+    position:absolute;
+    inset:0;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    pointer-events:none;
 }
 
-.glitch-small {
-    color: #66666f;
-
-    font-size: 12px;
-
-    letter-spacing: 8px;
-
-    margin-bottom: 20px;
+.screen.active{
+    display:flex;
+    opacity:1;
+    pointer-events:auto;
 }
 
-.classified h1 {
-    font-size: clamp(30px, 7vw, 60px);
-
-    margin-bottom: 20px;
+#agencyHeader{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    height:48px;
+    z-index:1000;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 15px;
+    background:#000d;
+    border-bottom:1px solid #292933;
+    color:#777;
+    font-size:10px;
+    letter-spacing:2px;
 }
 
-.archive-line {
-    width: 100%;
-    height: 1px;
-
-    background: #34343b;
-
-    margin: 20px 0;
+.terminal,
+.center-box,
+.corrupt-terminal{
+    width:min(700px,92vw);
+    padding:32px;
+    background:#060609ee;
+    border:1px solid #383840;
+    box-shadow:0 0 40px #000;
 }
 
-.classified .tiny {
-    margin-top: 30px;
+.terminal div{
+    margin:8px 0;
+    color:#aaa;
+    font-size:12px;
+    line-height:1.6;
 }
 
+.warning{
+    color:#a33!important;
+}
 
-/* =========================================================
-   ARCADE
-   ========================================================= */
+.iris-button,
+#questionScreen button,
+.voice-row button,
+#eyeChoices button{
+    padding:12px 20px;
+    margin:8px;
+    background:#08080c;
+    color:#ccc;
+    border:1px solid #555;
+    font-size:10px;
+    letter-spacing:2px;
+}
 
-#arcade {
-    flex-direction: column;
+.iris-button:hover,
+#questionScreen button:hover,
+.voice-row button:hover,
+#eyeChoices button:hover{
+    background:#ddd;
+    color:#000;
+}
 
+/* LEVEL 1-5 */
+
+#arcadeScreen{
+    justify-content:flex-start;
+    padding-top:62px;
+}
+
+.game-title{
+    width:min(700px,94vw);
+    display:flex;
+    justify-content:space-between;
+    font-size:10px;
+    color:#777;
+    letter-spacing:2px;
+}
+
+#arcadeMessage{
+    min-height:18px;
+    color:#999;
+    font-size:10px;
+    text-align:center;
+}
+
+#toolInventory{
+    width:min(700px,94vw);
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:5px;
+}
+
+.tool{
+    min-width:78px;
+    padding:6px;
+    background:#08080c;
+    border:1px solid #292930;
+    color:#777;
+    font-size:8px;
+}
+
+.tool:hover,
+.tool.selected{
+    color:#fff;
+    border-color:#aaa;
+}
+
+.tool small{
+    display:block;
+    color:#555;
+}
+
+#toolMessage{
+    height:18px;
+    color:#aaa;
+    font-size:9px;
+}
+
+#arcadeFrame{
+    width:min(620px,92vw);
+    aspect-ratio:1;
+    background:#000;
+    border:1px solid #292930;
+}
+
+#arcadeCanvas{
+    width:100%;
+    height:100%;
+    display:block;
+    image-rendering:pixelated;
+}
+
+#mobileControls{
+    text-align:center;
+    margin-top:5px;
+}
+
+#mobileControls button{
+    width:45px;
+    height:35px;
+    margin:2px;
+    background:#08080c;
+    color:#aaa;
+    border:1px solid #292930;
+}
+
+#fragmentCounter{
+    margin-top:5px;
+    color:#555;
+    font-size:9px;
+}
+
+/* BOSS */
+
+#bossScreen{
+    justify-content:flex-start;
+    padding-top:60px;
     background:
-        radial-gradient(
-            circle,
-            #0a0a13,
-            #020204 70%
-        );
+        radial-gradient(circle at center,#210006 0%,#080003 45%,#000 100%);
 }
 
-.arcade-header {
-    width: min(650px, 94vw);
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: flex-end;
-
-    margin-bottom: 10px;
+.boss-top{
+    width:min(900px,94vw);
+    display:flex;
+    justify-content:space-between;
+    color:#aaa;
+    font-size:10px;
+    letter-spacing:2px;
 }
 
-.arcade-header h2 {
-    margin: 5px 0 0;
-
-    color: #e6e6ed;
+.boss-top b{
+    color:#f22;
 }
 
-.label {
-    color: #555560;
-
-    font-size: 10px;
-
-    letter-spacing: 2px;
+#bossMessage{
+    height:25px;
+    color:#aaa;
+    font-size:10px;
+    text-align:center;
 }
 
-.difficulty {
-    color: #d71932;
-
-    font-size: 13px;
-
-    letter-spacing: 3px;
-}
-
-.arcade-frame {
-    padding: 5px;
-
-    border: 1px solid #242432;
-
+#bossFrame{
+    position:relative;
+    width:min(900px,96vw);
+    aspect-ratio:16/9;
+    background:#050006;
+    border:2px solid #381018;
     box-shadow:
-        0 0 35px rgba(60, 60, 255, .04);
+        0 0 50px #500008,
+        inset 0 0 50px #000;
 }
 
-#pacmanCanvas {
-    display: block;
-
-    width: min(608px, 88vw);
-    height: min(608px, 88vw);
-
-    background: #000;
+#bossCanvas{
+    width:100%;
+    height:100%;
+    display:block;
+    image-rendering:pixelated;
 }
 
-.arcade-instruction {
-    color: #555560;
-
-    font-size: 10px;
-
-    letter-spacing: 3px;
-
-    margin-top: 12px;
+#bossOverlay{
+    position:absolute;
+    inset:0;
+    background:#000c;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
 }
 
-
-/* =========================================================
-   PAC CONTROLS
-   ========================================================= */
-
-.pac-controls {
-    display: none;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    gap: 5px;
-
-    margin-top: 10px;
+#bossOverlay.hidden{
+    display:none;
 }
 
-.pac-controls div {
-    display: flex;
-    gap: 5px;
+#bossOverlayText{
+    color:#f22;
+    font-size:25px;
+    letter-spacing:5px;
+    text-shadow:0 0 20px #f00;
 }
 
-.pac-controls button {
-    width: 48px;
-    height: 42px;
-
-    color: #ddd;
-
-    background: #0b0b11;
-
-    border: 1px solid #34343f;
+#bossTools{
+    width:min(900px,96vw);
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:5px;
+    margin-top:6px;
 }
 
-
-/* =========================================================
-   MAZE
-   ========================================================= */
-
-#maze {
-    background:
-        radial-gradient(
-            circle,
-            #08080b,
-            #000 75%
-        );
+#bossTools button{
+    padding:7px 10px;
+    background:#08080c;
+    color:#999;
+    border:1px solid #333;
+    font-size:9px;
 }
 
-.maze-interface {
-    width: min(800px, 95vw);
-
-    text-align: center;
+#bossTools button.active{
+    color:#fff;
+    border-color:#aaa;
 }
 
-.maze-header {
-    display: flex;
-
-    justify-content: space-between;
-
-    color: #555560;
-
-    font-size: 10px;
-
-    letter-spacing: 2px;
-
-    margin-bottom: 30px;
+#bossControls{
+    margin-top:5px;
 }
 
-.maze-interface h1 {
-    font-size: clamp(25px, 6vw, 48px);
+#bossControls button{
+    width:55px;
+    height:38px;
+    margin:2px;
+    background:#08080c;
+    color:#aaa;
+    border:1px solid #333;
 }
 
-#mazeCanvas {
-    width: min(700px, 94vw);
+/* MAZE */
 
-    height: auto;
-
-    border: 1px solid #202028;
-
-    background: #000;
-
-    box-shadow:
-        0 0 50px rgba(255,255,255,.02);
+#mazeScreen{
+    padding-top:60px;
 }
 
-.maze-controls {
-    display: none;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    gap: 5px;
-
-    margin-top: 10px;
+.simple-header{
+    color:#777;
+    font-size:11px;
+    letter-spacing:3px;
 }
 
-.maze-controls div {
-    display: flex;
-    gap: 5px;
+#mazeMessage{
+    color:#888;
+    font-size:10px;
+    margin:8px;
 }
 
-.maze-controls button {
-    width: 48px;
-    height: 42px;
-
-    color: #ddd;
-
-    background: #0b0b11;
-
-    border: 1px solid #34343f;
+#mazeCanvas{
+    width:min(600px,92vw);
+    height:min(600px,72vh);
+    background:#000;
+    border:1px solid #292930;
+    image-rendering:pixelated;
 }
 
+/* BLACK BOX */
 
-/* =========================================================
-   BLACK BOX
-   ========================================================= */
-
-#blackbox {
-    background:
-        radial-gradient(
-            circle at center,
-            #18181d,
-            #050506 65%,
-            #000 100%
-        );
+#blackBox{
+    width:min(580px,92vw);
+    min-height:400px;
+    padding:35px;
+    background:#101014;
+    border:2px solid #292933;
+    box-shadow:inset 0 0 40px #000;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
 }
 
-.blackbox-machine {
-    width: min(800px, 94vw);
-
-    padding: 35px;
-
-    text-align: center;
-
-    background:
-        linear-gradient(
-            145deg,
-            #0c0c10,
-            #07070a
-        );
-
-    border: 1px solid #3b3b44;
-
-    box-shadow:
-        inset 0 0 70px #000,
-        0 0 80px #000;
+.switches,
+.dials,
+.symbols{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin:18px;
 }
 
-.machine-top {
-    display: flex;
-
-    justify-content: space-between;
-
-    color: #555560;
-
-    font-size: 10px;
-
-    letter-spacing: 2px;
-
-    margin-bottom: 35px;
+#blackBox button{
+    background:#08080c;
+    color:#888;
+    border:1px solid #444;
 }
 
-.blackbox-machine h1 {
-    font-size: clamp(30px, 7vw, 55px);
-
-    margin-bottom: 8px;
+.switches button,
+.symbols button{
+    width:48px;
+    height:48px;
 }
 
-.machine-warning {
-    color: #555560;
-
-    font-size: 11px;
-
-    letter-spacing: 3px;
+.switches button.active,
+.symbols button.active{
+    background:#ddd;
+    color:#000;
 }
 
-
-/* =========================================================
-   KNOBS
-   ========================================================= */
-
-.knob-container {
-    display: flex;
-
-    justify-content: center;
-
-    gap: 45px;
-
-    margin: 40px 0;
-
-    flex-wrap: wrap;
+.dial{
+    width:65px;
+    height:65px;
+    border-radius:50%;
 }
 
-.knob-unit button {
-    margin-top: 15px;
-
-    padding: 8px 12px;
-
-    background: #101016;
-
-    color: #bbb;
-
-    border: 1px solid #3a3a43;
-
-    font-size: 10px;
+.red-button{
+    padding:14px 28px!important;
+    background:#250607!important;
+    color:#e44!important;
+    border:1px solid #70252a!important;
+    letter-spacing:2px;
 }
 
-.knob {
-    width: 80px;
-    height: 80px;
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(
-            circle,
-            #2b2b31,
-            #101014
-        );
-
-    border: 6px solid #55555e;
-
-    position: relative;
-
-    box-shadow:
-        inset 0 0 15px #000,
-        0 5px 10px #000;
-
-    transition: transform .25s;
+.muted{
+    color:#555;
+    font-size:9px;
 }
 
-.knob::after {
-    content: "";
-
-    position: absolute;
-
-    left: 50%;
-    top: 5px;
-
-    width: 4px;
-    height: 27px;
-
-    transform: translateX(-50%);
-
-    background: #eee;
+.glitch{
+    color:#aaa;
+    letter-spacing:3px;
+    text-align:center;
 }
 
-
-/* =========================================================
-   SWITCHES
-   ========================================================= */
-
-.switch-container {
-    display: flex;
-
-    justify-content: center;
-
-    gap: 15px;
-
-    margin-bottom: 25px;
+#dontPressText,
+#blackBoxMessage,
+#memoryMessage{
+    min-height:22px;
+    color:#888;
+    font-size:10px;
+    text-align:center;
 }
 
-.switch {
-    width: 50px;
-    height: 80px;
+/* EYE */
 
-    position: relative;
-
-    background: #101015;
-
-    border: 1px solid #44444c;
+.no-archive,
+.eye-stage{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    gap:15px;
 }
 
-.switch span {
-    position: absolute;
-
-    left: 14px;
-    top: 8px;
-
-    width: 20px;
-    height: 30px;
-
-    background: #777;
-
-    transition: .2s;
+.eye{
+    position:relative;
+    width:230px;
+    height:145px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
-.switch.active span {
-    top: 40px;
-
-    background: #d71932;
+.eye.large{
+    width:340px;
+    height:220px;
 }
 
-
-/* =========================================================
-   BLACK BOX RED BUTTON
-   ========================================================= */
-
-.danger-button {
-    width: 110px;
-    height: 110px;
-
-    border-radius: 50%;
-
-    border: 9px solid #4b0a12;
-
-    background: #c5162c;
-
-    box-shadow:
-        0 9px 0 #30070b,
-        0 0 40px rgba(190, 20, 40, .35);
-
-    transition: transform .1s;
+.eye-white{
+    width:100%;
+    height:70%;
+    background:#ddd;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    box-shadow:0 0 35px #fff2;
 }
 
-.danger-button:active {
-    transform: translateY(7px);
+.eye-iris{
+    width:72px;
+    height:72px;
+    background:#777;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
-
-/* =========================================================
-   DON'T PRESS
-   ========================================================= */
-
-#dontpress {
-    background: #000;
+.eye.large .eye-iris{
+    width:105px;
+    height:105px;
 }
 
-.dont-container {
-    text-align: center;
+.eye-pupil{
+    width:28px;
+    height:28px;
+    background:#050505;
+    border-radius:50%;
 }
 
-.dont-container h1 {
-    font-size: clamp(35px, 10vw, 80px);
-
-    margin-bottom: 30px;
+.eye.large .eye-pupil{
+    width:42px;
+    height:42px;
 }
 
-.dont-container p:not(.tiny):not(.dont-status) {
-    color: #777780;
-
-    font-size: 12px;
-
-    line-height: 2;
+.mouth{
+    position:absolute;
+    bottom:0;
+    width:70px;
+    height:25px;
+    border-bottom:3px solid #aaa;
+    border-radius:0 0 50% 50%;
 }
 
-#dontButton {
-    width: min(200px, 48vw);
-    height: min(200px, 48vw);
-
-    border-radius: 50%;
-
-    border: 12px solid #4a0910;
-
-    background: #c9162c;
-
-    box-shadow:
-        0 14px 0 #2d060a,
-        0 0 80px rgba(190,20,40,.35);
-
-    margin: 45px auto 30px;
-
-    display: block;
-
-    transition:
-        transform .1s,
-        box-shadow .1s;
+.eye.large .mouth{
+    width:105px;
+    height:35px;
 }
 
-#dontButton:active {
-    transform: translateY(10px);
-
-    box-shadow:
-        0 4px 0 #2d060a,
-        0 0 50px rgba(190,20,40,.4);
+.voice-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:#777;
+    font-size:10px;
 }
 
-.dont-status {
-    min-height: 25px;
-
-    color: #d71932;
+#eyeText,
+#eyeDialogue{
+    max-width:600px;
+    min-height:28px;
+    color:#bbb;
+    line-height:1.6;
+    font-size:12px;
 }
 
+/* MEMORY */
 
-/* =========================================================
-   QUESTION
-   ========================================================= */
-
-#question {
-    background:
-        radial-gradient(
-            circle at center,
-            #1b1419,
-            #050406 70%
-        );
+#memorySequence{
+    font-size:24px;
+    letter-spacing:12px;
+    color:#ddd;
+    min-height:40px;
 }
 
-.question-interface {
-    width: min(780px, 94vw);
-
-    text-align: center;
+.center-box input{
+    background:#000;
+    color:#fff;
+    border:1px solid #555;
+    padding:12px;
+    width:260px;
+    text-align:center;
 }
 
-.question-interface h1 {
-    font-size: clamp(25px, 6vw, 45px);
-
-    line-height: 1.3;
+.center-box label{
+    color:#777;
+    font-size:10px;
+    letter-spacing:2px;
 }
 
-.question-text {
-    color: #aaaab1;
-
-    font-size: 16px;
-
-    line-height: 1.8;
-
-    margin: 35px auto;
-
-    max-width: 650px;
+.huge{
+    font-size:70px;
+    color:#aaa;
 }
 
-.choices {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 10px;
-
-    width: min(650px, 100%);
-
-    margin: auto;
+.hidden{
+    display:none!important;
 }
 
-.choices button {
-    padding: 16px;
+@media(max-height:700px){
 
-    text-align: left;
-
-    color: #ddd;
-
-    background: rgba(10,10,15,.85);
-
-    border: 1px solid #363640;
-
-    transition:
-        border-color .2s,
-        background .2s;
-}
-
-.choices button:hover {
-    border-color: #aaa;
-
-    background: #15151c;
-}
-
-#answerResult {
-    margin-top: 20px;
-}
-
-
-/* =========================================================
-   EASTER EGG
-   ========================================================= */
-
-.easter-egg {
-    padding: 20px;
-
-    border: 1px dashed #8e1728;
-
-    background: #100508;
-
-    color: #ddd;
-
-    animation: pulseEgg 2s infinite;
-}
-
-@keyframes pulseEgg {
-
-    0%,
-    100% {
-        box-shadow: 0 0 0 transparent;
+    #agencyHeader{
+        height:40px;
     }
 
-    50% {
-        box-shadow: 0 0 30px rgba(150,20,40,.25);
-    }
-}
-
-
-/* =========================================================
-   TERMINAL
-   ========================================================= */
-
-#noarchive {
-    background: #000;
-}
-
-.terminal {
-    width: min(850px, 94vw);
-
-    min-height: 430px;
-
-    padding: 30px;
-
-    border: 1px solid #202027;
-
-    background: #020202;
-
-    box-shadow:
-        0 0 100px #000;
-
-    font-size: 14px;
-
-    line-height: 2;
-}
-
-.terminal-text {
-    white-space: pre-wrap;
-}
-
-.terminal-cursor {
-    animation: blink .8s infinite;
-}
-
-@keyframes blink {
-
-    0%,
-    50% {
-        opacity: 1;
+    #arcadeScreen{
+        padding-top:48px;
     }
 
-    51%,
-    100% {
-        opacity: 0;
-    }
-}
-
-.terminal-error {
-    color: #d71932;
-}
-
-.terminal-muted {
-    color: #555560;
-}
-
-
-/* =========================================================
-   NAME SCREEN
-   ========================================================= */
-
-#nameScreen {
-    background:
-        radial-gradient(
-            circle,
-            #08080b,
-            #000 70%
-        );
-}
-
-.name-interface {
-    width: min(700px, 94vw);
-
-    text-align: center;
-}
-
-.name-interface h1 {
-    font-size: clamp(28px, 7vw, 55px);
-}
-
-#playerName {
-    width: min(450px, 90vw);
-
-    margin-top: 25px;
-
-    padding: 15px;
-
-    text-align: center;
-
-    color: #eee;
-
-    background: #050507;
-
-    border: 1px solid #414149;
-
-    outline: none;
-
-    font-family: inherit;
-
-    letter-spacing: 2px;
-}
-
-#playerName:focus {
-    border-color: #aaa;
-}
-
-.error-text {
-    color: #d71932;
-
-    min-height: 20px;
-}
-
-
-/* =========================================================
-   THE EYE
-   ========================================================= */
-
-#eyeScreen {
-    background:
-        radial-gradient(
-            circle at center,
-            #15151a 0%,
-            #060608 45%,
-            #010102 100%
-        );
-}
-
-.eye-interface {
-    width: min(900px, 94vw);
-
-    text-align: center;
-}
-
-.voice-button {
-    position: fixed;
-
-    top: 18px;
-    right: 18px;
-
-    padding: 10px 14px;
-
-    background: #0d0d12;
-
-    color: #ddd;
-
-    border: 1px solid #44444d;
-
-    z-index: 10;
-}
-
-.voice-button.off {
-    color: #ff4358;
-
-    border-color: #8e1728;
-}
-
-
-/* =========================================================
-   EYE SHAPE
-   ========================================================= */
-
-.eye-container {
-    position: relative;
-
-    width: 280px;
-
-    margin: 0 auto 35px;
-}
-
-.eye-outer {
-    width: 280px;
-    height: 170px;
-
-    border: 8px solid #8b8b91;
-
-    border-radius: 50% / 60%;
-
-    background:
-        radial-gradient(
-            circle,
-            #f5f5f5,
-            #c9c9c9
-        );
-
-    position: relative;
-
-    box-shadow:
-        0 0 40px rgba(255,255,255,.08);
-}
-
-.eye-pupil {
-    position: absolute;
-
-    width: 75px;
-    height: 105px;
-
-    left: 50%;
-    top: 50%;
-
-    transform: translate(-50%, -50%);
-
-    border-radius: 50%;
-
-    background: #030303;
-
-    box-shadow:
-        0 0 25px #d71932;
-}
-
-.eye-pupil::after {
-    content: "";
-
-    position: absolute;
-
-    width: 20px;
-    height: 20px;
-
-    border-radius: 50%;
-
-    background: #d71932;
-
-    left: 50%;
-    top: 50%;
-
-    transform: translate(-50%, -50%);
-}
-
-
-/* =========================================================
-   EYE MOUTH
-   ========================================================= */
-
-.eye-mouth {
-    width: 80px;
-    height: 22px;
-
-    margin: 22px auto 0;
-
-    border-bottom: 3px solid #aaa;
-
-    position: relative;
-
-    transition: .3s;
-}
-
-.eye-mouth span {
-    display: block;
-
-    width: 100%;
-    height: 3px;
-
-    background: #777;
-
-    position: absolute;
-
-    top: 8px;
-
-    animation: breathe 1.4s infinite;
-}
-
-.eye-mouth.blocked span {
-    animation: none;
-
-    background: #d71932;
-
-    transform: scaleX(.2);
-}
-
-@keyframes breathe {
-
-    0%,
-    100% {
-        transform: scaleX(.5);
+    .tool{
+        min-width:65px;
+        padding:4px;
     }
 
-    50% {
-        transform: scaleX(1);
-    }
-}
-
-
-/* =========================================================
-   EYE DIALOGUE
-   ========================================================= */
-
-.eye-dialogue {
-    max-width: 700px;
-
-    margin: auto;
-
-    min-height: 80px;
-
-    font-size: 17px;
-
-    line-height: 1.8;
-
-    color: #ddd;
-}
-
-.eye-dialogue p {
-    margin-bottom: 12px;
-
-    animation: dialogueIn .5s ease;
-}
-
-@keyframes dialogueIn {
-
-    from {
-        opacity: 0;
-        transform: translateY(10px);
+    #bossScreen{
+        padding-top:45px;
     }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
-
-
-/* =========================================================
-   EYE GAME
-   ========================================================= */
-
-.eye-game {
-    margin-top: 30px;
-}
-
-.memory-grid,
-.lock-grid {
-    display: flex;
-
-    flex-wrap: wrap;
-
-    justify-content: center;
-
-    gap: 10px;
-
-    max-width: 650px;
-
-    margin: auto;
-}
-
-.memory-button,
-.lock-button {
-    padding: 14px 18px;
-
-    color: #ddd;
-
-    background: #0d0d12;
-
-    border: 1px solid #3a3a43;
-}
-
-.memory-button:hover,
-.lock-button:hover {
-    border-color: #aaa;
-}
-
-.lock-button.open {
-    color: #65db8b;
-
-    border-color: #2c8c4c;
-}
-
-
-/* =========================================================
-   REPORT
-   ========================================================= */
-
-.blackiris-report {
-    max-width: 650px;
-
-    margin: auto;
-
-    padding: 25px;
-
-    background: #e7e7e7;
-
-    color: #111;
-
-    text-align: left;
-
-    font-family:
-        Arial,
-        sans-serif;
-
-    line-height: 1.7;
-}
-
-.blackiris-report .classified-red {
-    color: #9e1224;
-}
-
-
-/* =========================================================
-   FREQUENCY
-   ========================================================= */
-
-.frequency {
-    width: min(600px, 90vw);
-}
-
-.frequency input {
-    width: 100%;
-}
-
-
-/* =========================================================
-   RELEASE
-   ========================================================= */
-
-.release-screen {
-    color: #d71932;
-
-    font-size: 22px;
-
-    line-height: 2;
-}
-
-
-/* =========================================================
-   ORIGIN
-   ========================================================= */
-
-#origin {
-    background:
-        radial-gradient(
-            circle,
-            #09090c,
-            #010101 75%
-        );
-}
-
-.origin-interface {
-    width: min(750px, 94vw);
-
-    text-align: center;
-
-    line-height: 2;
-}
-
-.origin-interface h1 {
-    font-size: clamp(30px, 8vw, 60px);
-}
-
-.origin-interface h3 {
-    margin-top: 35px;
-
-    color: #d71932;
-
-    letter-spacing: 2px;
-
-    line-height: 1.6;
-}
-
-.origin-line {
-    height: 1px;
-
-    background: #303039;
-
-    margin: 25px 0;
-}
-
-
-/* =========================================================
-   GLITCH EFFECTS
-   ========================================================= */
-
-.glitch {
-    animation: glitch .15s infinite;
-}
-
-@keyframes glitch {
-
-    0% {
-        transform: translate(0);
-    }
-
-    25% {
-        transform: translate(-2px, 1px);
-    }
-
-    50% {
-        transform: translate(2px, -1px);
-    }
-
-    75% {
-        transform: translate(-1px, -2px);
-    }
-
-    100% {
-        transform: translate(0);
-    }
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 700px) {
-
-    .classified {
-        padding: 30px 20px;
-    }
-
-    .knob-container {
-        gap: 20px;
-    }
-
-    .knob {
-        width: 65px;
-        height: 65px;
-    }
-
-    .blackbox-machine {
-        padding: 25px 15px;
-    }
-
-    .maze-header {
-        font-size: 8px;
-    }
-
-    .eye-outer {
-        width: 230px;
-        height: 140px;
-    }
-
-    .eye-container {
-        width: 230px;
-    }
-
-    .eye-pupil {
-        width: 60px;
-        height: 85px;
-    }
-
-    .eye-dialogue {
-        font-size: 15px;
-    }
-
-    .pac-controls,
-    .maze-controls {
-        display: flex;
-    }
-}
-
-
-@media (min-width: 701px) {
-
-    .pac-controls,
-    .maze-controls {
-        display: none;
-    }
-  }
