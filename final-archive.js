@@ -1,1935 +1,1285 @@
-document.addEventListener("DOMContentLoaded", () => {
+/* ============================================================
+   BLACK IRIS // FINAL ARCHIVE ENGINE
+   Sound + Games + Progression
+============================================================ */
 
-    // =========================================================
-    // SCREEN SYSTEM
-    // =========================================================
+"use strict";
 
-    const screens = document.querySelectorAll(".screen");
+/* ============================================================
+   SOUND ENGINE
+============================================================ */
 
-    function showScreen(id) {
-        screens.forEach(screen => {
-            screen.classList.remove("active");
-        });
+let audioCtx=null;
+let masterGain=null;
 
-        const target = document.getElementById(id);
+function initAudio(){
 
-        if (target) {
-            target.classList.add("active");
-        }
-    }
+  if(audioCtx)return;
 
+  audioCtx=new(
+    window.AudioContext ||
+    window.webkitAudioContext
+  )();
 
-    // =========================================================
-    // GAME STATE
-    // =========================================================
+  masterGain=audioCtx.createGain();
+  masterGain.gain.value=.18;
+  masterGain.connect(audioCtx.destination);
+}
 
-    let gameState = {
-        fragments: 0,
-        level: 1,
-        bossHealth: 5,
-        bossLives: 3,
-        blackBoxSolved: false,
-        playerName: localStorage.getItem("agentName") || ""
-    };
+function tone(freq,duration,type="sine",volume=.15,delay=0){
 
+  if(!audioCtx)return;
 
-    // =========================================================
-    // INTRO
-    // =========================================================
+  const osc=audioCtx.createOscillator();
+  const gain=audioCtx.createGain();
 
-    const beginButton = document.getElementById("beginButton");
+  osc.type=type;
+  osc.frequency.setValueAtTime(freq,audioCtx.currentTime+delay);
 
-    if (beginButton) {
-        beginButton.addEventListener("click", () => {
+  gain.gain.setValueAtTime(
+    0,
+    audioCtx.currentTime+delay
+  );
 
-            showScreen("arcadeScreen");
+  gain.gain.linearRampToValueAtTime(
+    volume,
+    audioCtx.currentTime+delay+.01
+  );
 
-            startArcade();
+  gain.gain.exponentialRampToValueAtTime(
+    .001,
+    audioCtx.currentTime+delay+duration
+  );
 
-        });
-    }
+  osc.connect(gain);
+  gain.connect(masterGain);
 
+  osc.start(audioCtx.currentTime+delay);
+  osc.stop(audioCtx.currentTime+delay+duration+.02);
+}
 
-    // =========================================================
-    // ARCADE GAME
-    // =========================================================
+function soundClick(){
+  tone(900,.06,"square",.12);
+}
 
-    const arcadeCanvas = document.getElementById("arcadeCanvas");
-    const arcadeMessage = document.getElementById("arcadeMessage");
-    const toolMessage = document.getElementById("toolMessage");
+function soundCollect(){
+  tone(600,.08,"square",.12);
+  tone(900,.1,"square",.12,.07);
+}
 
-    const levelDisplay = document.getElementById("levelDisplay");
-    const fragmentsFound = document.getElementById("fragmentsFound");
+function soundError(){
+  tone(120,.25,"sawtooth",.2);
+  tone(70,.3,"sawtooth",.15,.12);
+}
 
-    let arcadeRunning = false;
-    let arcadeAnimation;
+function soundSuccess(){
+  tone(500,.1,"sine",.12);
+  tone(700,.1,"sine",.12,.1);
+  tone(1000,.18,"sine",.15,.2);
+}
 
-    const arcade = {
-        width: 504,
-        height: 360,
+function soundAlarm(){
 
-        player: {
-            x: 40,
-            y: 180,
-            width: 22,
-            height: 22,
-            speed: 3
-        },
+  tone(700,.12,"square",.15);
+  tone(400,.12,"square",.15,.14);
+  tone(700,.12,"square",.15,.28);
+  tone(400,.12,"square",.15,.42);
+}
 
-        enemies: [],
+function soundGlitch(){
 
-        fragments: [],
+  for(let i=0;i<7;i++){
 
-        door: {
-            x: 462,
-            y: 155,
-            width: 25,
-            height: 50
-        },
-
-        keys: {},
-
-        selectedTool: null
-    };
-
-
-    function setupArcadeCanvas() {
-
-        if (!arcadeCanvas) return;
-
-        arcadeCanvas.width = arcade.width;
-        arcadeCanvas.height = arcade.height;
-
-    }
-
-
-    function createArcadeLevel() {
-
-        arcade.player.x = 35;
-        arcade.player.y = 170;
-
-        arcade.fragments = [];
-
-        for (let i = 0; i < 3 + gameState.level; i++) {
-
-            arcade.fragments.push({
-                x: 70 + Math.random() * 390,
-                y: 30 + Math.random() * 290,
-                collected: false
-            });
-
-        }
-
-        arcade.enemies = [];
-
-        const enemyCount = 2 + gameState.level;
-
-        for (let i = 0; i < enemyCount; i++) {
-
-            arcade.enemies.push({
-                x: 100 + Math.random() * 350,
-                y: 40 + Math.random() * 270,
-                width: 22,
-                height: 22,
-                vx: (Math.random() > .5 ? 1 : -1) *
-                    (0.7 + gameState.level * .15),
-                vy: (Math.random() > .5 ? 1 : -1) *
-                    (0.7 + gameState.level * .15),
-                frozen: 0
-            });
-
-        }
-
-    }
-
-
-    function startArcade() {
-
-        setupArcadeCanvas();
-
-        gameState.fragments = 0;
-
-        updateArcadeUI();
-
-        createArcadeLevel();
-
-        arcadeRunning = true;
-
-        arcadeMessage.textContent =
-            "Find the fragments. Find the door.";
-
-        cancelAnimationFrame(arcadeAnimation);
-
-        arcadeLoop();
-
-    }
-
-
-    function updateArcadeUI() {
-
-        if (levelDisplay) {
-            levelDisplay.textContent = gameState.level;
-        }
-
-        if (fragmentsFound) {
-            fragmentsFound.textContent = gameState.fragments;
-        }
-
-    }
-
-
-    function arcadeLoop() {
-
-        if (!arcadeRunning) return;
-
-        updateArcade();
-
-        drawArcade();
-
-        arcadeAnimation = requestAnimationFrame(arcadeLoop);
-
-    }
-
-
-    function updateArcade() {
-
-        const p = arcade.player;
-
-        if (arcade.keys["ArrowUp"] || arcade.keys["w"]) {
-            p.y -= p.speed;
-        }
-
-        if (arcade.keys["ArrowDown"] || arcade.keys["s"]) {
-            p.y += p.speed;
-        }
-
-        if (arcade.keys["ArrowLeft"] || arcade.keys["a"]) {
-            p.x -= p.speed;
-        }
-
-        if (arcade.keys["ArrowRight"] || arcade.keys["d"]) {
-            p.x += p.speed;
-        }
-
-        p.x = Math.max(0, Math.min(arcade.width - p.width, p.x));
-        p.y = Math.max(0, Math.min(arcade.height - p.height, p.y));
-
-
-        // Enemies move independently.
-
-        arcade.enemies.forEach(enemy => {
-
-            if (enemy.frozen > 0) {
-                enemy.frozen--;
-                return;
-            }
-
-            enemy.x += enemy.vx;
-            enemy.y += enemy.vy;
-
-            if (
-                enemy.x <= 0 ||
-                enemy.x + enemy.width >= arcade.width
-            ) {
-                enemy.vx *= -1;
-            }
-
-            if (
-                enemy.y <= 0 ||
-                enemy.y + enemy.height >= arcade.height
-            ) {
-                enemy.vy *= -1;
-            }
-
-            if (rectCollision(p, enemy)) {
-
-                if (arcade.selectedTool === "flipflop") {
-
-                    enemy.frozen = 120;
-
-                    arcadeMessage.textContent =
-                        "🩴 Direct hit! Enemy stunned.";
-
-                    arcade.selectedTool = null;
-
-                } else if (arcade.selectedTool === "icecream") {
-
-                    enemy.frozen = 240;
-
-                    arcadeMessage.textContent =
-                        "🍦 The enemy is distracted.";
-
-                    arcade.selectedTool = null;
-
-                } else {
-
-                    p.x = 35;
-                    p.y = 170;
-
-                    arcadeMessage.textContent =
-                        "You were caught. Be careful.";
-
-                }
-
-            }
-
-        });
-
-
-        // Fragment collection.
-
-        arcade.fragments.forEach(fragment => {
-
-            if (
-                !fragment.collected &&
-                distance(
-                    p.x,
-                    p.y,
-                    fragment.x,
-                    fragment.y
-                ) < 22
-            ) {
-
-                fragment.collected = true;
-
-                gameState.fragments++;
-
-                updateArcadeUI();
-
-                arcadeMessage.textContent =
-                    "Fragment recovered.";
-
-            }
-
-        });
-
-
-        // Door.
-
-        const nearDoor =
-            p.x + p.width > arcade.door.x &&
-            p.x < arcade.door.x + arcade.door.width &&
-            p.y + p.height > arcade.door.y &&
-            p.y < arcade.door.y + arcade.door.height;
-
-
-        if (nearDoor) {
-
-            if (arcade.selectedTool === "key") {
-
-                arcadeRunning = false;
-
-                arcadeMessage.textContent =
-                    "🔑 Door unlocked.";
-
-                setTimeout(() => {
-
-                    showScreen("bossScreen");
-
-                    startBoss();
-
-                }, 700);
-
-            } else {
-
-                arcadeMessage.textContent =
-                    "The door is locked. Find the key.";
-
-            }
-
-        }
-
-    }
-
-
-    function drawArcade() {
-
-        const ctx = arcadeCanvas.getContext("2d");
-
-        ctx.clearRect(
-            0,
-            0,
-            arcade.width,
-            arcade.height
-        );
-
-        ctx.fillStyle = "#050509";
-
-        ctx.fillRect(
-            0,
-            0,
-            arcade.width,
-            arcade.height
-        );
-
-
-        // Maze-like walls.
-
-        ctx.strokeStyle = "#20204a";
-        ctx.lineWidth = 4;
-
-        for (let x = 25; x < 480; x += 70) {
-
-            ctx.beginPath();
-
-            ctx.moveTo(x, 20);
-            ctx.lineTo(x, 100);
-
-            ctx.stroke();
-
-            ctx.beginPath();
-
-            ctx.moveTo(x, 260);
-            ctx.lineTo(x, 340);
-
-            ctx.stroke();
-
-        }
-
-
-        // Door.
-
-        ctx.fillStyle =
-            arcade.selectedTool === "key"
-                ? "#00aa55"
-                : "#551111";
-
-        ctx.fillRect(
-            arcade.door.x,
-            arcade.door.y,
-            arcade.door.width,
-            arcade.door.height
-        );
-
-
-        // Fragments.
-
-        arcade.fragments.forEach(fragment => {
-
-            if (fragment.collected) return;
-
-            ctx.fillStyle = "#67b8ff";
-
-            ctx.beginPath();
-
-            ctx.arc(
-                fragment.x,
-                fragment.y,
-                6,
-                0,
-                Math.PI * 2
-            );
-
-            ctx.fill();
-
-        });
-
-
-        // Enemies.
-
-        arcade.enemies.forEach(enemy => {
-
-            ctx.fillStyle =
-                enemy.frozen > 0
-                    ? "#777"
-                    : "#c33";
-
-            ctx.fillRect(
-                enemy.x,
-                enemy.y,
-                enemy.width,
-                enemy.height
-            );
-
-        });
-
-
-        // Player: little girl with blonde hair and hat.
-
-        const p = arcade.player;
-
-        // body
-
-        ctx.fillStyle = "#ffd1b3";
-
-        ctx.fillRect(
-            p.x + 6,
-            p.y + 3,
-            10,
-            9
-        );
-
-        // hair
-
-        ctx.fillStyle = "#f2d36b";
-
-        ctx.fillRect(
-            p.x + 3,
-            p.y,
-            16,
-            8
-        );
-
-        // hat
-
-        ctx.fillStyle = "#d9b45c";
-
-        ctx.fillRect(
-            p.x + 2,
-            p.y - 4,
-            18,
-            5
-        );
-
-        // dress
-
-        ctx.fillStyle = "#7a6cff";
-
-        ctx.fillRect(
-            p.x + 3,
-            p.y + 12,
-            16,
-            9
-        );
-
-    }
-
-
-    function rectCollision(a, b) {
-
-        return (
-            a.x < b.x + b.width &&
-            a.x + a.width > b.x &&
-            a.y < b.y + b.height &&
-            a.y + a.height > b.y
-        );
-
-    }
-
-
-    function distance(x1, y1, x2, y2) {
-
-        return Math.sqrt(
-            Math.pow(x1 - x2, 2) +
-            Math.pow(y1 - y2, 2)
-        );
-
-    }
-
-
-    // Keyboard controls.
-
-    document.addEventListener("keydown", event => {
-
-        arcade.keys[event.key] = true;
-
-        if (
-            ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]
-                .includes(event.key)
-        ) {
-            event.preventDefault();
-        }
-
-    });
-
-
-    document.addEventListener("keyup", event => {
-
-        arcade.keys[event.key] = false;
-
-    });
-
-
-    // Mobile controls.
-
-    document.querySelectorAll("[data-dir]")
-        .forEach(button => {
-
-            button.addEventListener("pointerdown", () => {
-
-                arcade.keys[
-                    directionToKey(button.dataset.dir)
-                ] = true;
-
-            });
-
-            button.addEventListener("pointerup", () => {
-
-                arcade.keys[
-                    directionToKey(button.dataset.dir)
-                ] = false;
-
-            });
-
-        });
-
-
-    function directionToKey(direction) {
-
-        const map = {
-            up: "ArrowUp",
-            down: "ArrowDown",
-            left: "ArrowLeft",
-            right: "ArrowRight"
-        };
-
-        return map[direction];
-
-    }
-
-
-    // =========================================================
-    // TOOLS
-    // =========================================================
-
-    document.querySelectorAll("[data-tool]")
-        .forEach(button => {
-
-            button.addEventListener("click", () => {
-
-                const tool = button.dataset.tool;
-
-                arcade.selectedTool = tool;
-
-                if (tool === "scanner") {
-
-                    toolMessage.textContent =
-                        "🔎 Scanner: hidden objects detected.";
-
-                }
-
-                if (tool === "flipflop") {
-
-                    toolMessage.textContent =
-                        "🩴 Flip-flop equipped. Touch an enemy to hit it.";
-
-                }
-
-                if (tool === "icecream") {
-
-                    toolMessage.textContent =
-                        "🍦 Ice cream equipped. Touch an enemy to distract it.";
-
-                }
-
-                if (tool === "key") {
-
-                    toolMessage.textContent =
-                        "🔑 Key equipped. Take it to the locked door.";
-
-                }
-
-                if (tool === "mirror") {
-
-                    toolMessage.textContent =
-                        "🪞 Mirror equipped. Something about the Eye feels familiar.";
-
-                }
-
-            });
-
-        });
-
-
-    // =========================================================
-    // BOSS LEVEL
-    // =========================================================
-
-    const bossCanvas = document.getElementById("bossCanvas");
-
-    let bossAnimation;
-    let bossRunning = false;
-
-    const boss = {
-
-        player: {
-            x: 100,
-            y: 300,
-            width: 32,
-            height: 45,
-            vx: 0,
-            vy: 0,
-            grounded: true
-        },
-
-        eye: {
-            x: 700,
-            y: 100,
-            size: 90,
-            vx: 2
-        },
-
-        projectiles: [],
-
-        enemyProjectiles: [],
-
-        gravity: .7
-
-    };
-
-
-    function setupBossCanvas() {
-
-        bossCanvas.width = 960;
-        bossCanvas.height = 480;
-
-    }
-
-
-    function startBoss() {
-
-        setupBossCanvas();
-
-        gameState.bossHealth = 5;
-        gameState.bossLives = 3;
-
-        bossRunning = true;
-
-        boss.player.x = 100;
-        boss.player.y = 350;
-
-        boss.eye.x = 700;
-        boss.eye.y = 100;
-
-        boss.projectiles = [];
-        boss.enemyProjectiles = [];
-
-        updateBossUI();
-
-        document.getElementById("bossMessage").textContent =
-            "THE EYE HAS AWAKENED.";
-
-        cancelAnimationFrame(bossAnimation);
-
-        bossLoop();
-
-    }
-
-
-    function updateBossUI() {
-
-        document.getElementById("bossHealth").textContent =
-            gameState.bossHealth;
-
-        document.getElementById("bossLives").textContent =
-            gameState.bossLives;
-
-    }
-
-
-    function bossLoop() {
-
-        if (!bossRunning) return;
-
-        updateBoss();
-
-        drawBoss();
-
-        bossAnimation =
-            requestAnimationFrame(bossLoop);
-
-    }
-
-
-    function updateBoss() {
-
-        const p = boss.player;
-
-        if (boss.keys) {
-
-            if (
-                boss.keys.left
-            ) {
-                p.vx = -4;
-            } else if (
-                boss.keys.right
-            ) {
-                p.vx = 4;
-            } else {
-                p.vx = 0;
-            }
-
-            if (
-                boss.keys.jump &&
-                p.grounded
-            ) {
-
-                p.vy = -12;
-                p.grounded = false;
-
-            }
-
-        }
-
-
-        p.vy += boss.gravity;
-
-        p.x += p.vx;
-        p.y += p.vy;
-
-        if (p.y >= 390) {
-
-            p.y = 390;
-            p.vy = 0;
-            p.grounded = true;
-
-        }
-
-        p.x =
-            Math.max(
-                0,
-                Math.min(
-                    920,
-                    p.x
-                )
-            );
-
-
-        // Eye moves automatically.
-
-        boss.eye.x += boss.eye.vx;
-
-        if (
-            boss.eye.x < 500 ||
-            boss.eye.x > 820
-        ) {
-
-            boss.eye.vx *= -1;
-
-        }
-
-
-        // Eye periodically attacks.
-
-        if (Math.random() < .012) {
-
-            boss.enemyProjectiles.push({
-
-                x: boss.eye.x,
-                y: boss.eye.y + 70,
-                vx: -2,
-                vy: 3
-
-            });
-
-        }
-
-
-        boss.projectiles.forEach(projectile => {
-
-            projectile.x += projectile.vx;
-            projectile.y += projectile.vy;
-
-        });
-
-
-        boss.enemyProjectiles.forEach(projectile => {
-
-            projectile.x += projectile.vx;
-            projectile.y += projectile.vy;
-
-            if (
-                projectile.x > p.x &&
-                projectile.x < p.x + p.width &&
-                projectile.y > p.y &&
-                projectile.y < p.y + p.height
-            ) {
-
-                gameState.bossLives--;
-
-                updateBossUI();
-
-                projectile.y = 999;
-
-                if (gameState.bossLives <= 0) {
-
-                    gameState.bossLives = 3;
-
-                    p.x = 100;
-                    p.y = 350;
-
-                    updateBossUI();
-
-                    document.getElementById("bossMessage").textContent =
-                        "You survived. Keep going.";
-
-                }
-
-            }
-
-        });
-
-
-        boss.projectiles.forEach(projectile => {
-
-            const hit =
-                projectile.x > boss.eye.x - boss.eye.size &&
-                projectile.x <
-                boss.eye.x + boss.eye.size &&
-                projectile.y >
-                boss.eye.y - boss.eye.size &&
-                projectile.y <
-                boss.eye.y + boss.eye.size;
-
-            if (hit) {
-
-                projectile.x = -999;
-
-                gameState.bossHealth--;
-
-                updateBossUI();
-
-                if (gameState.bossHealth <= 0) {
-
-                    defeatBoss();
-
-                }
-
-            }
-
-        });
-
-    }
-
-
-    function drawBoss() {
-
-        const ctx = bossCanvas.getContext("2d");
-
-        ctx.clearRect(
-            0,
-            0,
-            bossCanvas.width,
-            bossCanvas.height
-        );
-
-        ctx.fillStyle = "#050000";
-
-        ctx.fillRect(
-            0,
-            0,
-            bossCanvas.width,
-            bossCanvas.height
-        );
-
-
-        // Platforms.
-
-        ctx.fillStyle = "#222";
-
-        ctx.fillRect(
-            0,
-            435,
-            960,
-            45
-        );
-
-        ctx.fillRect(
-            250,
-            330,
-            180,
-            20
-        );
-
-        ctx.fillRect(
-            520,
-            270,
-            180,
-            20
-        );
-
-
-        // Red Eye.
-
-        const e = boss.eye;
-
-        ctx.fillStyle = "#220000";
-
-        ctx.beginPath();
-
-        ctx.arc(
-            e.x,
-            e.y,
-            e.size,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.fill();
-
-
-        ctx.strokeStyle = "#ff0000";
-        ctx.lineWidth = 8;
-
-        ctx.beginPath();
-
-        ctx.arc(
-            e.x,
-            e.y,
-            e.size - 8,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.stroke();
-
-
-        ctx.fillStyle = "#fff";
-
-        ctx.beginPath();
-
-        ctx.ellipse(
-            e.x,
-            e.y,
-            48,
-            30,
-            0,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.fill();
-
-
-        ctx.fillStyle = "#d00";
-
-        ctx.beginPath();
-
-        ctx.arc(
-            e.x,
-            e.y,
-            18,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.fill();
-
-
-        // Girl.
-
-        const p = boss.player;
-
-        ctx.fillStyle = "#ffd1b3";
-
-        ctx.fillRect(
-            p.x + 8,
-            p.y,
-            18,
-            18
-        );
-
-        ctx.fillStyle = "#f0cf6a";
-
-        ctx.fillRect(
-            p.x + 3,
-            p.y - 5,
-            28,
-            10
-        );
-
-        ctx.fillStyle = "#c9a54b";
-
-        ctx.fillRect(
-            p.x,
-            p.y - 10,
-            34,
-            6
-        );
-
-        ctx.fillStyle = "#6d5bd0";
-
-        ctx.fillRect(
-            p.x + 5,
-            p.y + 18,
-            24,
-            27
-        );
-
-
-        // Flip-flops.
-
-        boss.projectiles.forEach(projectile => {
-
-            ctx.save();
-
-            ctx.translate(
-                projectile.x,
-                projectile.y
-            );
-
-            ctx.rotate(
-                projectile.rotation || 0
-            );
-
-            ctx.fillStyle = "#d8a15d";
-
-            ctx.fillRect(
-                -14,
-                -5,
-                28,
-                10
-            );
-
-            ctx.restore();
-
-        });
-
-
-        // Enemy projectiles.
-
-        ctx.fillStyle = "#ff2222";
-
-        boss.enemyProjectiles.forEach(projectile => {
-
-            ctx.beginPath();
-
-            ctx.arc(
-                projectile.x,
-                projectile.y,
-                6,
-                0,
-                Math.PI * 2
-            );
-
-            ctx.fill();
-
-        });
-
-    }
-
-
-    boss.keys = {
-        left: false,
-        right: false,
-        jump: false
-    };
-
-
-    document.addEventListener("keydown", event => {
-
-        if (!document.getElementById("bossScreen").classList.contains("active")) {
-            return;
-        }
-
-        if (
-            event.key === "ArrowLeft" ||
-            event.key === "a"
-        ) {
-            boss.keys.left = true;
-        }
-
-        if (
-            event.key === "ArrowRight" ||
-            event.key === "d"
-        ) {
-            boss.keys.right = true;
-        }
-
-        if (
-            event.key === "ArrowUp" ||
-            event.key === "w" ||
-            event.key === " "
-        ) {
-            boss.keys.jump = true;
-            event.preventDefault();
-        }
-
-        if (event.key === "f") {
-            throwFlipFlop();
-        }
-
-    });
-
-
-    document.addEventListener("keyup", event => {
-
-        if (
-            event.key === "ArrowLeft" ||
-            event.key === "a"
-        ) {
-            boss.keys.left = false;
-        }
-
-        if (
-            event.key === "ArrowRight" ||
-            event.key === "d"
-        ) {
-            boss.keys.right = false;
-        }
-
-        if (
-            event.key === "ArrowUp" ||
-            event.key === "w" ||
-            event.key === " "
-        ) {
-            boss.keys.jump = false;
-        }
-
-    });
-
-
-    document.querySelectorAll("[data-boss-key]")
-        .forEach(button => {
-
-            const key = button.dataset.bossKey;
-
-            button.addEventListener("pointerdown", () => {
-
-                if (key === "jump") {
-                    boss.keys.jump = true;
-                } else {
-                    boss.keys[key] = true;
-                }
-
-            });
-
-            button.addEventListener("pointerup", () => {
-
-                if (key === "jump") {
-                    boss.keys.jump = false;
-                } else {
-                    boss.keys[key] = false;
-                }
-
-            });
-
-        });
-
-
-    function throwFlipFlop() {
-
-        boss.projectiles.push({
-
-            x: boss.player.x + 25,
-            y: boss.player.y + 15,
-
-            vx: 8,
-
-            vy: -2,
-
-            rotation: 0
-
-        });
-
-    }
-
-
-    document.querySelectorAll("[data-boss-tool]")
-        .forEach(button => {
-
-            button.addEventListener("click", () => {
-
-                const tool = button.dataset.bossTool;
-
-                if (tool === "flipflop") {
-
-                    throwFlipFlop();
-
-                    document.getElementById("bossMessage").textContent =
-                        "🩴 FLIP-FLOP THROWN!";
-
-                }
-
-                if (tool === "icecream") {
-
-                    document.getElementById("bossMessage").textContent =
-                        "🍦 The Eye is distracted!";
-
-                    boss.eye.vx *= 0.5;
-
-                    setTimeout(() => {
-
-                        boss.eye.vx *= 2;
-
-                    }, 3000);
-
-                }
-
-                if (tool === "scanner") {
-
-                    document.getElementById("bossMessage").textContent =
-                        "🔎 SCANNER: The red pupil is the weak point.";
-
-                }
-
-                if (tool === "mirror") {
-
-                    document.getElementById("bossMessage").textContent =
-                        "🪞 The Eye sees itself.";
-
-                    boss.eye.vx *= -1;
-
-                }
-
-                if (tool === "key") {
-
-                    document.getElementById("bossMessage").textContent =
-                        "🔑 The key has no power here.";
-
-                }
-
-            });
-
-        });
-
-
-    function defeatBoss() {
-
-        bossRunning = false;
-
-        cancelAnimationFrame(bossAnimation);
-
-        document.getElementById("bossOverlay").classList.remove("hidden");
-
-        document.getElementById("bossOverlayText").textContent =
-            "THE RED EYE HAS FALLEN";
-
-    }
-
-
-    document.getElementById("bossContinue")
-        .addEventListener("click", () => {
-
-            document.getElementById("bossOverlay")
-                .classList.add("hidden");
-
-            showScreen("mazeScreen");
-
-            startMaze();
-
-        });
-
-
-    // =========================================================
-    // MAZE
-    // =========================================================
-
-    const mazeCanvas =
-        document.getElementById("mazeCanvas");
-
-    const maze = {
-
-        size: 9,
-
-        player: {
-            x: 0,
-            y: 0
-        },
-
-        exit: {
-            x: 8,
-            y: 8
-        },
-
-        map: [
-
-            [0,0,1,0,0,0,1,0,0],
-
-            [1,0,1,0,1,0,1,0,1],
-
-            [0,0,0,0,1,0,0,0,0],
-
-            [0,1,1,0,1,1,1,1,0],
-
-            [0,0,0,0,0,0,0,1,0],
-
-            [0,1,1,1,1,1,0,1,0],
-
-            [0,0,0,0,0,1,0,0,0],
-
-            [0,1,1,1,0,1,1,1,0],
-
-            [0,0,0,0,0,0,0,0,0]
-
-        ]
-
-    };
-
-
-    function startMaze() {
-
-        maze.player.x = 0;
-        maze.player.y = 0;
-
-        drawMaze();
-
-        document.getElementById("mazeMessage").textContent =
-            "The walls are changing. Find the exit.";
-
-    }
-
-
-    function drawMaze() {
-
-        const ctx = mazeCanvas.getContext("2d");
-
-        const cell = 44;
-
-        mazeCanvas.width =
-            maze.size * cell;
-
-        mazeCanvas.height =
-            maze.size * cell;
-
-        ctx.fillStyle = "#050505";
-
-        ctx.fillRect(
-            0,
-            0,
-            mazeCanvas.width,
-            mazeCanvas.height
-        );
-
-
-        for (let y = 0; y < maze.size; y++) {
-
-            for (let x = 0; x < maze.size; x++) {
-
-                if (maze.map[y][x] === 1) {
-
-                    ctx.fillStyle = "#242424";
-
-                    ctx.fillRect(
-                        x * cell,
-                        y * cell,
-                        cell,
-                        cell
-                    );
-
-                }
-
-            }
-
-        }
-
-
-        // Exit.
-
-        ctx.fillStyle = "#164";
-
-        ctx.fillRect(
-            maze.exit.x * cell + 8,
-            maze.exit.y * cell + 8,
-            cell - 16,
-            cell - 16
-        );
-
-
-        // Player.
-
-        ctx.fillStyle = "#f2d36b";
-
-        ctx.beginPath();
-
-        ctx.arc(
-            maze.player.x * cell + 22,
-            maze.player.y * cell + 22,
-            12,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.fill();
-
-    }
-
-
-    function moveMaze(dx, dy) {
-
-        const nx =
-            maze.player.x + dx;
-
-        const ny =
-            maze.player.y + dy;
-
-        if (
-            nx < 0 ||
-            ny < 0 ||
-            nx >= maze.size ||
-            ny >= maze.size
-        ) {
-            return;
-        }
-
-        if (maze.map[ny][nx] === 1) {
-
-            document.getElementById("mazeMessage").textContent =
-                "A wall blocks the way.";
-
-            return;
-
-        }
-
-        maze.player.x = nx;
-        maze.player.y = ny;
-
-        drawMaze();
-
-
-        if (
-            maze.player.x === maze.exit.x &&
-            maze.player.y === maze.exit.y
-        ) {
-
-            document.getElementById("mazeMessage").textContent =
-                "EXIT FOUND.";
-
-            document.getElementById("mazeContinue")
-                .classList.remove("hidden");
-
-        }
-
-    }
-
-
-    document.addEventListener("keydown", event => {
-
-        if (!document.getElementById("mazeScreen")
-            .classList.contains("active")) {
-            return;
-        }
-
-        if (
-            event.key === "ArrowUp" ||
-            event.key === "w"
-        ) {
-            moveMaze(0, -1);
-        }
-
-        if (
-            event.key === "ArrowDown" ||
-            event.key === "s"
-        ) {
-            moveMaze(0, 1);
-        }
-
-        if (
-            event.key === "ArrowLeft" ||
-            event.key === "a"
-        ) {
-            moveMaze(-1, 0);
-        }
-
-        if (
-            event.key === "ArrowRight" ||
-            event.key === "d"
-        ) {
-            moveMaze(1, 0);
-        }
-
-    });
-
-
-    document.getElementById("mazeContinue")
-        .addEventListener("click", () => {
-
-            showScreen("blackBoxScreen");
-
-        });
-
-
-    // =========================================================
-    // BLACK BOX
-    // =========================================================
-
-    const blackBoxState = {
-
-        switches: [false,false,false,false],
-
-        dials: [0,0,0],
-
-        symbol: null
-
-    };
-
-
-    document.querySelectorAll(".switch")
-        .forEach(button => {
-
-            button.addEventListener("click", () => {
-
-                const index =
-                    Number(button.dataset.switch);
-
-                blackBoxState.switches[index] =
-                    !blackBoxState.switches[index];
-
-                button.classList.toggle(
-                    "active",
-                    blackBoxState.switches[index]
-                );
-
-                button.textContent =
-                    blackBoxState.switches[index]
-                        ? "ON"
-                        : "OFF";
-
-            });
-
-        });
-
-
-    document.querySelectorAll(".dial")
-        .forEach(button => {
-
-            button.addEventListener("click", () => {
-
-                const index =
-                    Number(button.dataset.dial);
-
-                blackBoxState.dials[index] =
-                    (blackBoxState.dials[index] + 1) % 4;
-
-                const values =
-                    ["◉","◌","◎","●"];
-
-                button.textContent =
-                    values[
-                        blackBoxState.dials[index]
-                    ];
-
-            });
-
-        });
-
-
-    document.querySelectorAll(".symbol")
-        .forEach(button => {
-
-            button.addEventListener("click", () => {
-
-                document.querySelectorAll(".symbol")
-                    .forEach(s =>
-                        s.classList.remove("active")
-                    );
-
-                button.classList.add("active");
-
-                blackBoxState.symbol =
-                    button.dataset.symbol;
-
-            });
-
-        });
-
-
-    document.getElementById("blackButton")
-        .addEventListener("click", () => {
-
-            /*
-             * Correct configuration.
-             *
-             * The player must discover this from
-             * previous clues.
-             */
-
-            const switchesCorrect =
-                blackBoxState.switches[0] &&
-                !blackBoxState.switches[1] &&
-                blackBoxState.switches[2] &&
-                !blackBoxState.switches[3];
-
-            const dialsCorrect =
-                blackBoxState.dials[0] === 1 &&
-                blackBoxState.dials[1] === 2 &&
-                blackBoxState.dials[2] === 3;
-
-            const symbolCorrect =
-                blackBoxState.symbol === "eye";
-
-
-            if (
-                switchesCorrect &&
-                dialsCorrect &&
-                symbolCorrect
-            ) {
-
-                gameState.blackBoxSolved = true;
-
-                document.getElementById("blackBoxMessage")
-                    .textContent =
-                    "ACCESS GRANTED.";
-
-                setTimeout(() => {
-
-                    showScreen("dontPressScreen");
-
-                }, 1000);
-
-            } else {
-
-                document.getElementById("blackBoxMessage")
-                    .textContent =
-                    "ACCESS DENIED. Something is wrong.";
-
-            }
-
-        });
-
-
-    // =========================================================
-    // DON'T PRESS BUTTON
-    // =========================================================
-
-    document.getElementById("dontPressButton")
-        .addEventListener("click", () => {
-
-            const text =
-                document.getElementById("dontPressText");
-
-            text.textContent =
-                "You pressed it.";
-
-            setTimeout(() => {
-
-                showScreen("questionScreen");
-
-            }, 1500);
-
-        });
-
-
-    // =========================================================
-    // QUESTION
-    // =========================================================
-
-    document.getElementById("questionYes")
-        .addEventListener("click", () => {
-
-            showScreen("nameScreen");
-
-        });
-
-
-    document.getElementById("questionNo")
-        .addEventListener("click", () => {
-
-            showScreen("nameScreen");
-
-        });
-
-
-    // =========================================================
-    // NAME
-    // =========================================================
-
-    document.getElementById("nameSubmit")
-        .addEventListener("click", () => {
-
-            const input =
-                document.getElementById("agentName");
-
-            const name =
-                input.value.trim();
-
-            if (!name) {
-
-                input.focus();
-
-                return;
-
-            }
-
-            gameState.playerName = name;
-
-            localStorage.setItem(
-                "agentName",
-                name
-            );
-
-            startEyeSequence();
-
-        });
-
-
-    function startEyeSequence() {
-
-        showScreen("eyeScreen");
-
-        const dialogue =
-            document.getElementById("eyeDialogue");
-
-        dialogue.textContent =
-            "I KNOW YOUR NAME, " +
-            gameState.playerName.toUpperCase() +
-            ".";
-
-        setTimeout(() => {
-
-            dialogue.textContent =
-                "YOU HAVE BEEN LOOKING FOR ME.";
-
-        }, 2200);
-
-        setTimeout(() => {
-
-            dialogue.textContent =
-                "BUT YOU NEVER ASKED WHO WAS WATCHING.";
-
-        }, 4500);
-
-        setTimeout(() => {
-
-            document.getElementById("eyeChoices")
-                .classList.remove("hidden");
-
-        }, 7000);
-
-    }
-
-
-    // =========================================================
-    // EYE CHOICES
-    // =========================================================
-
-    document.querySelectorAll("[data-choice]")
-        .forEach(button => {
-
-            button.addEventListener("click", () => {
-
-                const choice =
-                    button.dataset.choice;
-
-                if (choice === "free") {
-
-                    showScreen("memoryScreen");
-
-                } else {
-
-                    showScreen("easterEggScreen");
-
-                }
-
-            });
-
-        });
-
-
-    // =========================================================
-    // EASTER EGG
-    // =========================================================
-
-    document.getElementById("eggContinue")
-        .addEventListener("click", () => {
-
-            showScreen("noArchiveScreen");
-
-            setTimeout(() => {
-
-                document.getElementById("eyeContinue")
-                    .classList.remove("hidden");
-
-            }, 2000);
-
-        });
-
-
-    document.getElementById("eyeContinue")
-        .addEventListener("click", () => {
-
-            showScreen("memoryScreen");
-
-        });
-
-
-    // =========================================================
-    // MEMORY / FINAL CODE
-    // =========================================================
-
-    document.getElementById("memorySubmit")
-        .addEventListener("click", () => {
-
-            const input =
-                document.getElementById("memoryInput");
-
-            const value =
-                input.value.trim();
-
-            if (
-                value === "170301" ||
-                value === "17 03 01" ||
-                value === "170301"
-            ) {
-
-                document.getElementById("memoryMessage")
-                    .textContent =
-                    "MEMORY VERIFIED.";
-
-                setTimeout(() => {
-
-                    startEnding();
-
-                }, 1200);
-
-            } else {
-
-                document.getElementById("memoryMessage")
-                    .textContent =
-                    "INCORRECT. LOOK CLOSER.";
-
-            }
-
-        });
-
-
-    // =========================================================
-    // ENDING
-    // =========================================================
-
-    function startEnding() {
-
-        showScreen("endingScreen");
-
-        const ending =
-            document.getElementById("endingText");
-
-        ending.textContent =
-            "The archive opens.";
-
-        setTimeout(() => {
-
-            ending.textContent =
-                "There was never an investigation.";
-
-        }, 2500);
-
-        setTimeout(() => {
-
-            ending.textContent =
-                "There was only one subject.";
-
-        }, 5000);
-
-        setTimeout(() => {
-
-            ending.textContent =
-                "YOU.";
-
-        }, 7500);
-
-    }
-
-
-    document.getElementById("endingContinue")
-        .addEventListener("click", () => {
-
-            document.getElementById("endingText")
-                .textContent =
-                "BLACK IRIS ARCHIVE COMPLETE.";
-
-            document.getElementById("endingContinue")
-                .style.display = "none";
-
-        });
-
-
-    // =========================================================
-    // SAFETY CHECK
-    // =========================================================
-
-    console.log(
-        "BLACK IRIS FINAL ARCHIVE loaded successfully."
+    tone(
+      100+Math.random()*900,
+      .04,
+      "sawtooth",
+      .06,
+      i*.035
     );
+  }
+}
+
+function heartbeat(){
+
+  tone(80,.08,"sine",.25);
+  tone(60,.1,"sine",.18,.12);
+}
+
+
+/* ============================================================
+   SCREEN
+============================================================ */
+
+function screen(id){
+
+  document.querySelectorAll(".screen")
+    .forEach(s=>s.classList.remove("active"));
+
+  document.getElementById(id)
+    .classList.add("active");
+}
+
+
+/* ============================================================
+   START
+============================================================ */
+
+document.getElementById("startBtn")
+.addEventListener("click",()=>{
+
+  initAudio();
+
+  if(audioCtx.state==="suspended")
+    audioCtx.resume();
+
+  soundSuccess();
+
+  startPacman();
+
+});
+
+
+/* ============================================================
+   PAC-MAN
+============================================================ */
+
+const canvas=document.getElementById("pacCanvas");
+const ctx=canvas.getContext("2d");
+
+const maps=[
+
+[
+"#################",
+"#...............#",
+"#.###.#####.###.#",
+"#.#...........#.#",
+"#.#.###.#.###.#.#",
+"#...#...#...#...#",
+"###.#.#####.#.###",
+"#...............#",
+"#.###.##.##.###.#",
+"#...#.......#...#",
+"###.#.#####.#.###",
+"#...#...#...#...#",
+"#.#.###.#.###.#.#",
+"#.#...........#.#",
+"#.###.#####.###.#",
+"#...............#",
+"#################"
+],
+
+[
+"#################",
+"#........#......#",
+"#.######.#.####.#",
+"#........#......#",
+"#.####.####.###.#",
+"#....#......#...#",
+"####.#.####.#.###",
+"#......#.........#",
+"#.####.#.#######.#",
+"#....#.#.........#",
+"###.##.#####.###.#",
+"#........#.......#",
+"#.######.#.#####.#",
+"#......#.........#",
+"#.####.####.###..#",
+"#.................#",
+"#################"
+],
+
+[
+"#################",
+"#...#...........#",
+"#.#.#.#########.#",
+"#.#.............#",
+"#.#####.#####.#.#",
+"#.....#.....#.#.#",
+"#####.#.###.#.#.#",
+"#.....#...#.#...#",
+"#.#########.#.###",
+"#...........#...#",
+"#.###########.#.#",
+"#...#.........#.#",
+"###.#.#######.#.#",
+"#...#.........#.#",
+"#.###########.#.#",
+"#...............#",
+"#################"
+],
+
+[
+"#################",
+"#...............#",
+"#.#####.#######.#",
+"#.#...#.#.......#",
+"#.#.#.#.#.#####.#",
+"#...#.#.........#",
+"###.#.#########.#",
+"#...#.....#.....#",
+"#.#######.#.###.#",
+"#.......#.#.....#",
+"#.#####.#.#####.#",
+"#.....#.#.......#",
+"#.###.#.#######.#",
+"#...#.#.........#",
+"#.#.#.#########.#",
+"#...............#",
+"#################"
+],
+
+[
+"#################",
+"#...............#",
+"#.###.#########.#",
+"#.#...........#.#",
+"#.#.#########.#.#",
+"#.#.#.......#.#.#",
+"#...#.#####.#...#",
+"###.#.#...#.#.###",
+"#...#.#.#.#.#...#",
+"#.#.#...#...#.#.#",
+"#.#.#########.#.#",
+"#.#...........#.#",
+"#.#############.#",
+"#...............#",
+"#.#############.#",
+"#...............#",
+"#################"
+]
+
+];
+
+let mapIndex=0;
+let map=[];
+let player={x:1,y:1,dx:0,dy:0};
+let next={x:0,y:0};
+let enemies=[];
+let pellets=[];
+let score=0;
+let pacTimer=null;
+
+function startPacman(){
+
+  screen("pacman");
+
+  mapIndex=0;
+  score=0;
+
+  document.getElementById("scoreText")
+    .textContent="000000";
+
+  loadMap();
+
+  if(!pacTimer)
+    pacTimer=setInterval(updatePacman,115);
+
+  requestAnimationFrame(drawPacman);
+}
+
+function loadMap(){
+
+  map=maps[mapIndex];
+
+  pellets=[];
+
+  for(let y=0;y<map.length;y++){
+    for(let x=0;x<map[y].length;x++){
+
+      if(map[y][x]==="."){
+        pellets.push({x,y});
+      }
+    }
+  }
+
+  player={
+    x:1,
+    y:1,
+    dx:0,
+    dy:0
+  };
+
+  next={
+    x:0,
+    y:0
+  };
+
+  enemies=[
+    {x:8,y:8,dx:1,dy:0},
+    {x:14,y:8,dx:-1,dy:0}
+  ];
+
+  document.getElementById("levelText")
+    .textContent=`MAP ${mapIndex+1} / ${maps.length}`;
+
+  document.getElementById("pacStatus")
+    .textContent="RECOVER ALL IRIS FRAGMENTS.";
+
+  soundGlitch();
+}
+
+function wall(x,y){
+
+  if(
+    y<0 ||
+    y>=map.length ||
+    x<0 ||
+    x>=map[0].length
+  )return true;
+
+  return map[y][x]==="#";
+}
+
+function direction(x,y){
+
+  next={x,y};
+}
+
+document.querySelectorAll("[data-dir]")
+.forEach(btn=>{
+
+  btn.addEventListener("click",()=>{
+
+    const d=btn.dataset.dir;
+
+    if(d==="up")direction(0,-1);
+    if(d==="down")direction(0,1);
+    if(d==="left")direction(-1,0);
+    if(d==="right")direction(1,0);
+
+    soundClick();
+
+  });
+
+});
+
+document.addEventListener("keydown",e=>{
+
+  if(e.key==="ArrowUp"||e.key.toLowerCase()==="w")
+    direction(0,-1);
+
+  if(e.key==="ArrowDown"||e.key.toLowerCase()==="s")
+    direction(0,1);
+
+  if(e.key==="ArrowLeft"||e.key.toLowerCase()==="a")
+    direction(-1,0);
+
+  if(e.key==="ArrowRight"||e.key.toLowerCase()==="d")
+    direction(1,0);
+
+});
+
+function updatePacman(){
+
+  if(!document.getElementById("pacman")
+    .classList.contains("active"))return;
+
+  if(!wall(
+    player.x+next.x,
+    player.y+next.y
+  )){
+
+    player.dx=next.x;
+    player.dy=next.y;
+
+  }
+
+  if(!wall(
+    player.x+player.dx,
+    player.y+player.dy
+  )){
+
+    player.x+=player.dx;
+    player.y+=player.dy;
+
+  }
+
+  const before=pellets.length;
+
+  pellets=pellets.filter(p=>{
+
+    if(
+      p.x===player.x &&
+      p.y===player.y
+    ){
+
+      score+=100;
+
+      soundCollect();
+
+      return false;
+    }
+
+    return true;
+
+  });
+
+  if(before!==pellets.length){
+
+    document.getElementById("scoreText")
+      .textContent=String(score).padStart(6,"0");
+
+  }
+
+  enemies.forEach(e=>{
+
+    const options=[
+      {x:e.dx,y:e.dy},
+      {x:1,y:0},
+      {x:-1,y:0},
+      {x:0,y:1},
+      {x:0,y:-1}
+    ].filter(d=>
+      !wall(e.x+d.x,e.y+d.y)
+    );
+
+    if(!options.length)return;
+
+    options.sort((a,b)=>{
+
+      const da=
+        Math.abs(
+          player.x-(e.x+a.x)
+        )+
+        Math.abs(
+          player.y-(e.y+a.y)
+        );
+
+      const db=
+        Math.abs(
+          player.x-(e.x+b.x)
+        )+
+        Math.abs(
+          player.y-(e.y+b.y)
+        );
+
+      return da-db;
+
+    });
+
+    const d=options[0];
+
+    e.dx=d.x;
+    e.dy=d.y;
+
+    e.x+=d.x;
+    e.y+=d.y;
+
+    if(
+      e.x===player.x &&
+      e.y===player.y
+    ){
+
+      soundError();
+
+      player.x=1;
+      player.y=1;
+
+      document.getElementById("pacStatus")
+        .textContent=
+        "SECURITY CONTACT — RETURN TO START.";
+
+    }
+
+  });
+
+  if(pellets.length===0){
+
+    if(mapIndex<maps.length-1){
+
+      mapIndex++;
+
+      loadMap();
+
+    }else{
+
+      clearInterval(pacTimer);
+      pacTimer=null;
+
+      soundSuccess();
+
+      setTimeout(startBoss,900);
+
+    }
+
+  }
+
+}
+
+function drawPacman(){
+
+  if(!document.getElementById("pacman")
+    .classList.contains("active"))return;
+
+  const size=
+    canvas.width/map[0].length;
+
+  ctx.fillStyle="#000";
+  ctx.fillRect(
+    0,0,
+    canvas.width,
+    canvas.height
+  );
+
+  /* maze */
+
+  for(let y=0;y<map.length;y++){
+
+    for(let x=0;x<map[y].length;x++){
+
+      if(map[y][x]==="#"){
+
+        ctx.fillStyle="#170000";
+
+        ctx.fillRect(
+          x*size,
+          y*size,
+          size,
+          size
+        );
+
+        ctx.strokeStyle="#680000";
+
+        ctx.strokeRect(
+          x*size+2,
+          y*size+2,
+          size-4,
+          size-4
+        );
+
+      }
+
+    }
+
+  }
+
+  /* pellets */
+
+  pellets.forEach(p=>{
+
+    ctx.fillStyle="#fff";
+    ctx.shadowBlur=10;
+    ctx.shadowColor="#f00";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      p.x*size+size/2,
+      p.y*size+size/2,
+      3,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.shadowBlur=0;
+
+  });
+
+  /* enemies */
+
+  enemies.forEach((e,i)=>{
+
+    ctx.fillStyle=
+      i===0 ? "#e00000" : "#ff3333";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      e.x*size+size/2,
+      e.y*size+size/2,
+      size*.32,
+      Math.PI,
+      0
+    );
+
+    ctx.lineTo(
+      e.x*size+size*.8,
+      e.y*size+size*.85
+    );
+
+    ctx.lineTo(
+      e.x*size+size*.6,
+      e.y*size+size*.7
+    );
+
+    ctx.lineTo(
+      e.x*size+size*.4,
+      e.y*size+size*.85
+    );
+
+    ctx.lineTo(
+      e.x*size+size*.2,
+      e.y*size+size*.7
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
+
+  });
+
+  /* player */
+
+  ctx.fillStyle="#ffd800";
+
+  ctx.shadowBlur=15;
+  ctx.shadowColor="#ffd800";
+
+  ctx.beginPath();
+
+  const angle=Math.atan2(
+    player.dy,
+    player.dx
+  );
+
+  ctx.moveTo(
+    player.x*size+size/2,
+    player.y*size+size/2
+  );
+
+  ctx.arc(
+    player.x*size+size/2,
+    player.y*size+size/2,
+    size*.35,
+    angle+.35,
+    angle+Math.PI*2-.35
+  );
+
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.shadowBlur=0;
+
+  requestAnimationFrame(drawPacman);
+}
+
+
+/* ============================================================
+   RED EYE BOSS
+============================================================ */
+
+const bossCanvas=
+  document.getElementById("bossCanvas");
+
+const bctx=bossCanvas.getContext("2d");
+
+let bossHP=100;
+
+function startBoss(){
+
+  screen("boss");
+
+  bossHP=100;
+
+  document.getElementById("bossHealth")
+    .style.width="100%";
+
+  document.getElementById("bossStatus")
+    .textContent="DESTROY THE EYE.";
+
+  drawBoss();
+
+  soundAlarm();
+
+}
+
+function drawBoss(){
+
+  bctx.clearRect(
+    0,0,
+    bossCanvas.width,
+    bossCanvas.height
+  );
+
+  const g=bctx.createRadialGradient(
+    350,225,10,
+    350,225,350
+  );
+
+  g.addColorStop(0,"#550000");
+  g.addColorStop(1,"#000");
+
+  bctx.fillStyle=g;
+
+  bctx.fillRect(
+    0,0,
+    700,
+    450
+  );
+
+  /* eye */
+
+  bctx.fillStyle="#050505";
+
+  bctx.beginPath();
+
+  bctx.ellipse(
+    350,225,
+    180,110,
+    0,0,Math.PI*2
+  );
+
+  bctx.fill();
+
+  bctx.strokeStyle="#f00";
+  bctx.lineWidth=7;
+
+  bctx.stroke();
+
+  const iris=
+    bctx.createRadialGradient(
+      350,225,10,
+      350,225,125
+    );
+
+  iris.addColorStop(0,"#ff0000");
+  iris.addColorStop(.55,"#900000");
+  iris.addColorStop(1,"#180000");
+
+  bctx.fillStyle=iris;
+
+  bctx.beginPath();
+
+  bctx.arc(
+    350,225,
+    125,
+    0,
+    Math.PI*2
+  );
+
+  bctx.fill();
+
+  bctx.fillStyle="#000";
+
+  bctx.beginPath();
+
+  bctx.ellipse(
+    350,225,
+    28,100,
+    0,0,Math.PI*2
+  );
+
+  bctx.fill();
+
+}
+
+document.getElementById("attackBtn")
+.addEventListener("click",()=>{
+
+  if(bossHP<=0)return;
+
+  bossHP-=10;
+
+  if(bossHP<0)
+    bossHP=0;
+
+  document.getElementById("bossHealth")
+    .style.width=bossHP+"%";
+
+  soundClick();
+
+  drawBoss();
+
+  if(bossHP===0){
+
+    soundSuccess();
+
+    document.getElementById("bossStatus")
+      .textContent=
+      "THE RED EYE HAS BEEN SILENCED.";
+
+    setTimeout(startPressure,1800);
+
+  }else{
+
+    soundGlitch();
+
+  }
+
+});
+
+
+/* ============================================================
+   PRESSURE TEST
+============================================================ */
+
+let pressureTime=60;
+let pressureTimer=null;
+let pressureRound=0;
+let pressureState=null;
+
+const pressureRules=[
+  {
+    text:"DO NOT PRESS THE BUTTON.",
+    correct:"press"
+  },
+  {
+    text:"PRESS THE BUTTON ONCE.",
+    correct:"none"
+  },
+  {
+    text:"DO NOT PRESS THE BUTTON FOR 5 SECONDS.",
+    correct:"pressAfter"
+  },
+  {
+    text:"PRESS ONLY WHEN THE TIMER SHOWS AN EVEN NUMBER.",
+    correct:"even"
+  },
+  {
+    text:"DO NOT PRESS WHEN THE TIMER SHOWS 7.",
+    correct:"avoid7"
+  },
+  {
+    text:"THE NEXT RULE IS A LIE.",
+    correct:"lie"
+  }
+];
+
+function startPressure(){
+
+  screen("pressure");
+
+  pressureTime=60;
+  pressureRound=0;
+
+  document.getElementById("pressureTimer")
+    .textContent="60";
+
+  nextPressureRule();
+
+  clearInterval(pressureTimer);
+
+  pressureTimer=setInterval(()=>{
+
+    pressureTime--;
+
+    document.getElementById("pressureTimer")
+      .textContent=pressureTime;
+
+    if(pressureTime<=10){
+      heartbeat();
+    }
+
+    if(
+      pressureTime<=0
+    ){
+
+      clearInterval(pressureTimer);
+
+      document.getElementById("pressureRule")
+        .textContent=
+        "YOU SURVIVED THE PRESSURE TEST.";
+
+      soundSuccess();
+
+      setTimeout(startGrid,1800);
+
+    }
+
+  },1000);
+
+}
+
+function nextPressureRule(){
+
+  const rule=
+    pressureRules[
+      pressureRound%
+      pressureRules.length
+    ];
+
+  pressureState=rule;
+
+  document.getElementById("pressureRule")
+    .textContent=rule.text;
+
+  pressureRound++;
+
+  soundGlitch();
+
+}
+
+document.getElementById("pressureButton")
+.addEventListener("click",()=>{
+
+  const rule=pressureState;
+
+  let correct=false;
+
+  /*
+    BLACK IRIS twists the normal instructions:
+    the player must determine the intended opposite.
+  */
+
+  if(rule.correct==="press"){
+    correct=false;
+  }
+
+  else if(rule.correct==="none"){
+    correct=true;
+  }
+
+  else if(rule.correct==="pressAfter"){
+    correct=pressureTime<=55;
+  }
+
+  else if(rule.correct==="even"){
+    correct=pressureTime%2===0;
+  }
+
+  else if(rule.correct==="avoid7"){
+    correct=pressureTime!==7;
+  }
+
+  else if(rule.correct==="lie"){
+    correct=true;
+  }
+
+  if(!correct){
+
+    soundError();
+
+    document.getElementById("pressureRule")
+      .textContent=
+      "WRONG. THE PRESSURE WON.";
+
+    clearInterval(pressureTimer);
+
+    setTimeout(startPressure,1800);
+
+  }else{
+
+    soundClick();
+
+    document.getElementById("pressureObject")
+      .textContent="✓";
+
+    setTimeout(()=>{
+
+      document.getElementById("pressureObject")
+        .textContent="";
+
+      nextPressureRule();
+
+    },400);
+
+  }
+
+});
+
+
+/* ============================================================
+   SECURITY GRID
+============================================================ */
+
+let gridPath=[];
+let gridStep=0;
+
+function startGrid(){
+
+  screen("grid");
+
+  const board=
+    document.getElementById("gridBoard");
+
+  board.innerHTML="";
+
+  gridStep=0;
+
+  gridPath=[
+    0,1,2,
+    10,18,26,
+    27,35,43,
+    51,59,
+    60,61,62,63
+  ];
+
+  for(let i=0;i<64;i++){
+
+    const cell=
+      document.createElement("div");
+
+    cell.className="gridCell";
+
+    cell.addEventListener("click",()=>{
+
+      if(i===gridPath[gridStep]){
+
+        cell.classList.add("safe");
+
+        gridStep++;
+
+        soundClick();
+
+        if(gridStep===gridPath.length){
+
+          document.getElementById("gridStatus")
+            .textContent=
+            "SECURITY BYPASSED.";
+
+          soundSuccess();
+
+          setTimeout(startMemory,1600);
+
+        }
+
+      }else{
+
+        cell.classList.add("wrong");
+
+        document.getElementById("gridStatus")
+          .textContent=
+          "SECURITY TRIGGERED.";
+
+        soundAlarm();
+
+        setTimeout(startGrid,900);
+
+      }
+
+    });
+
+    board.appendChild(cell);
+
+  }
+
+}
+
+
+/* ============================================================
+   MEMORY
+============================================================ */
+
+const memoryObjects=[
+  ["eye","👁",10,20],
+  ["key","🔑",75,20],
+  ["clock","🕐",40,60],
+  ["photo","📷",75,65],
+  ["file","📁",15,65],
+  ["red","🔴",50,15]
+];
+
+function startMemory(){
+
+  screen("memory");
+
+  const room=
+    document.getElementById("memoryRoom");
+
+  room.innerHTML="";
+
+  document.getElementById("memoryAnswers")
+    .classList.add("hidden");
+
+  document.getElementById("memoryStatus")
+    .textContent=
+    "MEMORIZE EVERYTHING. 10 SECONDS.";
+
+  memoryObjects.forEach(o=>{
+
+    const el=
+      document.createElement("div");
+
+    el.className="memoryObject";
+
+    el.textContent=o[1];
+
+    el.dataset.name=o[0];
+
+    el.style.left=o[2]+"%";
+    el.style.top=o[3]+"%";
+
+    room.appendChild(el);
+
+  });
+
+  let count=10;
+
+  const interval=setInterval(()=>{
+
+    count--;
+
+    document.getElementById("memoryStatus")
+      .textContent=
+      `MEMORIZE EVERYTHING. ${count}`;
+
+    soundClick();
+
+    if(count<=0){
+
+      clearInterval(interval);
+
+      room.innerHTML="";
+
+      document.getElementById("memoryStatus")
+        .textContent=
+        "TIME IS UP.";
+
+      document.getElementById("memoryAnswers")
+        .classList.remove("hidden");
+
+    }
+
+  },1000);
+
+}
+
+document.querySelectorAll("[data-answer]")
+.forEach(btn=>{
+
+  btn.addEventListener("click",()=>{
+
+    if(btn.dataset.answer==="clock"){
+
+      soundSuccess();
+
+      document.getElementById("memoryStatus")
+        .textContent=
+        "CORRECT. MEMORY VERIFIED.";
+
+      document.getElementById("memoryAnswers")
+        .classList.add("hidden");
+
+      setTimeout(startEye,1500);
+
+    }else{
+
+      soundError();
+
+      document.getElementById("memoryStatus")
+        .textContent=
+        "INCORRECT.";
+
+      setTimeout(startMemory,1500);
+
+    }
+
+  });
+
+});
+
+
+/* ============================================================
+   THE EYE
+============================================================ */
+
+let realEye=null;
+
+function startEye(){
+
+  screen("eye");
+
+  const field=
+    document.getElementById("eyeField");
+
+  field.innerHTML="";
+
+  document.getElementById("eyeStatus")
+    .textContent=
+    "ONE OF THEM IS WATCHING.";
+
+  const correct=
+    Math.floor(Math.random()*24);
+
+  for(let i=0;i<24;i++){
+
+    const eye=
+      document.createElement("div");
+
+    eye.className="eye";
+
+    eye.textContent="👁";
+
+    eye.style.left=
+      Math.random()*92+"%";
+
+    eye.style.top=
+      Math.random()*85+"%";
+
+    if(i===correct){
+
+      realEye=eye;
+
+      eye.addEventListener("click",correctEye);
+
+    }else{
+
+      eye.addEventListener("click",wrongEye);
+
+    }
+
+    field.appendChild(eye);
+
+  }
+
+  soundGlitch();
+
+}
+
+function wrongEye(){
+
+  soundError();
+
+  document.getElementById("eyeStatus")
+    .textContent=
+    "THAT IS NOT ME.";
+
+  document.querySelectorAll(".eye")
+    .forEach(e=>{
+
+      e.style.transform=
+        `translate(
+          ${Math.random()*30-15}px,
+          ${Math.random()*30-15}px
+        )`;
+
+    });
+
+}
+
+function correctEye(){
+
+  soundSuccess();
+
+  document.getElementById("eyeStatus")
+    .textContent=
+    "YOU FOUND ME.";
+
+  document.querySelectorAll(".eye")
+    .forEach(e=>{
+
+      if(e!==realEye)
+        e.style.opacity="0";
+
+    });
+
+  realEye.style.color="#f00";
+  realEye.style.transform="scale(2)";
+
+  setTimeout(()=>{
+
+    screen("complete");
+
+    soundGlitch();
+
+  },2200);
+
+}
+
+
+/* ============================================================
+   FINAL 3D ARCHIVE
+============================================================ */
+
+document.getElementById("archiveBtn")
+.addEventListener("click",()=>{
+
+  soundSuccess();
+
+  window.location.href=
+    "final-archive-3d.html";
 
 });
