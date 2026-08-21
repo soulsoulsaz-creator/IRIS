@@ -2,433 +2,863 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IRIS — FINAL ARCHIVE</title>
-<link rel="stylesheet" href="final-archive.css">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>BLACK IRIS — FINAL ARCHIVE</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+html,body{
+margin:0;
+padding:0;
+width:100%;
+height:100%;
+background:#030303;
+color:#eee;
+font-family:Arial,Helvetica,sans-serif;
+overflow-x:hidden;
+}
+
+body{
+min-height:100vh;
+}
+
+.screen{
+display:none;
+min-height:100vh;
+width:100%;
+padding:30px 18px;
+position:relative;
+}
+
+.screen.active{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+}
+
+.hidden{
+display:none!important;
+}
+
+.panel{
+width:min(900px,95vw);
+background:#0b0b0f;
+border:1px solid #292933;
+padding:30px;
+box-shadow:0 0 40px #000;
+}
+
+h1,h2{
+letter-spacing:3px;
+}
+
+button{
+background:#111;
+color:#eee;
+border:1px solid #555;
+padding:13px 22px;
+cursor:pointer;
+font-size:15px;
+margin:6px;
+}
+
+button:hover{
+background:#222;
+border-color:#aaa;
+}
+
+.danger{
+border-color:#900;
+color:#f44;
+}
+
+.small{
+font-size:12px;
+opacity:.6;
+}
+
+.message{
+min-height:25px;
+margin:12px;
+color:#aaa;
+}
+
+#arcadeScreen{
+background:#050509;
+}
+
+#arcadeCanvas{
+width:min(504px,95vw);
+height:auto;
+image-rendering:pixelated;
+border:2px solid #333;
+background:#000;
+}
+
+.tools{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:6px;
+margin:15px auto;
+max-width:700px;
+}
+
+.tool{
+min-width:100px;
+}
+
+.controls{
+display:flex;
+gap:8px;
+justify-content:center;
+margin-top:10px;
+}
+
+.controls button{
+width:60px;
+height:45px;
+}
+
+#bossScreen{
+background:
+radial-gradient(circle at center,#260000 0%,#090000 35%,#000 75%);
+}
+
+#bossCanvas{
+width:min(960px,96vw);
+height:auto;
+border:2px solid #330000;
+display:block;
+}
+
+.boss-ui{
+width:min(960px,96vw);
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+font-family:monospace;
+}
+
+.boss-tools{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+max-width:900px;
+}
+
+#mazeCanvas{
+width:min(440px,90vw);
+height:auto;
+image-rendering:pixelated;
+border:2px solid #333;
+}
+
+.maze-info{
+text-align:center;
+margin-bottom:15px;
+}
+
+.blackbox{
+width:min(700px,95vw);
+background:#090909;
+border:2px solid #333;
+padding:30px;
+text-align:center;
+}
+
+.switches,
+.dials,
+.symbols{
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+gap:10px;
+margin:20px 0;
+}
+
+.switch{
+width:60px;
+height:80px;
+}
+
+.switch.active{
+background:#600;
+border-color:#f00;
+}
+
+.dial{
+font-size:24px;
+width:65px;
+height:65px;
+}
+
+.symbol{
+font-size:25px;
+}
+
+.symbol.active{
+border-color:#f00;
+background:#300;
+}
+
+.eye-large{
+font-size:150px;
+line-height:1;
+filter:
+drop-shadow(0 0 15px red)
+drop-shadow(0 0 45px red);
+animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+0%,100%{
+transform:scale(1);
+}
+50%{
+transform:scale(1.08);
+}
+}
+
+.red-text{
+color:#e22;
+}
+
+.center{
+text-align:center;
+}
+
+input{
+background:#080808;
+border:1px solid #555;
+color:#fff;
+padding:13px;
+font-size:16px;
+outline:none;
+}
+
+input:focus{
+border-color:#aaa;
+}
+
+#bossOverlay{
+position:fixed;
+inset:0;
+background:#000e;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:100;
+}
+
+.overlay-box{
+text-align:center;
+padding:40px;
+border:2px solid #700;
+background:#090000;
+}
+
+</style>
 </head>
 
 <body>
 
-<div id="game">
 
-<header id="agencyHeader">
-    <span>IRIS INTELLIGENCE AGENCY</span>
-    <span>OMEGA CLEARANCE</span>
-</header>
+<!-- =====================================================
+     INTRO
+===================================================== -->
 
-<!-- INTRO -->
 <section id="introScreen" class="screen active">
-    <div class="terminal">
-        <div>CONNECTION ESTABLISHED...</div>
-        <div>FINAL ARCHIVE DETECTED.</div>
-        <div class="warning">WARNING: ARCHIVE INTEGRITY UNKNOWN</div>
-        <div>SUBJECT: B-001</div>
-        <div>CLEARANCE: OMEGA</div>
-        <br>
-        <div>THE FINAL ARCHIVE IS NOT WHAT IT APPEARS TO BE.</div>
 
-        <button id="beginButton" class="iris-button">
-            ENTER FINAL ARCHIVE
-        </button>
-    </div>
-</section>
+<div class="panel center">
 
-<!-- LEVELS 1-5 -->
-<section id="arcadeScreen" class="screen">
+<h1>BLACK IRIS</h1>
 
-    <div class="game-title">
-        <span>BLACK IRIS // RECOVERY PROTOCOL</span>
-        <span id="levelDisplay">LEVEL 1</span>
-    </div>
+<p class="red-text">
+FINAL ARCHIVE
+</p>
 
-    <div id="arcadeMessage"></div>
+<p>
+You have reached the highest classified section
+of the IRIS Intelligence Agency.
+</p>
 
-    <div id="toolInventory">
+<p>
+Everything you discovered was leading here.
+</p>
 
-        <button class="tool" data-tool="scanner">
-            📡
-            <b>SCANNER</b>
-            <small></small>
-        </button>
-
-        <button class="tool" data-tool="flipflop">
-            🩴
-            <b>FLIP-FLOP</b>
-            <small></small>
-        </button>
-
-        <button class="tool" data-tool="key">
-            🔑
-            <b>KEY</b>
-            <small></small>
-        </button>
-
-        <button class="tool" data-tool="icecream">
-            🍦
-            <b>ICE CREAM</b>
-            <small></small>
-        </button>
-
-        <button class="tool" data-tool="mirror">
-            🪞
-            <b>MIRROR</b>
-            <small></small>
-        </button>
-
-    </div>
-
-    <div id="toolMessage"></div>
-
-    <div id="arcadeFrame">
-        <canvas id="arcadeCanvas"></canvas>
-    </div>
-
-    <div id="mobileControls">
-        <button data-dir="up">▲</button>
-
-        <div>
-            <button data-dir="left">◀</button>
-            <button data-dir="down">▼</button>
-            <button data-dir="right">▶</button>
-        </div>
-    </div>
-
-    <div id="fragmentCounter">
-        FRAGMENTS:
-        <span id="fragmentsFound">0</span> /
-        <span id="fragmentsTotal">6</span>
-    </div>
-
-</section>
-
-<!-- LEVEL 6 BOSS -->
-<section id="bossScreen" class="screen">
-
-    <div class="boss-top">
-
-        <span>BLACK IRIS</span>
-
-        <span>
-            LIVES:
-            <b id="bossLives">3</b>
-        </span>
-
-        <span>
-            EYE:
-            <b id="bossHealth">5</b>
-        </span>
-
-    </div>
-
-    <div id="bossMessage">
-        THE FINAL GUARDIAN IS AWAKE.
-    </div>
-
-    <div id="bossFrame">
-
-        <canvas id="bossCanvas"></canvas>
-
-        <div id="bossOverlay" class="hidden">
-
-            <div id="bossOverlayText">
-                BOSS DEFEATED
-            </div>
-
-            <button id="bossContinue" class="iris-button">
-                CONTINUE
-            </button>
-
-        </div>
-
-    </div>
-
-    <div id="bossTools">
-
-        <button data-boss-tool="scanner">📡 SCANNER</button>
-        <button data-boss-tool="flipflop">🩴 FLIP-FLOP</button>
-        <button data-boss-tool="icecream">🍦 ICE CREAM</button>
-        <button data-boss-tool="mirror">🪞 MIRROR</button>
-        <button data-boss-tool="key">🔑 KEY</button>
-
-    </div>
-
-    <div id="bossControls">
-
-        <button data-boss-key="left">◀</button>
-        <button data-boss-key="jump">▲</button>
-        <button data-boss-key="right">▶</button>
-
-    </div>
-
-</section>
-
-<!-- MAZE -->
-<section id="mazeScreen" class="screen">
-
-    <div class="simple-header">
-        RECOVERY CHAMBER // VANISHING MAZE
-    </div>
-
-    <div id="mazeMessage">
-        FIND THE EXIT.
-    </div>
-
-    <canvas id="mazeCanvas"></canvas>
-
-    <button id="mazeContinue" class="iris-button hidden">
-        CONTINUE
-    </button>
-
-</section>
-
-<!-- BLACK BOX -->
-<section id="blackBoxScreen" class="screen">
-
-    <div class="simple-header">
-        BLACK BOX // CLASSIFIED
-    </div>
-
-    <p class="muted">
-        NO DIRECT INSTRUCTIONS.
-    </p>
-
-    <div id="blackBox">
-
-        <div class="switches">
-            <button data-switch="0">I</button>
-            <button data-switch="1">II</button>
-            <button data-switch="2">III</button>
-            <button data-switch="3">IV</button>
-        </div>
-
-        <div class="dials">
-            <button class="dial" data-dial="0">◉</button>
-            <button class="dial" data-dial="1">◉</button>
-            <button class="dial" data-dial="2">◉</button>
-        </div>
-
-        <div class="symbols">
-            <button data-symbol="eye">◉</button>
-            <button data-symbol="iris">◈</button>
-            <button data-symbol="triangle">△</button>
-            <button data-symbol="cross">✕</button>
-        </div>
-
-        <button id="blackButton" class="red-button">
-            ACTIVATE
-        </button>
-
-        <div id="blackBoxMessage"></div>
-
-    </div>
-
-</section>
-
-<!-- DON'T PRESS -->
-<section id="dontPressScreen" class="screen">
-
-    <div class="corrupt-terminal">
-
-        <div class="glitch">
-            THERE IS NO ARCHIVE HERE.
-        </div>
-
-        <p id="dontPressText">
-            DO NOT PRESS.
-        </p>
-
-        <button id="dontPressButton" class="red-button">
-            DO NOT PRESS
-        </button>
-
-    </div>
-
-</section>
-
-<!-- QUESTION -->
-<section id="questionScreen" class="screen">
-
-    <div class="question-container">
-
-        <div class="huge">?</div>
-
-        <h1>
-            ONE QUESTION REMAINS.
-        </h1>
-
-        <p>
-            DO YOU REMEMBER WHY YOU CAME HERE?
-        </p>
-
-        <button id="questionYes">YES</button>
-        <button id="questionNo">NO</button>
-
-    </div>
-
-</section>
-
-<!-- EASTER EGG -->
-<section id="easterEggScreen" class="screen">
-
-    <div class="center-box">
-
-        <div class="huge">◉</div>
-
-        <p>
-            YOU FOUND SOMETHING
-            THAT WAS NOT MEANT TO BE FOUND.
-        </p>
-
-        <button id="eggContinue" class="iris-button">
-            CONTINUE
-        </button>
-
-    </div>
-
-</section>
-
-<!-- NO ARCHIVE -->
-<section id="noArchiveScreen" class="screen">
-
-    <div class="no-archive">
-
-        <div class="glitch">
-            THERE IS NO ARCHIVE HERE.
-        </div>
-
-        <div class="eye">
-
-            <div class="eye-white">
-                <div class="eye-iris"></div>
-                <div class="eye-pupil"></div>
-            </div>
-
-            <div class="mouth"></div>
-
-        </div>
-
-        <div id="eyeText"></div>
-
-        <div class="voice-row">
-
-            <span>VOICE</span>
-
-            <button id="voiceToggle">
-                VOICE ON
-            </button>
-
-        </div>
-
-        <button id="eyeContinue" class="iris-button hidden">
-            CONTINUE
-        </button>
-
-    </div>
-
-</section>
-
-<!-- NAME -->
-<section id="nameScreen" class="screen">
-
-    <div class="center-box">
-
-        <div>
-            IDENTIFICATION REQUIRED.
-        </div>
-
-        <label for="agentName">
-            ENTER YOUR NAME
-        </label>
-
-        <input id="agentName" maxlength="30">
-
-        <button id="nameSubmit" class="iris-button">
-            SUBMIT
-        </button>
-
-    </div>
-
-</section>
-
-<!-- THE EYE -->
-<section id="eyeScreen" class="screen">
-
-    <div class="eye-stage">
-
-        <div class="eye large">
-
-            <div class="eye-white">
-                <div class="eye-iris"></div>
-                <div class="eye-pupil"></div>
-            </div>
-
-            <div class="mouth"></div>
-
-        </div>
-
-        <div id="eyeDialogue"></div>
-
-        <div id="eyeChoices" class="hidden">
-
-            <button data-choice="free">
-                FREE THE EYE
-            </button>
-
-            <button data-choice="leave">
-                LEAVE IT
-            </button>
-
-        </div>
-
-    </div>
-
-</section>
-
-<!-- MEMORY -->
-<section id="memoryScreen" class="screen">
-
-    <div class="center-box">
-
-        <div>
-            MEMORY RECOVERY
-        </div>
-
-        <p id="memorySequence"></p>
-
-        <input id="memoryInput">
-
-        <button id="memorySubmit" class="iris-button">
-            VERIFY
-        </button>
-
-        <div id="memoryMessage"></div>
-
-    </div>
-
-</section>
-
-<!-- END -->
-<section id="endingScreen" class="screen">
-
-    <div class="center-box">
-
-        <div class="huge">◉</div>
-
-        <h1>
-            ARCHIVE RESTORED
-        </h1>
-
-        <p id="endingText"></p>
-
-        <button id="endingContinue" class="iris-button">
-            OPEN FINAL FILE
-        </button>
-
-    </div>
-
-</section>
+<button id="beginButton">
+BEGIN FINAL ARCHIVE
+</button>
 
 </div>
+
+</section>
+
+
+<!-- =====================================================
+     ARCADE / PAC-MAN BOSS
+===================================================== -->
+
+<section id="arcadeScreen" class="screen">
+
+<h2>RECOVERY PROTOCOL</h2>
+
+<div>
+LEVEL:
+<span id="levelDisplay">1</span>
+</div>
+
+<div>
+FRAGMENTS:
+<span id="fragmentsFound">0</span>
+</div>
+
+<div id="arcadeMessage" class="message"></div>
+
+<canvas id="arcadeCanvas"></canvas>
+
+<div class="tools">
+
+<button class="tool" data-tool="scanner">
+🔎 SCANNER
+<small></small>
+</button>
+
+<button class="tool" data-tool="flipflop">
+🩴 FLIP-FLOP
+<small></small>
+</button>
+
+<button class="tool" data-tool="key">
+🔑 KEY
+<small></small>
+</button>
+
+<button class="tool" data-tool="icecream">
+🍦 ICE CREAM
+<small></small>
+</button>
+
+<button class="tool" data-tool="mirror">
+🪞 MIRROR
+<small></small>
+</button>
+
+</div>
+
+<div id="toolMessage" class="message"></div>
+
+<div class="controls">
+
+<button data-dir="up">▲</button>
+
+</div>
+
+<div class="controls">
+
+<button data-dir="left">◀</button>
+<button data-dir="down">▼</button>
+<button data-dir="right">▶</button>
+
+</div>
+
+<p class="small">
+PC: WASD or Arrow Keys
+</p>
+
+</section>
+
+
+<!-- =====================================================
+     BOSS
+===================================================== -->
+
+<section id="bossScreen" class="screen">
+
+<div class="boss-ui">
+
+<div>
+LIVES:
+<span id="bossLives">3</span>
+</div>
+
+<div>
+THE RED EYE
+</div>
+
+<div>
+HEALTH:
+<span id="bossHealth">5</span>
+</div>
+
+</div>
+
+<canvas id="bossCanvas"></canvas>
+
+<div id="bossMessage" class="message center"></div>
+
+<div class="boss-tools">
+
+<button data-boss-tool="scanner">
+🔎 SCANNER
+</button>
+
+<button data-boss-tool="flipflop">
+🩴 THROW FLIP-FLOP
+</button>
+
+<button data-boss-tool="icecream">
+🍦 ICE CREAM
+</button>
+
+<button data-boss-tool="mirror">
+🪞 MIRROR
+</button>
+
+<button data-boss-tool="key">
+🔑 KEY
+</button>
+
+</div>
+
+<div class="controls">
+
+<button data-boss-key="left">
+◀
+</button>
+
+<button data-boss-key="jump">
+▲
+</button>
+
+<button data-boss-key="right">
+▶
+</button>
+
+</div>
+
+<p class="small center">
+WASD / Arrow Keys to move • W / ↑ / SPACE to jump
+</p>
+
+<div id="bossOverlay" class="hidden">
+
+<div class="overlay-box">
+
+<h1 id="bossOverlayText">
+BOSS DEFEATED
+</h1>
+
+<button id="bossContinue">
+CONTINUE
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     VANISHING MAZE
+===================================================== -->
+
+<section id="mazeScreen" class="screen">
+
+<div class="maze-info">
+
+<h2>THE VANISHING MAZE</h2>
+
+<p id="mazeMessage">
+Find the exit.
+</p>
+
+</div>
+
+<canvas id="mazeCanvas"></canvas>
+
+<p class="small">
+WASD / Arrow Keys
+</p>
+
+<button id="mazeContinue" class="hidden">
+CONTINUE
+</button>
+
+</section>
+
+
+<!-- =====================================================
+     BLACK BOX
+===================================================== -->
+
+<section id="blackBoxScreen" class="screen">
+
+<div class="blackbox">
+
+<h2>BLACK BOX</h2>
+
+<p>
+No instructions are provided.
+</p>
+
+<p class="small">
+The previous archives contain everything you need.
+</p>
+
+<h3>SWITCHES</h3>
+
+<div class="switches">
+
+<button
+class="switch"
+data-switch="0">
+OFF
+</button>
+
+<button
+class="switch"
+data-switch="1">
+OFF
+</button>
+
+<button
+class="switch"
+data-switch="2">
+OFF
+</button>
+
+<button
+class="switch"
+data-switch="3">
+OFF
+</button>
+
+</div>
+
+<h3>DIALS</h3>
+
+<div class="dials">
+
+<button class="dial" data-dial="0">
+◉
+</button>
+
+<button class="dial" data-dial="1">
+◉
+</button>
+
+<button class="dial" data-dial="2">
+◉
+</button>
+
+</div>
+
+<h3>SYMBOL</h3>
+
+<div class="symbols">
+
+<button
+class="symbol"
+data-symbol="eye">
+👁
+</button>
+
+<button
+class="symbol"
+data-symbol="iris">
+◉
+</button>
+
+<button
+class="symbol"
+data-symbol="star">
+★
+</button>
+
+</div>
+
+<button id="blackButton" class="danger">
+ACTIVATE
+</button>
+
+<div
+id="blackBoxMessage"
+class="message">
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     DON'T PRESS
+===================================================== -->
+
+<section id="dontPressScreen" class="screen">
+
+<div class="panel center">
+
+<h1 class="red-text">
+WARNING
+</h1>
+
+<p>
+DO NOT PRESS THE BUTTON.
+</p>
+
+<button
+id="dontPressButton"
+class="danger">
+
+DO NOT PRESS
+
+</button>
+
+<h3 id="dontPressText"></h3>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     QUESTION
+===================================================== -->
+
+<section id="questionScreen" class="screen">
+
+<div class="panel center">
+
+<div class="eye-large">
+👁
+</div>
+
+<h2>
+DO YOU THINK YOU KNOW WHO I AM?
+</h2>
+
+<button id="questionYes">
+YES
+</button>
+
+<button id="questionNo">
+NO
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     EASTER EGG
+===================================================== -->
+
+<section id="easterEggScreen" class="screen">
+
+<div class="panel center">
+
+<h1>
+YOU FOUND THE EASTER EGG
+</h1>
+
+<p>
+But there is still one file missing.
+</p>
+
+<div class="eye-large">
+👁
+</div>
+
+<button id="eggContinue">
+OPEN THE LAST FILE
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     NO ARCHIVE
+===================================================== -->
+
+<section id="noArchiveScreen" class="screen">
+
+<div class="panel center">
+
+<h1>
+ARCHIVE NOT FOUND
+</h1>
+
+<p>
+There is no archive here.
+</p>
+
+<p class="small">
+Or perhaps...
+</p>
+
+<div class="eye-large">
+👁
+</div>
+
+<button id="eyeContinue" class="hidden">
+CONTINUE
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     NAME
+===================================================== -->
+
+<section id="nameScreen" class="screen">
+
+<div class="panel center">
+
+<h2>
+IDENTIFICATION REQUIRED
+</h2>
+
+<p>
+The Eye knows who you are.
+</p>
+
+<input
+id="agentName"
+type="text"
+placeholder="Enter your name"
+autocomplete="off">
+
+<br>
+
+<button id="nameSubmit">
+CONTINUE
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     THE EYE
+===================================================== -->
+
+<section id="eyeScreen" class="screen">
+
+<div class="panel center">
+
+<div class="eye-large">
+👁
+</div>
+
+<h2 id="eyeDialogue">
+</h2>
+
+<div
+id="eyeChoices"
+class="hidden">
+
+<button data-choice="free">
+OPEN THE DOOR
+</button>
+
+<button data-choice="stay">
+STAY
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     MEMORY
+===================================================== -->
+
+<section id="memoryScreen" class="screen">
+
+<div class="panel center">
+
+<h2>
+MEMORY RECOVERY
+</h2>
+
+<p>
+A date has been recovered.
+</p>
+
+<h1 id="memorySequence">
+17 03 01
+</h1>
+
+<p id="memoryMessage">
+REMEMBER THE DATE.
+</p>
+
+<input
+id="memoryInput"
+type="text"
+inputmode="numeric"
+placeholder="ENTER CODE">
+
+<br>
+
+<button id="memorySubmit">
+VERIFY
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     ENDING
+===================================================== -->
+
+<section id="endingScreen" class="screen">
+
+<div class="panel center">
+
+<div class="eye-large">
+👁
+</div>
+
+<h1>
+BLACK IRIS
+</h1>
+
+<p id="endingText">
+</p>
+
+<button id="endingContinue">
+FINAL FILE
+</button>
+
+</div>
+
+</section>
+
 
 <script src="final-archive.js"></script>
 
