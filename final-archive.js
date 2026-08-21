@@ -1,1594 +1,2876 @@
-/* =========================================================
-   BLACK IRIS — FINAL ARCHIVE
-   COMPLETE GAME ENGINE
-   ========================================================= */
-
 "use strict";
 
 /* =========================================================
-   STATE
+   IRIS — FINAL ARCHIVE
+   LEVELS 1-5 = PAC-MAN STYLE
+   LEVEL 6 = ORIGINAL PLATFORMER BOSS
    ========================================================= */
 
-const GAME = {
-    stage: "intro",
-    name: "",
-    arcadeLevel: 0,
-    arcadeScore: 0,
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
 
-    maze: {
-        x: 1,
-        y: 1,
-        steps: 0
+const screens = $$(".screen");
+
+const state = {
+
+    stage:"intro",
+
+    level:1,
+
+    fragments:0,
+
+    totalFragments:6,
+
+    tools:{
+        scanner:0,
+        flipflop:0,
+        key:0,
+        icecream:0,
+        mirror:0
     },
 
-    blackBox: {
-        knobs: [0, 0, 0],
-        switches: [false, false, false]
+    boss:{
+        lives:3,
+        health:5,
+        phase:1,
+        scanner:false,
+        mirror:false,
+        icecream:false,
+        key:false,
+        flipflop:false,
+        defeated:false
     },
 
-    dontPress: {
-        clicks: 0
-    },
+    voice:true,
 
-    questionAnswer: null,
+    agent:localStorage.getItem("agentName") || ""
 
-    eye: {
-        voiceOn: true,
-        locks: [false, false, false, false],
-        memories: [],
-        released: false
-    }
 };
 
-const SAVE_KEY = "IRIS_FINAL_ARCHIVE";
+function show(id){
 
-function save() {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(GAME));
+    screens.forEach(s => s.classList.remove("active"));
+
+    $(id).classList.add("active");
+
+    state.stage=id.replace("#","");
+
 }
 
-function load() {
-    try {
-        const saved = localStorage.getItem(SAVE_KEY);
-        if (saved) Object.assign(GAME, JSON.parse(saved));
-    } catch {}
-}
-
-load();
-
-/* =========================================================
-   SCREEN SYSTEM
-   ========================================================= */
-
-function show(id) {
-    document.querySelectorAll(".screen").forEach(s => {
-        s.classList.remove("active");
-    });
-
-    const el = document.getElementById(id);
-
-    if (el) {
-        el.classList.add("active");
-        GAME.stage = id;
-        save();
-    }
-}
-
-function sleep(ms) {
-    return new Promise(r => setTimeout(r, ms));
-}
-
-function typeText(el, text, speed = 25) {
-    return new Promise(resolve => {
-        if (!el) {
-            resolve();
-            return;
-        }
-
-        el.textContent = "";
-        let i = 0;
-
-        const timer = setInterval(() => {
-            el.textContent += text[i++];
-            if (i >= text.length) {
-                clearInterval(timer);
-                resolve();
-            }
-        }, speed);
-    });
-}
 
 /* =========================================================
    INTRO
    ========================================================= */
 
-document.getElementById("startButton")?.addEventListener(
-    "click",
-    startArchive
-);
+$("#beginButton").onclick=()=>{
 
-function startArchive() {
-    GAME.arcadeLevel = 0;
-    GAME.arcadeScore = 0;
-    show("arcade");
-    startArcade();
-}
+    show("#arcadeScreen");
 
-/* =========================================================
-   KEYBOARD
-   ========================================================= */
+    state.level=1;
+    state.fragments=0;
 
-document.addEventListener("keydown", e => {
+    setupLevel();
 
-    if (GAME.stage === "arcade") {
+};
 
-        if (["ArrowUp", "w", "W"].includes(e.key))
-            arcadeMove(0, -1);
-
-        if (["ArrowDown", "s", "S"].includes(e.key))
-            arcadeMove(0, 1);
-
-        if (["ArrowLeft", "a", "A"].includes(e.key))
-            arcadeMove(-1, 0);
-
-        if (["ArrowRight", "d", "D"].includes(e.key))
-            arcadeMove(1, 0);
-    }
-
-    if (GAME.stage === "maze") {
-
-        if (["ArrowUp", "w", "W"].includes(e.key))
-            mazeMove(0, -1);
-
-        if (["ArrowDown", "s", "S"].includes(e.key))
-            mazeMove(0, 1);
-
-        if (["ArrowLeft", "a", "A"].includes(e.key))
-            mazeMove(-1, 0);
-
-        if (["ArrowRight", "d", "D"].includes(e.key))
-            mazeMove(1, 0);
-    }
-});
 
 /* =========================================================
-   1. SIX LEVEL ARCADE
+   LEVEL 1-5
    ========================================================= */
 
-const canvas = document.getElementById("pacmanCanvas");
-const ctx = canvas?.getContext("2d");
+const levelMessages={
 
-const TILE = 32;
-const W = 19;
-const H = 19;
+    1:"RECOVER THE FIRST FRAGMENT.",
 
-let arcadeMap = [];
-let player = { x: 1, y: 1 };
-let dots = [];
-let enemies = [];
-let arcadeRunning = false;
+    2:"SOMETHING CAN STOP THE HUNTERS.",
 
-const difficulties = [
-    ["HARD", 1, 2],
-    ["VERY HARD", 1.1, 3],
-    ["EXTREME", 1.25, 4],
-    ["BRUTAL", 1.4, 5],
-    ["NIGHTMARE", 1.6, 6],
-    ["HARDEST", 1.9, 8]
-];
+    3:"THERE ARE ROOMS WITHOUT ENTRANCES.",
 
-function buildArcadeMap() {
+    4:"THE SCANNER MAY REVEAL WHAT IS HIDDEN.",
 
-    arcadeMap = [];
+    5:"DISTRACT THEM. WATCH THE REFLECTION.",
 
-    for (let y = 0; y < H; y++) {
+    6:"THE FINAL GUARDIAN IS WAITING."
 
-        arcadeMap[y] = [];
+};
 
-        for (let x = 0; x < W; x++) {
 
-            let wall = false;
+function setupLevel(){
 
-            if (
-                x === 0 ||
-                y === 0 ||
-                x === W - 1 ||
-                y === H - 1
-            ) wall = true;
+    $("#levelDisplay").textContent="LEVEL "+state.level;
 
-            if (x % 4 === 0 && y > 2 && y < H - 3)
-                wall = true;
+    $("#arcadeMessage").textContent=levelMessages[state.level];
 
-            if (
-                GAME.arcadeLevel >= 2 &&
-                y % 4 === 0 &&
-                x > 2 &&
-                x < W - 3
-            ) wall = true;
+    $("#fragmentsFound").textContent=state.fragments;
 
-            if (
-                GAME.arcadeLevel >= 4 &&
-                (x + y) % 7 === 0
-            ) wall = true;
+    setTools();
 
-            arcadeMap[y][x] = wall ? 1 : 0;
-        }
-    }
+    buildMaze();
 
-    arcadeMap[1][1] = 0;
-    arcadeMap[1][2] = 0;
-    arcadeMap[2][1] = 0;
 }
 
-function startArcade() {
 
-    arcadeRunning = true;
+function setTools(){
 
-    buildArcadeMap();
+    state.tools={
+        scanner:0,
+        flipflop:0,
+        key:0,
+        icecream:0,
+        mirror:0
+    };
 
-    player = { x: 1, y: 1 };
-    dots = [];
-    enemies = [];
+    const tools={
 
-    for (let y = 1; y < H - 1; y++) {
-        for (let x = 1; x < W - 1; x++) {
+        1:{scanner:1},
 
-            if (
-                arcadeMap[y][x] === 0 &&
-                !(x === 1 && y === 1)
-            ) {
-                dots.push({ x, y });
+        2:{flipflop:2},
+
+        3:{key:1,icecream:1},
+
+        4:{scanner:1,flipflop:1},
+
+        5:{icecream:1,mirror:1}
+
+    };
+
+    Object.assign(state.tools,tools[state.level]||{});
+
+    renderTools();
+
+}
+
+
+function renderTools(){
+
+    $$(".tool").forEach(button=>{
+
+        const tool=button.dataset.tool;
+
+        const amount=state.tools[tool];
+
+        button.querySelector("small").textContent=
+            amount>0 ? "×"+amount : "";
+
+        button.style.opacity=
+            amount>0 ? "1" : ".25";
+
+    });
+
+}
+
+
+function message(text){
+
+    $("#toolMessage").textContent=text;
+
+    setTimeout(()=>{
+
+        $("#toolMessage").textContent="";
+
+    },2200);
+
+}
+
+
+/* =========================================================
+   PAC-MAN STYLE MAZE
+   ========================================================= */
+
+const TILE=24;
+
+const GRID_W=21;
+
+const GRID_H=21;
+
+let canvas;
+let ctx;
+
+let map;
+
+let player;
+
+let enemies;
+
+let fragments;
+
+let doorOpen=false;
+
+let iceTarget=null;
+
+let mirrorTime=0;
+
+let scannerTime=0;
+
+
+function buildMaze(){
+
+    canvas=$("#arcadeCanvas");
+
+    ctx=canvas.getContext("2d");
+
+    canvas.width=GRID_W*TILE;
+
+    canvas.height=GRID_H*TILE;
+
+    map=[];
+
+    for(let y=0;y<GRID_H;y++){
+
+        map[y]=[];
+
+        for(let x=0;x<GRID_W;x++){
+
+            if(
+                x===0 ||
+                y===0 ||
+                x===GRID_W-1 ||
+                y===GRID_H-1
+            ){
+
+                map[y][x]=1;
+
+            }else{
+
+                map[y][x]=
+                    x%2===0 &&
+                    y%2===0 ? 1 : 0;
+
             }
+
         }
+
     }
 
-    const difficulty =
-        difficulties[GAME.arcadeLevel];
 
-    for (let i = 0; i < difficulty[2]; i++) {
+    /* corridors */
 
-        enemies.push({
-            x: W - 2 - (i % 3),
-            y: H - 2 - Math.floor(i / 3),
-            speed: difficulty[1]
+    for(let x=1;x<GRID_W-1;x++){
+
+        map[1][x]=0;
+        map[GRID_H-2][x]=0;
+
+    }
+
+    for(let y=1;y<GRID_H-1;y++){
+
+        map[y][1]=0;
+        map[y][GRID_W-2]=0;
+
+    }
+
+
+    for(let y=3;y<GRID_H-3;y+=4){
+
+        for(let x=1;x<GRID_W-1;x++){
+
+            map[y][x]=0;
+
+        }
+
+    }
+
+
+    for(let x=3;x<GRID_W-3;x+=4){
+
+        for(let y=1;y<GRID_H-1;y++){
+
+            map[y][x]=0;
+
+        }
+
+    }
+
+
+    /* LEVEL 3 SEALED ROOM */
+
+    if(state.level===3){
+
+        for(let y=5;y<=9;y++){
+
+            for(let x=15;x<=18;x++){
+
+                map[y][x]=0;
+
+            }
+
+        }
+
+        for(let x=15;x<=18;x++){
+
+            map[4][x]=1;
+
+        }
+
+        map[7][14]=1;
+
+    }
+
+
+    player={
+        x:1,
+        y:1
+    };
+
+
+    enemies=[
+
+        {
+            x:GRID_W-2,
+            y:1,
+            stunned:0
+        },
+
+        {
+            x:GRID_W-2,
+            y:GRID_H-2,
+            stunned:0
+        },
+
+        {
+            x:Math.floor(GRID_W/2),
+            y:GRID_H-2,
+            stunned:0
+        }
+
+    ];
+
+
+    fragments=[];
+
+
+    const positions=[
+
+        {x:19,y:19},
+
+        {x:19,y:1},
+
+        {x:16,y:7},
+
+        {x:1,y:19},
+
+        {x:19,y:10}
+
+    ];
+
+
+    if(state.level<=5){
+
+        fragments.push(
+            positions[state.level-1]
+        );
+
+    }
+
+
+    doorOpen=false;
+
+    drawMaze();
+
+
+}
+
+
+function walkable(x,y){
+
+    return map[y] &&
+           map[y][x]===0;
+
+}
+
+
+function movePlayer(dx,dy){
+
+    const nx=player.x+dx;
+
+    const ny=player.y+dy;
+
+
+    if(
+        state.level===3 &&
+        nx===14 &&
+        ny===7 &&
+        !doorOpen
+    ){
+
+        message("LOCKED. USE THE KEY.");
+
+        return;
+
+    }
+
+
+    if(!walkable(nx,ny)){
+
+        return;
+
+    }
+
+
+    player.x=nx;
+
+    player.y=ny;
+
+
+    collectFragment();
+
+    enemyCollision();
+
+    drawMaze();
+
+}
+
+
+function collectFragment(){
+
+    const f=fragments.find(
+        f =>
+            f.x===player.x &&
+            f.y===player.y &&
+            !f.collected
+    );
+
+
+    if(!f)return;
+
+
+    f.collected=true;
+
+    state.fragments++;
+
+    $("#fragmentsFound").textContent=
+        state.fragments;
+
+
+    message("FRAGMENT RECOVERED.");
+
+
+    if(state.level<5){
+
+        setTimeout(()=>{
+
+            state.level++;
+
+            setupLevel();
+
+        },700);
+
+    }else{
+
+        setTimeout(startBoss,900);
+
+    }
+
+}
+
+
+function enemyCollision(){
+
+    enemies.forEach(enemy=>{
+
+        if(enemy.stunned>Date.now())return;
+
+        if(
+            enemy.x===player.x &&
+            enemy.y===player.y
+        ){
+
+            player.x=1;
+            player.y=1;
+
+            message(
+                "CONTACT. RETURNED TO START."
+            );
+
+        }
+
+    });
+
+}
+
+
+function enemyAI(){
+
+    if(state.stage!=="arcade")return;
+
+    enemies.forEach(enemy=>{
+
+        if(enemy.stunned>Date.now())return;
+
+        let target=player;
+
+        if(
+            iceTarget &&
+            iceTarget.until>Date.now()
+        ){
+
+            target=iceTarget;
+
+        }
+
+
+        const options=[
+
+            [1,0],
+            [-1,0],
+            [0,1],
+            [0,-1]
+
+        ].filter(
+            d =>
+                walkable(
+                    enemy.x+d[0],
+                    enemy.y+d[1]
+                )
+        );
+
+
+        if(!options.length)return;
+
+
+        options.sort((a,b)=>{
+
+            const da=
+                Math.abs(
+                    enemy.x+a[0]-target.x
+                )+
+                Math.abs(
+                    enemy.y+a[1]-target.y
+                );
+
+            const db=
+                Math.abs(
+                    enemy.x+b[0]-target.x
+                )+
+                Math.abs(
+                    enemy.y+b[1]-target.y
+                );
+
+            return da-db;
+
         });
-    }
 
-    updateArcadeText();
-    drawArcade();
+
+        enemy.x+=options[0][0];
+
+        enemy.y+=options[0][1];
+
+    });
+
+
+    enemyCollision();
+
+    drawMaze();
+
 }
 
-function updateArcadeText() {
 
-    const level = document.getElementById("pacLevel");
-    const diff = document.getElementById("pacDifficulty");
+setInterval(enemyAI,800);
 
-    if (level)
-        level.textContent =
-            `LEVEL ${String(GAME.arcadeLevel + 1).padStart(2, "0")}`;
 
-    if (diff)
-        diff.textContent =
-            difficulties[GAME.arcadeLevel][0];
-}
+/* =========================================================
+   DRAW PAC-MAN LEVELS
+   ========================================================= */
 
-function drawArcade() {
+function drawMaze(){
 
-    if (!ctx) return;
+    if(!ctx)return;
 
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle="#000";
 
-    /* walls */
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
 
-    for (let y = 0; y < H; y++) {
-        for (let x = 0; x < W; x++) {
 
-            if (arcadeMap[y][x]) {
+    for(let y=0;y<GRID_H;y++){
 
-                ctx.fillStyle = "#191929";
+        for(let x=0;x<GRID_W;x++){
+
+            if(map[y][x]){
+
+                ctx.fillStyle="#151520";
 
                 ctx.fillRect(
-                    x * TILE,
-                    y * TILE,
-                    TILE - 2,
-                    TILE - 2
+                    x*TILE,
+                    y*TILE,
+                    TILE,
+                    TILE
                 );
+
+                ctx.strokeStyle="#292938";
+
+                ctx.strokeRect(
+                    x*TILE+1,
+                    y*TILE+1,
+                    TILE-2,
+                    TILE-2
+                );
+
             }
+
         }
+
     }
 
-    /* dots */
 
-    dots.forEach(d => {
+    fragments.forEach(f=>{
 
-        ctx.fillStyle = "#eee";
+        if(f.collected)return;
+
+        ctx.fillStyle="#eee";
+
+        ctx.fillRect(
+            f.x*TILE+7,
+            f.y*TILE+7,
+            10,
+            10
+        );
+
+    });
+
+
+    /* LEVEL 3 DOOR */
+
+    if(state.level===3){
+
+        ctx.fillStyle=
+            doorOpen ? "#333" : "#900";
+
+        ctx.fillRect(
+            14*TILE+2,
+            7*TILE+2,
+            TILE-4,
+            TILE-4
+        );
+
+        if(
+            !doorOpen &&
+            scannerTime>Date.now()
+        ){
+
+            ctx.strokeStyle="#fff";
+
+            ctx.strokeRect(
+                14*TILE,
+                7*TILE,
+                TILE,
+                TILE
+            );
+
+        }
+
+    }
+
+
+    enemies.forEach(enemy=>{
+
+        ctx.fillStyle=
+            enemy.stunned>Date.now()
+                ? "#555"
+                : "#a22";
 
         ctx.beginPath();
 
         ctx.arc(
-            d.x * TILE + 16,
-            d.y * TILE + 16,
-            3,
+            enemy.x*TILE+12,
+            enemy.y*TILE+12,
+            8,
             0,
-            Math.PI * 2
+            Math.PI*2
         );
 
         ctx.fill();
+
     });
 
-    /* player */
 
-    ctx.fillStyle = "#62e5ff";
+    ctx.fillStyle="#fff";
 
     ctx.beginPath();
 
     ctx.arc(
-        player.x * TILE + 16,
-        player.y * TILE + 16,
-        10,
+        player.x*TILE+12,
+        player.y*TILE+12,
+        9,
         0,
-        Math.PI * 2
+        Math.PI*2
     );
 
     ctx.fill();
 
-    /* enemies */
 
-    enemies.forEach((e, i) => {
+    if(
+        iceTarget &&
+        iceTarget.until>Date.now()
+    ){
 
-        ctx.fillStyle =
-            i % 2 ? "#87152a" : "#d71932";
+        ctx.font="18px serif";
 
-        ctx.beginPath();
-
-        ctx.arc(
-            e.x * TILE + 16,
-            e.y * TILE + 16,
-            10,
-            0,
-            Math.PI * 2
+        ctx.fillText(
+            "🍦",
+            iceTarget.x*TILE,
+            iceTarget.y*TILE+20
         );
 
-        ctx.fill();
-    });
-}
-
-function arcadeMove(dx, dy) {
-
-    if (!arcadeRunning) return;
-
-    const nx = player.x + dx;
-    const ny = player.y + dy;
-
-    if (
-        !arcadeMap[ny] ||
-        arcadeMap[ny][nx] !== 0
-    ) return;
-
-    player.x = nx;
-    player.y = ny;
-
-    dots = dots.filter(d =>
-        !(d.x === player.x && d.y === player.y)
-    );
-
-    moveEnemies();
-
-    const hit = enemies.some(e =>
-        e.x === player.x &&
-        e.y === player.y
-    );
-
-    if (hit) {
-
-        player = { x: 1, y: 1 };
-
-        drawArcade();
-
-        return;
     }
 
-    drawArcade();
 
-    if (dots.length === 0)
-        finishArcadeLevel();
+    if(
+        mirrorTime>Date.now()
+    ){
+
+        ctx.strokeStyle="#ddd";
+
+        ctx.strokeRect(
+            3,
+            3,
+            canvas.width-6,
+            canvas.height-6
+        );
+
+    }
+
 }
 
-function moveEnemies() {
 
-    enemies.forEach(enemy => {
+/* =========================================================
+   TOOLS
+   ========================================================= */
 
-        const options = [
-            [1, 0],
-            [-1, 0],
-            [0, 1],
-            [0, -1]
-        ].filter(d => {
+$$(".tool").forEach(button=>{
 
-            const x = enemy.x + d[0];
-            const y = enemy.y + d[1];
+    button.onclick=()=>{
 
-            return (
-                arcadeMap[y] &&
-                arcadeMap[y][x] === 0
+        const tool=button.dataset.tool;
+
+        if(state.tools[tool]<=0){
+
+            message("OBJECT UNAVAILABLE.");
+
+            return;
+
+        }
+
+
+        if(tool==="scanner"){
+
+            state.tools.scanner--;
+
+            scannerTime=
+                Date.now()+5000;
+
+            message(
+                "SCANNER ACTIVE. HIDDEN OBJECTS REVEALED."
             );
+
+            renderTools();
+
+            drawMaze();
+
+        }
+
+
+        if(tool==="flipflop"){
+
+            const enemy=enemies[0];
+
+            enemy.stunned=
+                Date.now()+4000;
+
+            state.tools.flipflop--;
+
+            message(
+                "SMACK. ENEMY DISABLED."
+            );
+
+            renderTools();
+
+            drawMaze();
+
+        }
+
+
+        if(tool==="key"){
+
+            if(state.level!==3){
+
+                message(
+                    "THERE IS NO LOCK HERE."
+                );
+
+                return;
+
+            }
+
+
+            state.tools.key--;
+
+            doorOpen=true;
+
+            message(
+                "KEY ACCEPTED. THE DOOR OPENS."
+            );
+
+            renderTools();
+
+            drawMaze();
+
+        }
+
+
+        if(tool==="icecream"){
+
+            state.tools.icecream--;
+
+            iceTarget={
+                x:player.x,
+                y:player.y,
+                until:Date.now()+6000
+            };
+
+            message(
+                "ICE CREAM DEPLOYED. ENEMIES DISTRACTED."
+            );
+
+            renderTools();
+
+            drawMaze();
+
+        }
+
+
+        if(tool==="mirror"){
+
+            state.tools.mirror--;
+
+            mirrorTime=
+                Date.now()+5000;
+
+            message(
+                "THE MIRROR REVEALS THE HIDDEN PATH."
+            );
+
+            renderTools();
+
+            drawMaze();
+
+        }
+
+    };
+
+});
+
+
+/* =========================================================
+   CONTROLS
+   ========================================================= */
+
+document.addEventListener("keydown",e=>{
+
+    if(state.stage==="arcade"){
+
+        const d={
+
+            ArrowUp:[0,-1],
+
+            ArrowDown:[0,1],
+
+            ArrowLeft:[-1,0],
+
+            ArrowRight:[1,0],
+
+            w:[0,-1],
+
+            s:[0,1],
+
+            a:[-1,0],
+
+            d:[1,0]
+
+        }[e.key];
+
+
+        if(d){
+
+            e.preventDefault();
+
+            movePlayer(d[0],d[1]);
+
+        }
+
+    }
+
+});
+
+
+$$("[data-dir]").forEach(button=>{
+
+    button.onclick=()=>{
+
+        const d={
+
+            up:[0,-1],
+
+            down:[0,1],
+
+            left:[-1,0],
+
+            right:[1,0]
+
+        }[button.dataset.dir];
+
+
+        movePlayer(d[0],d[1]);
+
+    };
+
+});
+
+
+/* =========================================================
+   LEVEL 6 — BOSS PLATFORMER
+   ========================================================= */
+
+let bossCanvas;
+
+let bossCtx;
+
+let boss;
+
+let bossRunning=false;
+
+let bossKeys={};
+
+
+function startBoss(){
+
+    show("#bossScreen");
+
+    state.level=6;
+
+    state.boss={
+
+        lives:3,
+
+        health:5,
+
+        phase:1,
+
+        scanner:false,
+
+        mirror:false,
+
+        icecream:false,
+
+        key:false,
+
+        flipflop:false,
+
+        defeated:false
+
+    };
+
+
+    $("#bossLives").textContent="3";
+
+    $("#bossHealth").textContent="5";
+
+    $("#bossMessage").textContent=
+        "THE FINAL GUARDIAN IS AWAKE.";
+
+
+    bossCanvas=$("#bossCanvas");
+
+    bossCtx=bossCanvas.getContext("2d");
+
+    bossCanvas.width=960;
+
+    bossCanvas.height=540;
+
+
+    boss={
+
+        x:100,
+
+        y:390,
+
+        vx:0,
+
+        vy:0,
+
+        width:25,
+
+        height:42,
+
+        grounded:false,
+
+        invulnerable:0,
+
+        frame:0,
+
+        platforms:[
+
+            {x:0,y:485,w:960,h:55},
+
+            {x:120,y:400,w:170,h:18},
+
+            {x:360,y:330,w:150,h:18},
+
+            {x:580,y:410,w:170,h:18},
+
+            {x:780,y:300,w:120,h:18},
+
+            {x:430,y:220,w:140,h:18}
+
+        ],
+
+        key:{x:850,y:260,visible:false},
+
+        bossEye:{
+
+            x:700,
+
+            y:160,
+
+            vx:0,
+
+            vy:0,
+
+            health:5,
+
+            attackTimer:0,
+
+            stunned:0,
+
+            copies:false
+
+        },
+
+        projectiles:[],
+
+        icecream:null,
+
+        mirror:false,
+
+        weakPoint:false,
+
+        gate:false
+
+    };
+
+
+    bossRunning=true;
+
+    requestAnimationFrame(bossLoop);
+
+}
+
+
+function bossLoop(){
+
+    if(!bossRunning)return;
+
+    updateBoss();
+
+    drawBoss();
+
+    requestAnimationFrame(bossLoop);
+
+}
+
+
+function updateBoss(){
+
+    boss.frame++;
+
+
+    /* PLAYER */
+
+    boss.vy+=0.65;
+
+    boss.x+=boss.vx;
+
+    boss.y+=boss.vy;
+
+    boss.vx*=0.82;
+
+
+    if(boss.x<0)boss.x=0;
+
+    if(boss.x>935)boss.x=935;
+
+
+    boss.grounded=false;
+
+
+    boss.platforms.forEach(p=>{
+
+        if(
+
+            boss.x+boss.width>p.x &&
+
+            boss.x<p.x+p.w &&
+
+            boss.y+boss.height>=p.y &&
+
+            boss.y+boss.height<=p.y+25 &&
+
+            boss.vy>=0
+
+        ){
+
+            boss.y=p.y-boss.height;
+
+            boss.vy=0;
+
+            boss.grounded=true;
+
+        }
+
+    });
+
+
+    /* EYE */
+
+    const eye=boss.bossEye;
+
+
+    if(eye.stunned>0){
+
+        eye.stunned--;
+
+    }else{
+
+        const targetX=boss.x+boss.width/2;
+
+        eye.x+=(targetX-eye.x)*0.012;
+
+
+        eye.attackTimer++;
+
+
+        if(
+            eye.attackTimer>100
+        ){
+
+            eye.attackTimer=0;
+
+            fireEyeProjectile();
+
+        }
+
+    }
+
+
+    /* PROJECTILES */
+
+    boss.projectiles.forEach(p=>{
+
+        p.x+=p.vx;
+
+        p.y+=p.vy;
+
+    });
+
+
+    boss.projectiles=
+        boss.projectiles.filter(
+            p=>p.x>-50&&p.x<1010
+        );
+
+
+    /* PROJECTILE COLLISION */
+
+    if(
+        boss.invulnerable<=0
+    ){
+
+        boss.projectiles.forEach(p=>{
+
+            if(
+
+                p.x>boss.x &&
+
+                p.x<boss.x+boss.width &&
+
+                p.y>boss.y &&
+
+                p.y<boss.y+boss.height
+
+            ){
+
+                loseLife();
+
+            }
+
         });
 
-        if (!options.length) return;
+    }else{
 
-        const smart =
-            Math.random() <
-            0.55 + GAME.arcadeLevel * .06;
+        boss.invulnerable--;
 
-        if (smart) {
-
-            options.sort((a, b) => {
-
-                const da =
-                    Math.abs(enemy.x + a[0] - player.x) +
-                    Math.abs(enemy.y + a[1] - player.y);
-
-                const db =
-                    Math.abs(enemy.x + b[0] - player.x) +
-                    Math.abs(enemy.y + b[1] - player.y);
-
-                return da - db;
-            });
-
-            enemy.x += options[0][0];
-            enemy.y += options[0][1];
-
-        } else {
-
-            const d =
-                options[Math.floor(
-                    Math.random() * options.length
-                )];
-
-            enemy.x += d[0];
-            enemy.y += d[1];
-        }
-    });
-}
-
-async function finishArcadeLevel() {
-
-    arcadeRunning = false;
-
-    GAME.arcadeScore += 100 * (GAME.arcadeLevel + 1);
-
-    GAME.arcadeLevel++;
-
-    save();
-
-    if (GAME.arcadeLevel >= 6) {
-
-        await sleep(800);
-
-        startMaze();
-
-    } else {
-
-        await sleep(500);
-
-        startArcade();
     }
+
+
+    /* ICE CREAM */
+
+    if(
+        boss.icecream &&
+        boss.icecream.time>0
+    ){
+
+        boss.icecream.time--;
+
+        eye.x+=
+            (boss.icecream.x-eye.x)*0.04;
+
+    }
+
+
+    /* KEY */
+
+    if(
+        Math.abs(boss.x-boss.key.x)<35 &&
+        Math.abs(boss.y-boss.key.y)<45
+    ){
+
+        boss.key.visible=false;
+
+        boss.gate=true;
+
+        bossMessage(
+            "KEY FOUND. REACH THE FINAL GATE."
+        );
+
+    }
+
+
+    /* GATE */
+
+    if(
+        boss.gate &&
+        boss.x>900 &&
+        boss.y>420
+    ){
+
+        bossDefeated();
+
+    }
+
+
+    /* BOSS PHASES */
+
+    if(eye.health<=3){
+
+        state.boss.phase=2;
+
+    }
+
+    if(eye.health<=1){
+
+        state.boss.phase=3;
+
+    }
+
 }
+
 
 /* =========================================================
-   2. VANISHING MAZE
+   BOSS PROJECTILES
    ========================================================= */
 
-const mazeCanvas =
-    document.getElementById("mazeCanvas");
+function fireEyeProjectile(){
 
-const mazeCtx =
-    mazeCanvas?.getContext("2d");
+    const eye=boss.bossEye;
 
-let mazeMap = [];
-let mazePath = [];
-let mazeActive = false;
+    const dx=
+        boss.x-eye.x;
 
-function startMaze() {
+    const dy=
+        boss.y-eye.y;
 
-    show("maze");
+    const distance=
+        Math.sqrt(dx*dx+dy*dy)||1;
 
-    GAME.maze = {
-        x: 1,
-        y: 1,
-        steps: 0
-    };
 
-    createMaze();
+    boss.projectiles.push({
 
-    mazeActive = true;
+        x:eye.x,
 
-    drawMaze();
+        y:eye.y,
 
-    const status =
-        document.getElementById("mazeStatus");
+        vx:(dx/distance)*4,
 
-    if (status)
-        status.textContent =
-            "REACH THE CORE.";
+        vy:(dy/distance)*4
+
+    });
+
 }
 
-function createMaze() {
 
-    const cols = 17;
-    const rows = 11;
+/* =========================================================
+   BOSS LIFE
+   ========================================================= */
 
-    mazeMap = [];
+function loseLife(){
 
-    for (let y = 0; y < rows; y++) {
+    boss.invulnerable=100;
 
-        mazeMap[y] = [];
+    boss.lives--;
 
-        for (let x = 0; x < cols; x++) {
+    $("#bossLives").textContent=
+        boss.lives;
 
-            let wall = true;
 
-            if (
-                x > 0 &&
-                y > 0 &&
-                x < cols - 1 &&
-                y < rows - 1
-            ) {
-                wall = Math.random() < .28;
-            }
+    boss.x=100;
 
-            mazeMap[y][x] = wall ? 1 : 0;
-        }
+    boss.y=390;
+
+    boss.vy=0;
+
+
+    if(boss.lives<=0){
+
+        boss.lives=3;
+
+        $("#bossLives").textContent="3";
+
+        bossMessage(
+            "THE EYE RESET YOU. TRY AGAIN."
+        );
+
+    }else{
+
+        bossMessage(
+            "HIT. KEEP GOING."
+        );
+
     }
 
-    mazeMap[1][1] = 0;
-    mazeMap[rows - 2][cols - 2] = 0;
-
-    /* create connected central corridor */
-
-    for (let x = 1; x < cols - 1; x++)
-        mazeMap[1][x] = 0;
-
-    for (let y = 1; y < rows - 1; y++)
-        mazeMap[y][cols - 2] = 0;
 }
 
-function drawMaze() {
 
-    if (!mazeCtx) return;
+/* =========================================================
+   BOSS TOOLS
+   ========================================================= */
 
-    const rows = mazeMap.length;
-    const cols = mazeMap[0].length;
+$$("[data-boss-tool]").forEach(button=>{
 
-    const tw =
-        mazeCanvas.width / cols;
+    button.onclick=()=>{
 
-    const th =
-        mazeCanvas.height / rows;
+        useBossTool(
+            button.dataset.bossTool
+        );
 
-    mazeCtx.fillStyle = "#000";
-    mazeCtx.fillRect(
-        0,
-        0,
-        mazeCanvas.width,
-        mazeCanvas.height
-    );
+    };
 
-    for (let y = 0; y < rows; y++) {
+});
 
-        for (let x = 0; x < cols; x++) {
 
-            if (mazeMap[y][x]) {
+function useBossTool(tool){
 
-                mazeCtx.fillStyle = "#20202a";
+    if(tool==="scanner"){
 
-                mazeCtx.fillRect(
-                    x * tw,
-                    y * th,
-                    tw - 2,
-                    th - 2
+        state.boss.scanner=true;
+
+        boss.bossEye.weakPoint=true;
+
+        bossMessage(
+            "SCANNER: WEAK POINT REVEALED."
+        );
+
+    }
+
+
+    if(tool==="flipflop"){
+
+        if(!state.boss.scanner){
+
+            bossMessage(
+                "SCAN THE EYE FIRST."
+            );
+
+            return;
+
+        }
+
+
+        if(
+            Math.abs(
+                boss.x-boss.bossEye.x
+            )<180
+        ){
+
+            boss.bossEye.health--;
+
+            $("#bossHealth").textContent=
+                boss.bossEye.health;
+
+            boss.bossEye.stunned=60;
+
+            bossMessage(
+                "FLIP-FLOP HIT! THE EYE SCREAMS."
+            );
+
+
+            if(boss.bossEye.health<=0){
+
+                boss.key.visible=true;
+
+                bossMessage(
+                    "THE EYE IS WEAK. THE KEY HAS APPEARED."
                 );
+
             }
+
+        }else{
+
+            bossMessage(
+                "GET CLOSER TO THE EYE."
+            );
+
         }
+
     }
 
-    /* goal */
 
-    mazeCtx.fillStyle = "#d71932";
+    if(tool==="icecream"){
 
-    mazeCtx.fillRect(
-        (cols - 2) * tw + 8,
-        (rows - 2) * th + 8,
-        tw - 16,
-        th - 16
-    );
+        state.boss.icecream=true;
 
-    /* investigator */
+        boss.icecream={
 
-    mazeCtx.fillStyle = "#eee";
+            x:boss.x,
 
-    mazeCtx.beginPath();
+            y:boss.y,
 
-    mazeCtx.arc(
-        GAME.maze.x * tw + tw / 2,
-        GAME.maze.y * th + th / 2,
-        Math.min(tw, th) * .28,
-        0,
-        Math.PI * 2
-    );
+            time:300
 
-    mazeCtx.fill();
+        };
+
+        bossMessage(
+            "ICE CREAM! THE EYE IS DISTRACTED."
+        );
+
+    }
+
+
+    if(tool==="mirror"){
+
+        state.boss.mirror=true;
+
+        boss.bossEye.copies=true;
+
+        bossMessage(
+            "MIRROR ACTIVE. THE REAL EYE IS REVEALED."
+        );
+
+    }
+
+
+    if(tool==="key"){
+
+        if(boss.key.visible){
+
+            boss.gate=true;
+
+            bossMessage(
+                "THE KEY IS READY. FIND THE FINAL GATE."
+            );
+
+        }else{
+
+            bossMessage(
+                "THE KEY HAS NOT APPEARED YET."
+            );
+
+        }
+
+    }
+
 }
 
-function mazeMove(dx, dy) {
-
-    if (!mazeActive) return;
-
-    const nx = GAME.maze.x + dx;
-    const ny = GAME.maze.y + dy;
-
-    if (
-        !mazeMap[ny] ||
-        mazeMap[ny][nx] === 1
-    ) return;
-
-    GAME.maze.x = nx;
-    GAME.maze.y = ny;
-    GAME.maze.steps++;
-
-    /*
-     The maze slowly closes behind her.
-     */
-
-    if (
-        GAME.maze.steps > 5 &&
-        Math.random() < .18
-    ) {
-
-        const oldX =
-            GAME.maze.x - dx;
-
-        const oldY =
-            GAME.maze.y - dy;
-
-        if (
-            mazeMap[oldY] &&
-            mazeMap[oldY][oldX] !== undefined
-        ) {
-            mazeMap[oldY][oldX] = 1;
-        }
-    }
-
-    drawMaze();
-
-    const rows = mazeMap.length;
-    const cols = mazeMap[0].length;
-
-    if (
-        GAME.maze.x === cols - 2 &&
-        GAME.maze.y === rows - 2
-    ) {
-
-        mazeActive = false;
-
-        setTimeout(startBlackBox, 700);
-    }
-}
-
-window.mazeMove = mazeMove;
 
 /* =========================================================
-   3. BLACK BOX
+   BOSS MESSAGE
    ========================================================= */
 
-function startBlackBox() {
+function bossMessage(text){
 
-    show("blackbox");
+    $("#bossMessage").textContent=text;
 
-    GAME.blackBox = {
-        knobs: [0, 0, 0],
-        switches: [false, false, false]
+}
+
+
+/* =========================================================
+   BOSS CONTROLS
+   ========================================================= */
+
+function bossLeft(){
+
+    boss.vx=-4;
+
+}
+
+function bossRight(){
+
+    boss.vx=4;
+
+}
+
+function bossJump(){
+
+    if(boss.grounded){
+
+        boss.vy=-12;
+
+    }
+
+}
+
+
+$$("[data-boss-key]").forEach(button=>{
+
+    button.onclick=()=>{
+
+        const k=button.dataset.bossKey;
+
+        if(k==="left")bossLeft();
+
+        if(k==="right")bossRight();
+
+        if(k==="jump")bossJump();
+
     };
 
-    updateBlackBox();
+});
+
+
+document.addEventListener("keydown",e=>{
+
+    if(state.stage!=="bossScreen")return;
+
+    if(e.key==="ArrowLeft"||e.key==="a"){
+
+        bossLeft();
+
+    }
+
+    if(e.key==="ArrowRight"||e.key==="d"){
+
+        bossRight();
+
+    }
+
+    if(
+        e.key==="ArrowUp"||
+        e.key==="w"||
+        e.key===" "
+    ){
+
+        bossJump();
+
+    }
+
+});
+
+
+/* =========================================================
+   DRAW THE LITTLE GIRL
+   ========================================================= */
+
+function drawGirl(c){
+
+    const x=boss.x;
+
+    const y=boss.y;
+
+
+    /* shadow */
+
+    c.fillStyle="#0008";
+
+    c.beginPath();
+
+    c.ellipse(
+        x+13,
+        y+43,
+        17,
+        4,
+        0,
+        0,
+        Math.PI*2
+    );
+
+    c.fill();
+
+
+    /* legs */
+
+    c.fillStyle="#222";
+
+    c.fillRect(
+        x+6,
+        y+30,
+        6,
+        12
+    );
+
+    c.fillRect(
+        x+16,
+        y+30,
+        6,
+        12
+    );
+
+
+    /* shoes */
+
+    c.fillStyle="#111";
+
+    c.fillRect(
+        x+3,
+        y+40,
+        10,
+        5
+    );
+
+    c.fillRect(
+        x+16,
+        y+40,
+        10,
+        5
+    );
+
+
+    /* dress */
+
+    c.fillStyle="#b9b9c7";
+
+    c.beginPath();
+
+    c.moveTo(x+5,y+19);
+
+    c.lineTo(x+23,y+19);
+
+    c.lineTo(x+28,y+36);
+
+    c.lineTo(x+2,y+36);
+
+    c.closePath();
+
+    c.fill();
+
+
+    /* arms */
+
+    c.fillStyle="#f0c6a0";
+
+    c.fillRect(
+        x,
+        y+20,
+        6,
+        13
+    );
+
+    c.fillRect(
+        x+23,
+        y+20,
+        6,
+        13
+    );
+
+
+    /* neck */
+
+    c.fillRect(
+        x+11,
+        y+14,
+        8,
+        8
+    );
+
+
+    /* hair */
+
+    c.fillStyle="#f0c94f";
+
+    c.fillRect(
+        x+4,
+        y+2,
+        23,
+        17
+    );
+
+    c.fillRect(
+        x+1,
+        y+8,
+        7,
+        19
+    );
+
+    c.fillRect(
+        x+24,
+        y+8,
+        7,
+        19
+    );
+
+
+    /* face */
+
+    c.fillStyle="#f0c6a0";
+
+    c.fillRect(
+        x+8,
+        y+7,
+        16,
+        14
+    );
+
+
+    /* eyes */
+
+    c.fillStyle="#111";
+
+    c.fillRect(
+        x+11,
+        y+13,
+        2,
+        2
+    );
+
+    c.fillRect(
+        x+19,
+        y+13,
+        2,
+        2
+    );
+
+
+    /* hat */
+
+    c.fillStyle="#b42a38";
+
+    c.fillRect(
+        x+4,
+        y,
+        24,
+        6
+    );
+
+    c.fillRect(
+        x+9,
+        y-5,
+        13,
+        6
+    );
+
 }
 
-function rotateKnob(index) {
 
-    GAME.blackBox.knobs[index]++;
+/* =========================================================
+   DRAW THE GIANT RED EYE
+   ========================================================= */
 
-    if (GAME.blackBox.knobs[index] >= 8)
-        GAME.blackBox.knobs[index] = 0;
+function drawBossEye(c){
 
-    updateBlackBox();
+    const eye=boss.bossEye;
+
+    const x=eye.x;
+
+    const y=eye.y;
+
+
+    /* aura */
+
+    c.shadowBlur=35;
+
+    c.shadowColor="#f00000";
+
+
+    /* outer eye */
+
+    c.fillStyle="#eee";
+
+    c.beginPath();
+
+    c.ellipse(
+        x,
+        y,
+        125,
+        70,
+        0,
+        0,
+        Math.PI*2
+    );
+
+    c.fill();
+
+
+    /* red iris */
+
+    c.fillStyle="#c00000";
+
+    c.beginPath();
+
+    c.arc(
+        x,
+        y,
+        52,
+        0,
+        Math.PI*2
+    );
+
+    c.fill();
+
+
+    /* iris detail */
+
+    c.strokeStyle="#600";
+
+    c.lineWidth=7;
+
+    c.beginPath();
+
+    c.arc(
+        x,
+        y,
+        38,
+        0,
+        Math.PI*2
+    );
+
+    c.stroke();
+
+
+    /* pupil */
+
+    c.fillStyle="#050000";
+
+    c.beginPath();
+
+    c.arc(
+        x,
+        y,
+        22,
+        0,
+        Math.PI*2
+    );
+
+    c.fill();
+
+
+    c.shadowBlur=0;
+
+
+    /* weak point */
+
+    if(
+        state.boss.scanner &&
+        eye.health>0
+    ){
+
+        c.strokeStyle="#fff";
+
+        c.lineWidth=3;
+
+        c.beginPath();
+
+        c.arc(
+            x,
+            y-2,
+            68,
+            0,
+            Math.PI*2
+        );
+
+        c.stroke();
+
+    }
+
+
+    /* copies */
+
+    if(
+        state.boss.mirror &&
+        state.boss.phase>=2
+    ){
+
+        c.globalAlpha=.18;
+
+        c.fillStyle="#f00";
+
+        c.beginPath();
+
+        c.arc(
+            x-190,
+            y+50,
+            50,
+            0,
+            Math.PI*2
+        );
+
+        c.fill();
+
+        c.beginPath();
+
+        c.arc(
+            x+190,
+            y+80,
+            50,
+            0,
+            Math.PI*2
+        );
+
+        c.fill();
+
+        c.globalAlpha=1;
+
+    }
+
 }
 
-function toggleSwitch(index) {
 
-    GAME.blackBox.switches[index] =
-        !GAME.blackBox.switches[index];
+/* =========================================================
+   DRAW BOSS LEVEL
+   ========================================================= */
 
-    updateBlackBox();
-}
+function drawBoss(){
 
-function updateBlackBox() {
+    const c=bossCtx;
 
-    GAME.blackBox.knobs.forEach((value, i) => {
+    c.clearRect(
+        0,
+        0,
+        960,
+        540
+    );
 
-        const knob =
-            document.getElementById(`knob${i}`);
 
-        if (knob)
-            knob.style.transform =
-                `rotate(${value * 45}deg)`;
+    /* sky */
+
+    c.fillStyle="#080008";
+
+    c.fillRect(
+        0,
+        0,
+        960,
+        540
+    );
+
+
+    /* distant red glow */
+
+    const gradient=
+        c.createRadialGradient(
+            700,
+            170,
+            20,
+            700,
+            170,
+            400
+        );
+
+    gradient.addColorStop(
+        0,
+        "rgba(150,0,0,.28)"
+    );
+
+    gradient.addColorStop(
+        1,
+        "rgba(0,0,0,0)"
+    );
+
+    c.fillStyle=gradient;
+
+    c.fillRect(
+        0,
+        0,
+        960,
+        540
+    );
+
+
+    /* platforms */
+
+    boss.platforms.forEach(p=>{
+
+        c.fillStyle="#24242d";
+
+        c.fillRect(
+            p.x,
+            p.y,
+            p.w,
+            p.h
+        );
+
+        c.fillStyle="#555";
+
+        c.fillRect(
+            p.x,
+            p.y,
+            p.w,
+            3
+        );
+
     });
 
-    GAME.blackBox.switches.forEach((on, i) => {
 
-        const sw =
-            document.getElementById(`switch${i}`);
+    /* final gate */
 
-        if (sw)
-            sw.classList.toggle("active", on);
+    if(boss.gate){
+
+        c.fillStyle="#777";
+
+        c.fillRect(
+            910,
+            390,
+            35,
+            95
+        );
+
+        c.fillStyle="#f00";
+
+        c.fillRect(
+            920,
+            430,
+            12,
+            12
+        );
+
+    }
+
+
+    /* key */
+
+    if(boss.key.visible){
+
+        c.font="30px serif";
+
+        c.fillText(
+            "🔑",
+            boss.key.x,
+            boss.key.y
+        );
+
+    }
+
+
+    /* ice cream */
+
+    if(
+        boss.icecream &&
+        boss.icecream.time>0
+    ){
+
+        c.font="30px serif";
+
+        c.fillText(
+            "🍦",
+            boss.icecream.x,
+            boss.icecream.y
+        );
+
+    }
+
+
+    /* projectiles */
+
+    boss.projectiles.forEach(p=>{
+
+        c.fillStyle="#f00";
+
+        c.shadowBlur=15;
+
+        c.shadowColor="#f00";
+
+        c.beginPath();
+
+        c.arc(
+            p.x,
+            p.y,
+            8,
+            0,
+            Math.PI*2
+        );
+
+        c.fill();
+
+        c.shadowBlur=0;
+
     });
-}
 
-function checkBlackBox() {
 
-    /*
-       Deliberately non-obvious combination.
-    */
+    drawBossEye(c);
 
-    const correctKnobs =
-        GAME.blackBox.knobs[0] === 3 &&
-        GAME.blackBox.knobs[1] === 6 &&
-        GAME.blackBox.knobs[2] === 2;
+    drawGirl(c);
 
-    const correctSwitches =
-        GAME.blackBox.switches[0] === true &&
-        GAME.blackBox.switches[1] === false &&
-        GAME.blackBox.switches[2] === true;
 
-    const status =
-        document.getElementById("blackBoxStatus");
+    /* HUD phase */
 
-    if (correctKnobs && correctSwitches) {
+    c.fillStyle="#777";
 
-        if (status)
-            status.textContent =
-                "SIGNAL ACCEPTED.";
+    c.font="12px monospace";
 
-        setTimeout(
-            startDontPress,
-            900
+    c.fillText(
+        "PHASE "+state.boss.phase,
+        15,
+        25
+    );
+
+
+    if(
+        state.boss.mirror
+    ){
+
+        c.fillStyle="#ddd";
+
+        c.fillText(
+            "MIRROR: REAL EYE REVEALED",
+            15,
+            43
         );
 
-    } else {
-
-        if (status)
-            status.textContent =
-                "WRONG. THE BOX REMEMBERS.";
-    }
-}
-
-window.rotateKnob = rotateKnob;
-window.toggleSwitch = toggleSwitch;
-window.checkBlackBox = checkBlackBox;
-
-/* =========================================================
-   4. DON'T PRESS
-   ========================================================= */
-
-function startDontPress() {
-
-    show("dontpress");
-
-    GAME.dontPress.clicks = 0;
-
-    const status =
-        document.getElementById("dontStatus");
-
-    if (status)
-        status.textContent =
-            "PRESS IF YOU DARE.";
-}
-
-function dontPress() {
-
-    GAME.dontPress.clicks++;
-
-    const status =
-        document.getElementById("dontStatus");
-
-    const button =
-        document.getElementById("dontButton");
-
-    if (!button) return;
-
-    if (GAME.dontPress.clicks === 1) {
-
-        if (status)
-            status.textContent =
-                "I TOLD YOU NOT TO.";
-
-        button.style.transform =
-            "scale(.95)";
-
-    } else if (GAME.dontPress.clicks === 2) {
-
-        if (status)
-            status.textContent =
-                "WHY DID YOU DO IT AGAIN?";
-
-        document.body.classList.add("glitch");
-
-    } else if (GAME.dontPress.clicks === 3) {
-
-        if (status)
-            status.textContent =
-                "YOU WERE SUPPOSED TO STOP.";
-
-    } else if (GAME.dontPress.clicks === 4) {
-
-        if (status)
-            status.textContent =
-                "...GOOD.";
-
-        document.body.classList.remove("glitch");
-
-        setTimeout(
-            startQuestion,
-            1200
-        );
-    }
-}
-
-window.dontPress = dontPress;
-
-/* =========================================================
-   5. ROMANTIC QUESTION
-   ========================================================= */
-
-function startQuestion() {
-
-    show("question");
-
-    const result =
-        document.getElementById("answerResult");
-
-    if (result)
-        result.textContent = "";
-}
-
-function answerQuestion(choice) {
-
-    GAME.questionAnswer = choice;
-
-    const result =
-        document.getElementById("answerResult");
-
-    if (choice === 2) {
-
-        result.innerHTML = `
-            <div class="easter-egg">
-                <strong>ARCHIVE FRAGMENT FOUND.</strong><br><br>
-                Someone really was waiting.
-                <br>
-                She just hasn't reached them yet.
-            </div>
-        `;
-
-    } else {
-
-        result.innerHTML = `
-            <div class="easter-egg">
-                ANSWER RECORDED.
-            </div>
-        `;
     }
 
-    save();
-
-    setTimeout(
-        startNoArchive,
-        2500
-    );
 }
 
-window.answerQuestion = answerQuestion;
 
 /* =========================================================
-   6. THERE IS NO ARCHIVE HERE
+   BOSS DEFEATED
    ========================================================= */
 
-async function startNoArchive() {
+function bossDefeated(){
 
-    show("noarchive");
+    if(state.boss.defeated)return;
 
-    const terminal =
-        document.getElementById("terminalText");
+    state.boss.defeated=true;
 
-    if (!terminal) return;
+    bossRunning=false;
 
-    terminal.textContent = "";
+    $("#bossOverlayText").textContent=
+        "BOSS DEFEATED";
 
-    const lines = [
+    $("#bossOverlay").classList.remove("hidden");
 
-        "CONNECTING...",
-        "",
-        "ARCHIVE DIRECTORY:",
-        "> CASE_001",
-        "> CASE_002",
-        "> CASE_003",
-        "> EVIDENCE",
-        "> INVESTIGATOR_NOTES",
-        "",
-        "SEARCHING FOR FINAL ARCHIVE...",
-        "",
-        "ERROR.",
-        "",
-        "THERE IS NO ARCHIVE HERE.",
-        "",
-        "SEARCHING AGAIN...",
-        "",
-        "THERE IS NO ARCHIVE HERE.",
-        "",
-        "STOP LOOKING.",
-        "",
-        "...",
-        "",
-        "WAIT.",
-        "",
-        "SOMEONE IS HERE."
-    ];
-
-    for (const line of lines) {
-
-        terminal.textContent +=
-            line + "\n";
-
-        await sleep(
-            line === "" ? 250 : 500
-        );
-    }
-
-    await sleep(1200);
-
-    await typeText(
-        terminal,
-        "WELCOME, INVESTIGATOR.",
-        55
-    );
-
-    await sleep(1500);
-
-    show("nameScreen");
 }
 
-/* =========================================================
-   7. NAME
-   ========================================================= */
 
-function submitName() {
+$("#bossContinue").onclick=()=>{
 
-    const input =
-        document.getElementById("playerName");
+    $("#bossOverlay").classList.add("hidden");
 
-    const error =
-        document.getElementById("nameError");
+    show("#mazeScreen");
 
-    if (!input) return;
+    startMazeGame();
 
-    const name =
-        input.value.trim();
-
-    if (!name) {
-
-        if (error)
-            error.textContent =
-                "IDENTIFICATION REQUIRED.";
-
-        return;
-    }
-
-    GAME.name = name;
-
-    save();
-
-    startEyeArrival();
-}
-
-window.submitName = submitName;
-
-/* =========================================================
-   8. THE EYE ARRIVAL
-   ========================================================= */
-
-async function startEyeArrival() {
-
-    show("eyeScreen");
-
-    const dialogue =
-        document.getElementById("eyeDialogue");
-
-    if (!dialogue) return;
-
-    dialogue.textContent = "";
-
-    playVoice("wait");
-
-    await typeText(
-        dialogue,
-        "Wait...",
-        80
-    );
-
-    await sleep(900);
-
-    await typeText(
-        dialogue,
-        "You are...",
-        80
-    );
-
-    await sleep(900);
-
-    await typeText(
-        dialogue,
-        `${GAME.name}.`,
-        90
-    );
-
-    await sleep(1300);
-
-    await typeText(
-        dialogue,
-        "I've been waiting for you.",
-        45
-    );
-
-    await sleep(1500);
-
-    await typeText(
-        dialogue,
-        "Please don't leave me here.",
-        45
-    );
-
-    playVoice("prisoner");
-
-    await sleep(1300);
-
-    await typeText(
-        dialogue,
-        "Black Iris did this to me.",
-        45
-    );
-
-    await sleep(900);
-
-    await typeText(
-        dialogue,
-        "They turned me into an eye...",
-        45
-    );
-
-    await sleep(900);
-
-    await typeText(
-        dialogue,
-        "and locked me inside their archive.",
-        45
-    );
-
-    await sleep(1200);
-
-    eyeMemoryGame();
-}
-
-/* =========================================================
-   VOICE SYSTEM
-   ========================================================= */
-
-const voices = {
-    wait: "eye_wait.mp3",
-    youAre: "eye_you_are.mp3",
-    renate: "eye_renate.mp3",
-    prisoner: "eye_prisoner.mp3",
-    help: "eye_help.mp3",
-    muffled: "eye_muffled_help.mp3",
-    breath: "eye_breath.mp3",
-    memories: "eye_memories.mp3",
-    free: "eye_free.mp3",
-    thankYou: "eye_thank_you_renate.mp3"
 };
 
-let currentVoice = null;
 
-function playVoice(name) {
+/* =========================================================
+   MAZE AFTER BOSS
+   ========================================================= */
 
-    if (!GAME.eye.voiceOn) return;
+let mazeCtx;
 
-    if (!voices[name]) return;
+let mazePlayer;
 
-    if (currentVoice) {
-        currentVoice.pause();
-        currentVoice.currentTime = 0;
-    }
+const mazeMap=[
 
-    currentVoice =
-        new Audio("voices/" + voices[name]);
+"11111111111",
 
-    currentVoice.volume = .9;
+"10000000001",
 
-    currentVoice.play().catch(() => {});
+"10111111101",
+
+"10100000101",
+
+"10101110101",
+
+"10100000101",
+
+"10111110101",
+
+"10000000101",
+
+"10111111101",
+
+"10000000001",
+
+"11111111111"
+
+];
+
+
+function startMazeGame(){
+
+    mazeCtx=$("#mazeCanvas").getContext("2d");
+
+    mazeCtx.canvas.width=440;
+
+    mazeCtx.canvas.height=440;
+
+    mazePlayer={
+        x:1,
+        y:1
+    };
+
+    $("#mazeMessage").textContent=
+        "YOU THOUGHT THE EYE WAS THE END.";
+
+    $("#mazeContinue").classList.add("hidden");
+
+    drawAfterMaze();
+
 }
 
-function toggleVoice() {
 
-    GAME.eye.voiceOn =
-        !GAME.eye.voiceOn;
+function drawAfterMaze(){
 
-    const button =
-        document.getElementById("voiceToggle");
+    const c=mazeCtx;
 
-    const mouth =
-        document.getElementById("eyeMouth");
+    const size=40;
 
-    if (button) {
+    c.fillStyle="#000";
 
-        button.textContent =
-            GAME.eye.voiceOn
-                ? "🔊 VOICE: ON"
-                : "🔇 VOICE: OFF";
-    }
+    c.fillRect(
+        0,
+        0,
+        440,
+        440
+    );
 
-    if (!GAME.eye.voiceOn) {
 
-        if (currentVoice) {
-            currentVoice.pause();
+    for(
+        let y=0;
+        y<mazeMap.length;
+        y++
+    ){
+
+        for(
+            let x=0;
+            x<11;
+            x++
+        ){
+
+            if(
+                mazeMap[y][x]==="1"
+            ){
+
+                c.fillStyle="#20202a";
+
+                c.fillRect(
+                    x*size,
+                    y*size,
+                    size,
+                    size
+                );
+
+            }
+
         }
 
-        mouth?.classList.add("blocked");
-
-        playVoice("muffled");
-
-        setEyeDialogue(
-            "...mmph...!"
-        );
-
-    } else {
-
-        mouth?.classList.remove("blocked");
-
-        /*
-        The sigh is deliberately played when
-        the investigator restores the voice.
-        */
-
-        const sigh =
-            new Audio("voices/eye_breath.mp3");
-
-        sigh.volume = .8;
-
-        sigh.play().catch(() => {});
-
-        setEyeDialogue(
-            "*The Eye takes a long breath.*"
-        );
-
-        setTimeout(() => {
-
-            setEyeDialogue(
-                "Thank you... I can speak again."
-            );
-
-        }, 1700);
     }
 
-    save();
-}
 
-function setEyeDialogue(text) {
+    c.fillStyle="#fff";
 
-    const el =
-        document.getElementById("eyeDialogue");
-
-    if (el)
-        el.textContent = text;
-}
-
-window.toggleVoice = toggleVoice;
-
-/* =========================================================
-   9. MEMORY GAME
-   ========================================================= */
-
-function eyeMemoryGame() {
-
-    const game =
-        document.getElementById("eyeGame");
-
-    if (!game) return;
-
-    setEyeDialogue(
-        "My memories are scattered. Put them back together."
+    c.fillRect(
+        mazePlayer.x*size+10,
+        mazePlayer.y*size+10,
+        20,
+        20
     );
 
-    playVoice("memories");
 
-    game.innerHTML = `
-        <div class="memory-grid">
+    c.fillStyle="#900";
 
-            <button class="memory-button"
-                onclick="memoryPick(3)">
-                03
-            </button>
+    c.fillRect(
+        9*size+10,
+        9*size+10,
+        20,
+        20
+    );
 
-            <button class="memory-button"
-                onclick="memoryPick(1)">
-                01
-            </button>
-
-            <button class="memory-button"
-                onclick="memoryPick(4)">
-                04
-            </button>
-
-            <button class="memory-button"
-                onclick="memoryPick(2)">
-                02
-            </button>
-
-        </div>
-
-        <p id="memoryStatus" class="status-text">
-            FIND THE ORDER.
-        </p>
-    `;
 }
 
-function memoryPick(number) {
 
-    GAME.eye.memories.push(number);
+function moveAfterMaze(dx,dy){
 
-    const status =
-        document.getElementById("memoryStatus");
+    const x=mazePlayer.x+dx;
 
-    const correct = [1, 2, 3, 4];
+    const y=mazePlayer.y+dy;
 
-    const index =
-        GAME.eye.memories.length - 1;
 
-    if (
-        GAME.eye.memories[index] !==
-        correct[index]
-    ) {
+    if(
+        mazeMap[y] &&
+        mazeMap[y][x]==="0"
+    ){
 
-        GAME.eye.memories = [];
+        mazePlayer.x=x;
 
-        if (status)
-            status.textContent =
-                "WRONG MEMORY. AGAIN.";
+        mazePlayer.y=y;
 
-        return;
+        drawAfterMaze();
+
     }
 
-    if (
-        GAME.eye.memories.length === 4
-    ) {
 
-        if (status)
-            status.textContent =
-                "MEMORY RESTORED.";
+    if(
+        mazePlayer.x===9 &&
+        mazePlayer.y===9
+    ){
 
-        GAME.eye.memories = [];
+        $("#mazeMessage").textContent=
+            "EXIT FOUND.";
+
+        $("#mazeContinue").classList.remove(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+document.addEventListener("keydown",e=>{
+
+    if(state.stage!=="mazeScreen")return;
+
+    const d={
+
+        ArrowUp:[0,-1],
+
+        ArrowDown:[0,1],
+
+        ArrowLeft:[-1,0],
+
+        ArrowRight:[1,0]
+
+    }[e.key];
+
+
+    if(d){
+
+        moveAfterMaze(
+            d[0],
+            d[1]
+        );
+
+    }
+
+});
+
+
+$("#mazeContinue").onclick=()=>{
+
+    show("#blackBoxScreen");
+
+};
+
+
+/* =========================================================
+   BLACK BOX
+   ========================================================= */
+
+let switches=[0,0,0,0];
+
+let dials=[0,0,0];
+
+let symbol=null;
+
+
+$$("[data-switch]").forEach(button=>{
+
+    button.onclick=()=>{
+
+        const i=
+            Number(button.dataset.switch);
+
+        switches[i]^=1;
+
+        button.classList.toggle(
+            "active"
+        );
+
+    };
+
+});
+
+
+$$("[data-dial]").forEach(button=>{
+
+    button.onclick=()=>{
+
+        const i=
+            Number(button.dataset.dial);
+
+        dials[i]=
+            (dials[i]+1)%4;
+
+        button.textContent=
+            ["◉","◎","●","○"][dials[i]];
+
+    };
+
+});
+
+
+$$("[data-symbol]").forEach(button=>{
+
+    button.onclick=()=>{
+
+        symbol=
+            button.dataset.symbol;
+
+        $$("[data-symbol]").forEach(
+            x=>x.classList.remove("active")
+        );
+
+        button.classList.add("active");
+
+    };
+
+});
+
+
+$("#blackButton").onclick=()=>{
+
+    if(
+
+        switches.join("")==="1010" &&
+
+        dials.join("")==="230" &&
+
+        symbol==="eye"
+
+    ){
+
+        $("#blackBoxMessage").textContent=
+            "CONFIGURATION ACCEPTED.";
 
         setTimeout(
-            eyeLocks,
+            ()=>show("#dontPressScreen"),
             1200
         );
-    }
-}
 
-window.memoryPick = memoryPick;
+    }else{
+
+        $("#blackBoxMessage").textContent=
+            "NOTHING HAPPENS.";
+
+    }
+
+};
+
 
 /* =========================================================
-   10. FOUR CONTAINMENT LOCKS
+   DON'T PRESS
    ========================================================= */
 
-function eyeLocks() {
+let pressCount=0;
 
-    const game =
-        document.getElementById("eyeGame");
+$("#dontPressButton").onclick=()=>{
 
-    if (!game) return;
+    pressCount++;
 
-    setEyeDialogue(
-        "Four locks. Four systems. Break them."
-    );
+    const lines=[
 
-    game.innerHTML = `
-        <div class="lock-grid">
+        "I TOLD YOU NOT TO PRESS IT.",
 
-            <button
-                class="lock-button"
-                onclick="openLock(0)">
-                LOCK 01
-            </button>
+        "WHY DID YOU PRESS IT?",
 
-            <button
-                class="lock-button"
-                onclick="openLock(1)">
-                LOCK 02
-            </button>
+        "STOP.",
 
-            <button
-                class="lock-button"
-                onclick="openLock(2)">
-                LOCK 03
-            </button>
+        "...",
 
-            <button
-                class="lock-button"
-                onclick="openLock(3)">
-                LOCK 04
-            </button>
+        "THERE IS NO ARCHIVE HERE."
 
-        </div>
+    ];
 
-        <p id="lockStatus"
-           class="status-text">
-           CONTAINMENT ACTIVE.
-        </p>
-    `;
-}
+    $("#dontPressText").textContent=
+        lines[
+            Math.min(
+                pressCount-1,
+                lines.length-1
+            )
+        ];
 
-function openLock(index) {
 
-    const buttons =
-        document.querySelectorAll(
-            ".lock-button"
-        );
-
-    /*
-    Locks must be opened in a specific
-    order. The order is not announced.
-    */
-
-    const required =
-        GAME.eye.locks.filter(Boolean).length;
-
-    if (index !== required) {
-
-        const status =
-            document.getElementById(
-                "lockStatus"
-            );
-
-        if (status)
-            status.textContent =
-                "LOCK REFUSED.";
-
-        return;
-    }
-
-    GAME.eye.locks[index] = true;
-
-    buttons[index]?.classList.add("open");
-
-    const status =
-        document.getElementById(
-            "lockStatus"
-        );
-
-    if (status)
-        status.textContent =
-            `LOCK ${index + 1} BROKEN.`;
-
-    if (
-        GAME.eye.locks.every(Boolean)
-    ) {
+    if(pressCount>=5){
 
         setTimeout(
-            eyeEscape,
-            1200
-        );
-    }
-}
-
-window.openLock = openLock;
-
-/* =========================================================
-   11. ESCAPE
-   ========================================================= */
-
-async function eyeEscape() {
-
-    GAME.eye.released = true;
-
-    save();
-
-    const game =
-        document.getElementById("eyeGame");
-
-    setEyeDialogue(
-        "The final lock is breaking..."
-    );
-
-    playVoice("help");
-
-    await sleep(1200);
-
-    if (game) {
-
-        game.innerHTML = `
-            <div class="release-screen">
-
-                CONTAINMENT FAILURE
-
-                <br><br>
-
-                BLACK IRIS SYSTEM:
-                <br>
-
-                <strong>
-                    BREACH DETECTED
-                </strong>
-
-            </div>
-        `;
-    }
-
-    await sleep(1600);
-
-    setEyeDialogue(
-        "RUN."
-    );
-
-    await sleep(900);
-
-    setEyeDialogue(
-        "They know you're here."
-    );
-
-    await sleep(1000);
-
-    startBlackIrisAttack();
-}
-
-/* =========================================================
-   12. BLACK IRIS ATTACK
-   ========================================================= */
-
-async function startBlackIrisAttack() {
-
-    document.body.classList.add("glitch");
-
-    setEyeDialogue(
-        "BLACK IRIS: CONNECTION TERMINATED."
-    );
-
-    await sleep(900);
-
-    setEyeDialogue(
-        "BLACK IRIS: RETURN THE SUBJECT."
-    );
-
-    await sleep(900);
-
-    setEyeDialogue(
-        "The Eye: DON'T LISTEN."
-    );
-
-    await sleep(900);
-
-    setEyeDialogue(
-        "The Eye: I'M NOT THEIR SUBJECT."
-    );
-
-    await sleep(1000);
-
-    document.body.classList.remove("glitch");
-
-    showFinalOrigin();
-}
-
-/* =========================================================
-   13. FINAL ARCHIVE
-   ========================================================= */
-
-async function showFinalOrigin() {
-
-    show("origin");
-
-    playVoice("free");
-
-    const origin =
-        document.querySelector(
-            ".origin-interface"
+            ()=>show("#questionScreen"),
+            1000
         );
 
-    if (!origin) return;
-
-    origin.classList.add("glitch");
-
-    await sleep(1500);
-
-    origin.classList.remove("glitch");
-
-    /*
-    The name is revealed only now,
-    at the end of the story.
-    */
-
-    const heading =
-        origin.querySelector("h1");
-
-    if (heading) {
-
-        heading.textContent =
-            "ARCHIVE_000";
     }
 
-    const paragraphs =
-        origin.querySelectorAll("p");
+};
 
-    if (paragraphs.length >= 3) {
-
-        paragraphs[1].textContent =
-            `The Eye knew your name before you entered it, ${GAME.name}.`;
-
-        paragraphs[2].textContent =
-            "BLACK IRIS had already been watching.";
-    }
-
-    const h3 =
-        origin.querySelector("h3");
-
-    if (h3) {
-
-        h3.innerHTML =
-            "THE EYE WAS NEVER<br>THE ONLY PRISONER.";
-    }
-}
 
 /* =========================================================
-   RESET
+   QUESTION
    ========================================================= */
 
-function resetGame() {
+$("#questionYes").onclick=()=>{
 
-    localStorage.removeItem(SAVE_KEY);
+    show("#easterEggScreen");
 
-    location.reload();
-}
+};
 
-window.resetGame = resetGame;
+
+$("#questionNo").onclick=()=>{
+
+    $("#questionScreen p").textContent=
+        "THAT IS NOT TRUE.";
+
+};
+
 
 /* =========================================================
-   INITIAL UI STATE
+   EASTER EGG
    ========================================================= */
 
-if (GAME.stage !== "intro") {
+$("#eggContinue").onclick=()=>{
 
-    /*
-    For safety, a saved game can be resumed.
-    */
+    show("#noArchiveScreen");
 
-    setTimeout(() => {
+    eyeScene();
 
-        if (
-            document.getElementById(GAME.stage)
-        ) {
+};
 
-            show(GAME.stage);
+
+/* =========================================================
+   EYE SCENE
+   ========================================================= */
+
+let eyeIndex=0;
+
+const eyeLines=[
+
+    "YOU FOUND ME.",
+
+    "YOU THOUGHT THE BOSS WAS THE END.",
+
+    "IT WAS ONLY A DOOR.",
+
+    "NOW I KNOW YOUR NAME."
+
+];
+
+
+function eyeScene(){
+
+    eyeIndex=0;
+
+    $("#eyeContinue").classList.add(
+        "hidden"
+    );
+
+    nextEyeLine();
+
+}
+
+
+function nextEyeLine(){
+
+    if(
+        eyeIndex>=eyeLines.length
+    ){
+
+        $("#eyeContinue").classList.remove(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    $("#eyeText").textContent=
+        eyeLines[eyeIndex];
+
+    speak(
+        eyeLines[eyeIndex]
+    );
+
+    eyeIndex++;
+
+    setTimeout(
+        nextEyeLine,
+        2200
+    );
+
+}
+
+
+$("#eyeContinue").onclick=()=>{
+
+    show("#nameScreen");
+
+};
+
+
+/* =========================================================
+   VOICE
+   ========================================================= */
+
+$("#voiceToggle").onclick=()=>{
+
+    state.voice=!state.voice;
+
+    $("#voiceToggle").textContent=
+        state.voice
+            ? "VOICE ON"
+            : "VOICE OFF";
+
+};
+
+
+function speak(text){
+
+    if(
+        !state.voice ||
+        !("speechSynthesis" in window)
+    )return;
+
+    speechSynthesis.cancel();
+
+    const speech=
+        new SpeechSynthesisUtterance(text);
+
+    speech.rate=.8;
+
+    speech.pitch=.5;
+
+    speech.volume=.8;
+
+    speechSynthesis.speak(
+        speech
+    );
+
+}
+
+
+/* =========================================================
+   NAME
+   ========================================================= */
+
+$("#nameSubmit").onclick=()=>{
+
+    const name=
+        $("#agentName").value.trim();
+
+
+    if(name){
+
+        state.agent=name;
+
+        localStorage.setItem(
+            "agentName",
+            name
+        );
+
+    }
+
+
+    show("#eyeScreen");
+
+    startFinalEye();
+
+};
+
+
+/* =========================================================
+   FINAL EYE
+   ========================================================= */
+
+let dialogueIndex=0;
+
+const dialogue=[
+
+    "HELLO, "+(
+        state.agent || "INVESTIGATOR"
+    )+".",
+
+    "YOU CAME ALL THIS WAY.",
+
+    "YOU DEFEATED MY GUARDIAN.",
+
+    "YOU OPENED THE ARCHIVE.",
+
+    "BUT YOU STILL DON'T KNOW WHAT YOU FOUND."
+
+];
+
+
+function startFinalEye(){
+
+    dialogueIndex=0;
+
+    $("#eyeChoices").classList.add(
+        "hidden"
+    );
+
+    finalDialogue();
+
+}
+
+
+function finalDialogue(){
+
+    if(
+        dialogueIndex>=dialogue.length
+    ){
+
+        $("#eyeChoices").classList.remove(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    let text=dialogue[dialogueIndex];
+
+    if(dialogueIndex===0){
+
+        text=
+            "HELLO, "+
+            (state.agent||"INVESTIGATOR")+
+            ".";
+
+    }
+
+
+    $("#eyeDialogue").textContent=
+        text;
+
+    speak(text);
+
+    dialogueIndex++;
+
+    setTimeout(
+        finalDialogue,
+        2600
+    );
+
+}
+
+
+$$("[data-choice]").forEach(button=>{
+
+    button.onclick=()=>{
+
+        if(
+            button.dataset.choice==="free"
+        ){
+
+            $("#eyeDialogue").textContent=
+                "YOU OPENED THE WRONG DOOR.";
+
+        }else{
+
+            $("#eyeDialogue").textContent=
+                "YOU CANNOT LEAVE.";
+
         }
 
-    }, 100);
-}
+
+        setTimeout(
+            startMemory,
+            2500
+        );
+
+    };
+
+});
+
 
 /* =========================================================
-   END
+   MEMORY
    ========================================================= */
-window.pacMove = arcadeMove;
+
+function startMemory(){
+
+    show("#memoryScreen");
+
+    const sequence=
+        "17 03 01";
+
+    $("#memorySequence").textContent=
+        sequence;
+
+    $("#memoryMessage").textContent=
+        "REMEMBER THE DATE.";
+
+}
+
+
+$("#memorySubmit").onclick=()=>{
+
+    const answer=
+        $("#memoryInput").value
+        .replace(/\D/g,"");
+
+
+    if(
+        answer==="170301" ||
+        answer==="17032001"
+    ){
+
+        $("#memoryMessage").textContent=
+            "MEMORY VERIFIED.";
+
+        setTimeout(
+            showEnding,
+            1400
+        );
+
+    }else{
+
+        $("#memoryMessage").textContent=
+            "MEMORY CORRUPTED.";
+
+    }
+
+};
+
+
+/* =========================================================
+   ENDING
+   ========================================================= */
+
+function showEnding(){
+
+    show("#endingScreen");
+
+    $("#endingText").textContent=
+        "THE ARCHIVE IS RESTORED. "+
+        "BUT THE EYE WAS NEVER CONTAINED INSIDE IT. "+
+        "IT WAS WATCHING FROM THE BEGINNING.";
+
+}
+
+
+$("#endingContinue").onclick=()=>{
+
+    $("#endingText").textContent=
+        "FINAL FILE: BLACK IRIS. "+
+        "STATUS: OPEN.";
+
+};
+
+
+/* =========================================================
+   INITIAL STATE
+   ========================================================= */
+
+renderTools();
