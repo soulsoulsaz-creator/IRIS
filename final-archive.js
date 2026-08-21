@@ -1,415 +1,491 @@
 "use strict";
 
 /* =========================================================
-   IRIS — FINAL ARCHIVE
-   LEVELS 1-5 = PAC-MAN STYLE
-   LEVEL 6 = ORIGINAL PLATFORMER BOSS
+   BLACK IRIS — FINAL ARCHIVE GAME ENGINE
    ========================================================= */
 
-const $ = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
 
 const screens = $$(".screen");
 
 const state = {
+    stage: "intro",
+    level: 1,
+    fragments: 0,
+    voice: true,
+    agent: localStorage.getItem("agentName") || "",
+    tools: {},
+    boss: {}
+};
 
-    stage:"intro",
+function show(id) {
+    screens.forEach((screen) => screen.classList.remove("active"));
 
-    level:1,
+    const target = $(id);
 
-    fragments:0,
+    if (target) {
+        target.classList.add("active");
+    }
 
-    totalFragments:6,
+    state.stage = id.replace("#", "");
+}
 
-    tools:{
-        scanner:0,
-        flipflop:0,
-        key:0,
-        icecream:0,
-        mirror:0
+function message(text) {
+    const element = $("#toolMessage");
+
+    if (!element) return;
+
+    element.textContent = text;
+
+    clearTimeout(message.timer);
+
+    message.timer = setTimeout(() => {
+        element.textContent = "";
+    }, 2200);
+}
+
+
+/* =========================================================
+   RECOVERY PROTOCOL — LEVELS 1–5
+   ========================================================= */
+
+const levelMessages = {
+    1: "RECOVER THE FIRST FRAGMENT.",
+    2: "SOMETHING CAN STOP THE HUNTERS.",
+    3: "THERE ARE ROOMS WITHOUT ENTRANCES.",
+    4: "THE SCANNER MAY REVEAL WHAT IS HIDDEN.",
+    5: "DISTRACT THEM. WATCH THE REFLECTION."
+};
+
+const levelTools = {
+    1: {
+        scanner: 1
     },
 
-    boss:{
-        lives:3,
-        health:5,
-        phase:1,
-        scanner:false,
-        mirror:false,
-        icecream:false,
-        key:false,
-        flipflop:false,
-        defeated:false
+    2: {
+        flipflop: 2
     },
 
-    voice:true,
+    3: {
+        key: 1,
+        icecream: 1
+    },
 
-    agent:localStorage.getItem("agentName") || ""
+    4: {
+        scanner: 1,
+        flipflop: 1
+    },
 
+    5: {
+        icecream: 1,
+        mirror: 1
+    }
 };
 
-function show(id){
-
-    screens.forEach(s => s.classList.remove("active"));
-
-    $(id).classList.add("active");
-
-    state.stage=id.replace("#","");
-
-}
-
-
-/* =========================================================
-   INTRO
-   ========================================================= */
-
-$("#beginButton").onclick=()=>{
-
-    show("#arcadeScreen");
-
-    state.level=1;
-    state.fragments=0;
-
-    setupLevel();
-
-};
-
-
-/* =========================================================
-   LEVEL 1-5
-   ========================================================= */
-
-const levelMessages={
-
-    1:"RECOVER THE FIRST FRAGMENT.",
-
-    2:"SOMETHING CAN STOP THE HUNTERS.",
-
-    3:"THERE ARE ROOMS WITHOUT ENTRANCES.",
-
-    4:"THE SCANNER MAY REVEAL WHAT IS HIDDEN.",
-
-    5:"DISTRACT THEM. WATCH THE REFLECTION.",
-
-    6:"THE FINAL GUARDIAN IS WAITING."
-
-};
-
-
-function setupLevel(){
-
-    $("#levelDisplay").textContent="LEVEL "+state.level;
-
-    $("#arcadeMessage").textContent=levelMessages[state.level];
-
-    $("#fragmentsFound").textContent=state.fragments;
-
-    setTools();
-
-    buildMaze();
-
-}
-
-
-function setTools(){
-
-    state.tools={
-        scanner:0,
-        flipflop:0,
-        key:0,
-        icecream:0,
-        mirror:0
-    };
-
-    const tools={
-
-        1:{scanner:1},
-
-        2:{flipflop:2},
-
-        3:{key:1,icecream:1},
-
-        4:{scanner:1,flipflop:1},
-
-        5:{icecream:1,mirror:1}
-
-    };
-
-    Object.assign(state.tools,tools[state.level]||{});
-
-    renderTools();
-
-}
-
-
-function renderTools(){
-
-    $$(".tool").forEach(button=>{
-
-        const tool=button.dataset.tool;
-
-        const amount=state.tools[tool];
-
-        button.querySelector("small").textContent=
-            amount>0 ? "×"+amount : "";
-
-        button.style.opacity=
-            amount>0 ? "1" : ".25";
-
-    });
-
-}
-
-
-function message(text){
-
-    $("#toolMessage").textContent=text;
-
-    setTimeout(()=>{
-
-        $("#toolMessage").textContent="";
-
-    },2200);
-
-}
-
-
-/* =========================================================
-   PAC-MAN STYLE MAZE
-   ========================================================= */
-
-const TILE=24;
-
-const GRID_W=21;
-
-const GRID_H=21;
+const TILE = 24;
+const MAP_WIDTH = 21;
+const MAP_HEIGHT = 21;
 
 let canvas;
 let ctx;
 
-let map;
+let map = [];
+let player = null;
+let enemies = [];
+let fragments = [];
 
-let player;
+let doorOpen = false;
+let keyArmed = false;
 
-let enemies;
-
-let fragments;
-
-let doorOpen=false;
-
-let iceTarget=null;
-
-let mirrorTime=0;
-
-let scannerTime=0;
+let iceTarget = null;
+let mirrorTime = 0;
+let scannerTime = 0;
 
 
-function buildMaze(){
+/* =========================================================
+   START GAME
+   ========================================================= */
 
-    canvas=$("#arcadeCanvas");
+if ($("#beginButton")) {
+    $("#beginButton").onclick = () => {
+        state.level = 1;
+        state.fragments = 0;
 
-    ctx=canvas.getContext("2d");
+        show("#arcadeScreen");
 
-    canvas.width=GRID_W*TILE;
+        setupLevel();
+    };
+}
 
-    canvas.height=GRID_H*TILE;
 
-    map=[];
+function setupLevel() {
 
-    for(let y=0;y<GRID_H;y++){
+    $("#levelDisplay").textContent = "LEVEL " + state.level;
 
-        map[y]=[];
+    $("#arcadeMessage").textContent =
+        levelMessages[state.level] || "";
 
-        for(let x=0;x<GRID_W;x++){
+    $("#fragmentsFound").textContent =
+        state.fragments;
 
-            if(
-                x===0 ||
-                y===0 ||
-                x===GRID_W-1 ||
-                y===GRID_H-1
-            ){
+    state.tools = {
+        scanner: 0,
+        flipflop: 0,
+        key: 0,
+        icecream: 0,
+        mirror: 0
+    };
 
-                map[y][x]=1;
+    Object.assign(
+        state.tools,
+        levelTools[state.level] || {}
+    );
 
-            }else{
+    keyArmed = false;
+    iceTarget = null;
+    mirrorTime = 0;
+    scannerTime = 0;
 
-                map[y][x]=
-                    x%2===0 &&
-                    y%2===0 ? 1 : 0;
+    renderTools();
 
+    buildMaze();
+}
+
+
+/* =========================================================
+   TOOLS
+   ========================================================= */
+
+function renderTools() {
+
+    $$(".tool").forEach((button) => {
+
+        const tool = button.dataset.tool;
+
+        const amount =
+            state.tools[tool] || 0;
+
+        const small = button.querySelector("small");
+
+        if (small) {
+            small.textContent =
+                amount ? "×" + amount : "";
+        }
+
+        button.style.opacity =
+            amount ? "1" : ".25";
+
+        if (tool === "key") {
+            button.draggable = amount > 0;
+        }
+    });
+}
+
+
+/* =========================================================
+   MAZE
+   ========================================================= */
+
+function walkable(x, y) {
+
+    return !!(
+        map[y] &&
+        map[y][x] === 0
+    );
+}
+
+
+function buildMaze() {
+
+    canvas = $("#arcadeCanvas");
+
+    if (!canvas) return;
+
+    ctx = canvas.getContext("2d");
+
+    canvas.width =
+        MAP_WIDTH * TILE;
+
+    canvas.height =
+        MAP_HEIGHT * TILE;
+
+    map = [];
+
+    for (let y = 0; y < MAP_HEIGHT; y++) {
+
+        map[y] = [];
+
+        for (let x = 0; x < MAP_WIDTH; x++) {
+
+            const wall =
+                x === 0 ||
+                y === 0 ||
+                x === MAP_WIDTH - 1 ||
+                y === MAP_HEIGHT - 1 ||
+                (x % 2 === 0 && y % 2 === 0);
+
+            map[y][x] = wall ? 1 : 0;
+        }
+    }
+
+    /*
+       Open corridors.
+    */
+
+    for (let x = 1; x < MAP_WIDTH - 1; x++) {
+
+        map[1][x] = 0;
+        map[MAP_HEIGHT - 2][x] = 0;
+    }
+
+    for (let y = 1; y < MAP_HEIGHT - 1; y++) {
+
+        map[y][1] = 0;
+        map[y][MAP_WIDTH - 2] = 0;
+    }
+
+    /*
+       Horizontal corridors.
+    */
+
+    for (
+        let y = 3;
+        y < MAP_HEIGHT - 3;
+        y += 4
+    ) {
+
+        for (
+            let x = 1;
+            x < MAP_WIDTH - 1;
+            x++
+        ) {
+
+            map[y][x] = 0;
+        }
+    }
+
+    /*
+       Vertical corridors.
+    */
+
+    for (
+        let x = 3;
+        x < MAP_WIDTH - 3;
+        x += 4
+    ) {
+
+        for (
+            let y = 1;
+            y < MAP_HEIGHT - 1;
+            y++
+        ) {
+
+            map[y][x] = 0;
+        }
+    }
+
+
+    /*
+       LEVEL 3 — SECRET ROOM
+
+       The room has no normal entrance.
+       The player must find the key.
+    */
+
+    if (state.level === 3) {
+
+        for (let y = 5; y <= 9; y++) {
+
+            for (let x = 15; x <= 18; x++) {
+
+                map[y][x] = 0;
             }
-
         }
 
-    }
+        /*
+           Seal room.
+        */
 
+        for (let x = 15; x <= 18; x++) {
 
-    /* corridors */
-
-    for(let x=1;x<GRID_W-1;x++){
-
-        map[1][x]=0;
-        map[GRID_H-2][x]=0;
-
-    }
-
-    for(let y=1;y<GRID_H-1;y++){
-
-        map[y][1]=0;
-        map[y][GRID_W-2]=0;
-
-    }
-
-
-    for(let y=3;y<GRID_H-3;y+=4){
-
-        for(let x=1;x<GRID_W-1;x++){
-
-            map[y][x]=0;
-
+            map[4][x] = 1;
+            map[10][x] = 1;
         }
 
+        for (let y = 5; y <= 9; y++) {
+
+            map[y][19] = 1;
+            map[y][14] = 1;
+        }
+
+        /*
+           Locked door.
+        */
+
+        map[7][14] = 0;
     }
 
 
-    for(let x=3;x<GRID_W-3;x+=4){
-
-        for(let y=1;y<GRID_H-1;y++){
-
-            map[y][x]=0;
-
-        }
-
-    }
-
-
-    /* LEVEL 3 SEALED ROOM */
-
-    if(state.level===3){
-
-        for(let y=5;y<=9;y++){
-
-            for(let x=15;x<=18;x++){
-
-                map[y][x]=0;
-
-            }
-
-        }
-
-        for(let x=15;x<=18;x++){
-
-            map[4][x]=1;
-
-        }
-
-        map[7][14]=1;
-
-    }
-
-
-    player={
-        x:1,
-        y:1
+    player = {
+        x: 1,
+        y: 1
     };
 
 
-    enemies=[
+    /*
+       Difficulty progression.
+
+       Levels 1–2 = easier.
+       Level 3 = medium.
+       Levels 4–5 = harder.
+    */
+
+    const enemyCount =
+        state.level <= 2
+            ? 1
+            : state.level === 3
+                ? 2
+                : 3;
+
+
+    const enemyPositions = [
 
         {
-            x:GRID_W-2,
-            y:1,
-            stunned:0
+            x: 19,
+            y: 1
         },
 
         {
-            x:GRID_W-2,
-            y:GRID_H-2,
-            stunned:0
+            x: 19,
+            y: 19
         },
 
         {
-            x:Math.floor(GRID_W/2),
-            y:GRID_H-2,
-            stunned:0
+            x: 11,
+            y: 19
+        }
+    ];
+
+
+    enemies = enemyPositions
+        .slice(0, enemyCount)
+        .map((enemy) => ({
+            ...enemy,
+            stunned: 0
+        }));
+
+
+    const fragmentPositions = [
+
+        {
+            x: 19,
+            y: 19
+        },
+
+        {
+            x: 19,
+            y: 1
+        },
+
+        {
+            x: 16,
+            y: 7
+        },
+
+        {
+            x: 1,
+            y: 19
+        },
+
+        {
+            x: 19,
+            y: 10
+        }
+    ];
+
+
+    fragments = [
+
+        {
+            ...fragmentPositions[
+                state.level - 1
+            ],
+            collected: false
         }
 
     ];
 
-
-    fragments=[];
-
-
-    const positions=[
-
-        {x:19,y:19},
-
-        {x:19,y:1},
-
-        {x:16,y:7},
-
-        {x:1,y:19},
-
-        {x:19,y:10}
-
-    ];
-
-
-    if(state.level<=5){
-
-        fragments.push(
-            positions[state.level-1]
-        );
-
-    }
-
-
-    doorOpen=false;
+    doorOpen = false;
 
     drawMaze();
-
-
 }
 
 
-function walkable(x,y){
+/* =========================================================
+   PLAYER MOVEMENT
+   ========================================================= */
 
-    return map[y] &&
-           map[y][x]===0;
+function movePlayer(dx, dy) {
 
-}
+    if (!player) return;
 
+    const nextX =
+        player.x + dx;
 
-function movePlayer(dx,dy){
-
-    const nx=player.x+dx;
-
-    const ny=player.y+dy;
+    const nextY =
+        player.y + dy;
 
 
-    if(
-        state.level===3 &&
-        nx===14 &&
-        ny===7 &&
-        !doorOpen
-    ){
+    /*
+       Level 3 locked door.
+    */
 
-        message("LOCKED. USE THE KEY.");
+    if (
+        state.level === 3 &&
+        !doorOpen &&
+        nextX === 14 &&
+        nextY === 7
+    ) {
+
+        if (
+            keyArmed ||
+            state.tools.key > 0
+        ) {
+
+            doorOpen = true;
+            keyArmed = false;
+
+            if (state.tools.key > 0) {
+                state.tools.key--;
+            }
+
+            renderTools();
+
+            message(
+                "KEY INSERTED. DOOR OPEN."
+            );
+
+        } else {
+
+            message(
+                "LOCKED. FIND THE KEY."
+            );
+        }
+
+        drawMaze();
 
         return;
-
     }
 
 
-    if(!walkable(nx,ny)){
-
+    if (!walkable(nextX, nextY)) {
         return;
-
     }
 
 
-    player.x=nx;
-
-    player.y=ny;
+    player.x = nextX;
+    player.y = nextY;
 
 
     collectFragment();
@@ -417,166 +493,254 @@ function movePlayer(dx,dy){
     enemyCollision();
 
     drawMaze();
-
 }
 
 
-function collectFragment(){
+/* =========================================================
+   FRAGMENT
+   ========================================================= */
 
-    const f=fragments.find(
-        f =>
-            f.x===player.x &&
-            f.y===player.y &&
-            !f.collected
-    );
+function collectFragment() {
+
+    const fragment =
+        fragments.find(
+            (f) =>
+                !f.collected &&
+                f.x === player.x &&
+                f.y === player.y
+        );
 
 
-    if(!f)return;
+    if (!fragment) return;
 
 
-    f.collected=true;
+    fragment.collected = true;
 
     state.fragments++;
 
-    $("#fragmentsFound").textContent=
+
+    $("#fragmentsFound").textContent =
         state.fragments;
 
 
-    message("FRAGMENT RECOVERED.");
+    message(
+        "FRAGMENT RECOVERED."
+    );
 
 
-    if(state.level<5){
+    /*
+       Move to next level.
+    */
 
-        setTimeout(()=>{
+    if (state.level < 5) {
+
+        setTimeout(() => {
 
             state.level++;
 
             setupLevel();
 
-        },700);
+        }, 650);
 
-    }else{
+    } else {
 
-        setTimeout(startBoss,900);
-
+        setTimeout(
+            startBoss,
+            900
+        );
     }
-
 }
 
 
-function enemyCollision(){
+/* =========================================================
+   ENEMY COLLISION
+   ========================================================= */
 
-    enemies.forEach(enemy=>{
+function enemyCollision() {
 
-        if(enemy.stunned>Date.now())return;
+    const now = Date.now();
 
-        if(
-            enemy.x===player.x &&
-            enemy.y===player.y
-        ){
 
-            player.x=1;
-            player.y=1;
+    for (const enemy of enemies) {
+
+        if (
+            enemy.stunned > now
+        ) {
+            continue;
+        }
+
+
+        if (
+            enemy.x === player.x &&
+            enemy.y === player.y
+        ) {
+
+            player.x = 1;
+            player.y = 1;
 
             message(
                 "CONTACT. RETURNED TO START."
             );
 
+            break;
         }
-
-    });
-
+    }
 }
 
 
-function enemyAI(){
+/* =========================================================
+   ENEMY AI
 
-    if(state.stage!=="arcade")return;
+   IMPORTANT:
+   ENEMIES MOVE EVEN WHEN THE PLAYER DOES NOTHING.
+   ========================================================= */
 
-    enemies.forEach(enemy=>{
+function enemyAI() {
 
-        if(enemy.stunned>Date.now())return;
+    if (
+        state.stage !== "arcade" ||
+        !enemies ||
+        !player
+    ) {
+        return;
+    }
 
-        let target=player;
 
-        if(
-            iceTarget &&
-            iceTarget.until>Date.now()
-        ){
+    const now = Date.now();
 
-            target=iceTarget;
 
+    for (const enemy of enemies) {
+
+        if (
+            enemy.stunned > now
+        ) {
+            continue;
         }
 
 
-        const options=[
+        /*
+           Ice cream becomes the enemy target.
+        */
 
-            [1,0],
-            [-1,0],
-            [0,1],
-            [0,-1]
+        const target =
+            iceTarget &&
+            iceTarget.until > now
+                ? iceTarget
+                : player;
+
+
+        let options = [
+
+            [1, 0],
+            [-1, 0],
+            [0, 1],
+            [0, -1]
 
         ].filter(
-            d =>
+            (direction) =>
                 walkable(
-                    enemy.x+d[0],
-                    enemy.y+d[1]
+                    enemy.x + direction[0],
+                    enemy.y + direction[1]
                 )
         );
 
 
-        if(!options.length)return;
+        if (!options.length) {
+            continue;
+        }
 
 
-        options.sort((a,b)=>{
+        /*
+           Choose movement toward target.
+        */
 
-            const da=
-                Math.abs(
-                    enemy.x+a[0]-target.x
-                )+
-                Math.abs(
-                    enemy.y+a[1]-target.y
-                );
+        options.sort(
+            (a, b) => {
 
-            const db=
-                Math.abs(
-                    enemy.x+b[0]-target.x
-                )+
-                Math.abs(
-                    enemy.y+b[1]-target.y
-                );
-
-            return da-db;
-
-        });
+                const distanceA =
+                    Math.abs(
+                        enemy.x + a[0] - target.x
+                    ) +
+                    Math.abs(
+                        enemy.y + a[1] - target.y
+                    );
 
 
-        enemy.x+=options[0][0];
+                const distanceB =
+                    Math.abs(
+                        enemy.x + b[0] - target.x
+                    ) +
+                    Math.abs(
+                        enemy.y + b[1] - target.y
+                    );
 
-        enemy.y+=options[0][1];
 
-    });
+                return distanceA - distanceB;
+            }
+        );
+
+
+        /*
+           Early levels are forgiving.
+        */
+
+        if (
+            state.level <= 2 &&
+            Math.random() < 0.35
+        ) {
+
+            options.reverse();
+        }
+
+
+        if (
+            state.level === 3 &&
+            Math.random() < 0.18
+        ) {
+
+            options.reverse();
+        }
+
+
+        /*
+           Harder levels chase more aggressively.
+        */
+
+        const direction =
+            options[0];
+
+
+        enemy.x += direction[0];
+        enemy.y += direction[1];
+    }
 
 
     enemyCollision();
 
     drawMaze();
-
 }
 
 
-setInterval(enemyAI,800);
+/*
+   Enemies have their own independent clock.
+*/
+
+setInterval(
+    enemyAI,
+    900
+);
 
 
 /* =========================================================
-   DRAW PAC-MAN LEVELS
+   DRAW MAZE
    ========================================================= */
 
-function drawMaze(){
+function drawMaze() {
 
-    if(!ctx)return;
+    if (!ctx || !map) return;
 
-    ctx.fillStyle="#000";
+
+    ctx.fillStyle = "#000";
 
     ctx.fillRect(
         0,
@@ -586,729 +750,1142 @@ function drawMaze(){
     );
 
 
-    for(let y=0;y<GRID_H;y++){
+    /*
+       Walls.
+    */
 
-        for(let x=0;x<GRID_W;x++){
+    for (
+        let y = 0;
+        y < MAP_HEIGHT;
+        y++
+    ) {
 
-            if(map[y][x]){
+        for (
+            let x = 0;
+            x < MAP_WIDTH;
+            x++
+        ) {
 
-                ctx.fillStyle="#151520";
+            if (map[y][x]) {
+
+                ctx.fillStyle =
+                    "#151520";
 
                 ctx.fillRect(
-                    x*TILE,
-                    y*TILE,
+                    x * TILE,
+                    y * TILE,
                     TILE,
                     TILE
                 );
 
-                ctx.strokeStyle="#292938";
+                ctx.strokeStyle =
+                    "#292938";
 
                 ctx.strokeRect(
-                    x*TILE+1,
-                    y*TILE+1,
-                    TILE-2,
-                    TILE-2
+                    x * TILE + 1,
+                    y * TILE + 1,
+                    TILE - 2,
+                    TILE - 2
                 );
-
             }
-
         }
-
     }
 
 
-    fragments.forEach(f=>{
+    /*
+       Fragment.
+    */
 
-        if(f.collected)return;
+    fragments.forEach(
+        (fragment) => {
 
-        ctx.fillStyle="#eee";
+            if (!fragment.collected) {
+
+                ctx.fillStyle =
+                    "#eee";
+
+                ctx.fillRect(
+                    fragment.x * TILE + 7,
+                    fragment.y * TILE + 7,
+                    10,
+                    10
+                );
+            }
+        }
+    );
+
+
+    /*
+       Locked door.
+    */
+
+    if (state.level === 3) {
+
+        ctx.fillStyle =
+            doorOpen
+                ? "#333"
+                : "#900";
 
         ctx.fillRect(
-            f.x*TILE+7,
-            f.y*TILE+7,
-            10,
-            10
+            14 * TILE + 2,
+            7 * TILE + 2,
+            TILE - 4,
+            TILE - 4
         );
 
-    });
 
+        /*
+           Scanner highlights door.
+        */
 
-    /* LEVEL 3 DOOR */
-
-    if(state.level===3){
-
-        ctx.fillStyle=
-            doorOpen ? "#333" : "#900";
-
-        ctx.fillRect(
-            14*TILE+2,
-            7*TILE+2,
-            TILE-4,
-            TILE-4
-        );
-
-        if(
+        if (
             !doorOpen &&
-            scannerTime>Date.now()
-        ){
+            scannerTime > Date.now()
+        ) {
 
-            ctx.strokeStyle="#fff";
+            ctx.strokeStyle =
+                "#fff";
+
+            ctx.lineWidth = 3;
 
             ctx.strokeRect(
-                14*TILE,
-                7*TILE,
+                14 * TILE,
+                7 * TILE,
                 TILE,
                 TILE
             );
-
         }
-
     }
 
 
-    enemies.forEach(enemy=>{
+    /*
+       Enemies.
+    */
 
-        ctx.fillStyle=
-            enemy.stunned>Date.now()
-                ? "#555"
-                : "#a22";
+    enemies.forEach(
+        (enemy) => {
 
-        ctx.beginPath();
+            ctx.fillStyle =
+                enemy.stunned > Date.now()
+                    ? "#555"
+                    : "#a22";
 
-        ctx.arc(
-            enemy.x*TILE+12,
-            enemy.y*TILE+12,
-            8,
-            0,
-            Math.PI*2
-        );
+            ctx.beginPath();
 
-        ctx.fill();
+            ctx.arc(
+                enemy.x * TILE + 12,
+                enemy.y * TILE + 12,
+                8,
+                0,
+                Math.PI * 2
+            );
 
-    });
+            ctx.fill();
+        }
+    );
 
 
-    ctx.fillStyle="#fff";
+    /*
+       Player.
+    */
+
+    ctx.fillStyle =
+        "#fff";
 
     ctx.beginPath();
 
     ctx.arc(
-        player.x*TILE+12,
-        player.y*TILE+12,
+        player.x * TILE + 12,
+        player.y * TILE + 12,
         9,
         0,
-        Math.PI*2
+        Math.PI * 2
     );
 
     ctx.fill();
 
 
-    if(
-        iceTarget &&
-        iceTarget.until>Date.now()
-    ){
+    /*
+       Ice cream.
+    */
 
-        ctx.font="18px serif";
+    if (
+        iceTarget &&
+        iceTarget.until > Date.now()
+    ) {
+
+        ctx.font = "18px serif";
 
         ctx.fillText(
             "🍦",
-            iceTarget.x*TILE,
-            iceTarget.y*TILE+20
+            iceTarget.x * TILE,
+            iceTarget.y * TILE + 20
         );
-
     }
 
 
-    if(
-        mirrorTime>Date.now()
-    ){
+    /*
+       Mirror effect.
+    */
 
-        ctx.strokeStyle="#ddd";
+    if (
+        mirrorTime > Date.now()
+    ) {
+
+        ctx.strokeStyle =
+            "#ddd";
 
         ctx.strokeRect(
             3,
             3,
-            canvas.width-6,
-            canvas.height-6
+            canvas.width - 6,
+            canvas.height - 6
         );
-
     }
-
 }
 
 
 /* =========================================================
-   TOOLS
+   INVENTORY TOOLS
    ========================================================= */
 
-$$(".tool").forEach(button=>{
+$$(".tool").forEach(
+    (button) => {
 
-    button.onclick=()=>{
+        button.onclick = () => {
 
-        const tool=button.dataset.tool;
+            const tool =
+                button.dataset.tool;
 
-        if(state.tools[tool]<=0){
-
-            message("OBJECT UNAVAILABLE.");
-
-            return;
-
-        }
+            const amount =
+                state.tools[tool] || 0;
 
 
-        if(tool==="scanner"){
-
-            state.tools.scanner--;
-
-            scannerTime=
-                Date.now()+5000;
-
-            message(
-                "SCANNER ACTIVE. HIDDEN OBJECTS REVEALED."
-            );
-
-            renderTools();
-
-            drawMaze();
-
-        }
-
-
-        if(tool==="flipflop"){
-
-            const enemy=enemies[0];
-
-            enemy.stunned=
-                Date.now()+4000;
-
-            state.tools.flipflop--;
-
-            message(
-                "SMACK. ENEMY DISABLED."
-            );
-
-            renderTools();
-
-            drawMaze();
-
-        }
-
-
-        if(tool==="key"){
-
-            if(state.level!==3){
+            if (!amount) {
 
                 message(
-                    "THERE IS NO LOCK HERE."
+                    "OBJECT UNAVAILABLE."
                 );
 
                 return;
-
             }
 
 
-            state.tools.key--;
+            /*
+               SCANNER
+            */
 
-            doorOpen=true;
+            if (tool === "scanner") {
 
-            message(
-                "KEY ACCEPTED. THE DOOR OPENS."
-            );
+                state.tools.scanner--;
+
+                scannerTime =
+                    Date.now() + 5000;
+
+                message(
+                    "SCANNER ACTIVE. HIDDEN OBJECTS REVEALED."
+                );
+            }
+
+
+            /*
+               FLIP-FLOP
+            */
+
+            else if (
+                tool === "flipflop"
+            ) {
+
+                const enemy =
+                    enemies.find(
+                        (e) =>
+                            e.stunned <= Date.now()
+                    );
+
+
+                if (enemy) {
+
+                    enemy.stunned =
+                        Date.now() + 4000;
+
+                    state.tools.flipflop--;
+
+                    message(
+                        "SMACK. ENEMY DISABLED."
+                    );
+                }
+            }
+
+
+            /*
+               KEY
+            */
+
+            else if (
+                tool === "key"
+            ) {
+
+                keyArmed = true;
+
+                message(
+                    "KEY READY. PUT IT ON THE LOCKED DOOR."
+                );
+            }
+
+
+            /*
+               ICE CREAM
+            */
+
+            else if (
+                tool === "icecream"
+            ) {
+
+                state.tools.icecream--;
+
+                iceTarget = {
+
+                    x: player.x,
+                    y: player.y,
+
+                    until:
+                        Date.now() + 6000
+                };
+
+
+                message(
+                    "ICE CREAM DEPLOYED. ENEMIES DISTRACTED."
+                );
+            }
+
+
+            /*
+               MIRROR
+            */
+
+            else if (
+                tool === "mirror"
+            ) {
+
+                state.tools.mirror--;
+
+                mirrorTime =
+                    Date.now() + 5000;
+
+                message(
+                    "THE MIRROR REVEALS THE HIDDEN PATH."
+                );
+            }
+
 
             renderTools();
 
             drawMaze();
-
-        }
-
-
-        if(tool==="icecream"){
-
-            state.tools.icecream--;
-
-            iceTarget={
-                x:player.x,
-                y:player.y,
-                until:Date.now()+6000
-            };
-
-            message(
-                "ICE CREAM DEPLOYED. ENEMIES DISTRACTED."
-            );
-
-            renderTools();
-
-            drawMaze();
-
-        }
-
-
-        if(tool==="mirror"){
-
-            state.tools.mirror--;
-
-            mirrorTime=
-                Date.now()+5000;
-
-            message(
-                "THE MIRROR REVEALS THE HIDDEN PATH."
-            );
-
-            renderTools();
-
-            drawMaze();
-
-        }
-
-    };
-
-});
-
-
-/* =========================================================
-   CONTROLS
-   ========================================================= */
-
-document.addEventListener("keydown",e=>{
-
-    if(state.stage==="arcade"){
-
-        const d={
-
-            ArrowUp:[0,-1],
-
-            ArrowDown:[0,1],
-
-            ArrowLeft:[-1,0],
-
-            ArrowRight:[1,0],
-
-            w:[0,-1],
-
-            s:[0,1],
-
-            a:[-1,0],
-
-            d:[1,0]
-
-        }[e.key];
-
-
-        if(d){
-
-            e.preventDefault();
-
-            movePlayer(d[0],d[1]);
-
-        }
-
+        };
     }
-
-});
-
-
-$$("[data-dir]").forEach(button=>{
-
-    button.onclick=()=>{
-
-        const d={
-
-            up:[0,-1],
-
-            down:[0,1],
-
-            left:[-1,0],
-
-            right:[1,0]
-
-        }[button.dataset.dir];
-
-
-        movePlayer(d[0],d[1]);
-
-    };
-
-});
+);
 
 
 /* =========================================================
-   LEVEL 6 — BOSS PLATFORMER
+   KEY DRAGGING
    ========================================================= */
 
-let bossCanvas;
+const keyButton =
+    $(".tool[data-tool='key']");
 
-let bossCtx;
 
-let boss;
+if (keyButton) {
 
-let bossRunning=false;
+    keyButton.addEventListener(
+        "dragstart",
+        () => {
 
-let bossKeys={};
+            keyArmed = true;
 
-
-function startBoss(){
-
-    show("#bossScreen");
-
-    state.level=6;
-
-    state.boss={
-
-        lives:3,
-
-        health:5,
-
-        phase:1,
-
-        scanner:false,
-
-        mirror:false,
-
-        icecream:false,
-
-        key:false,
-
-        flipflop:false,
-
-        defeated:false
-
-    };
-
-
-    $("#bossLives").textContent="3";
-
-    $("#bossHealth").textContent="5";
-
-    $("#bossMessage").textContent=
-        "THE FINAL GUARDIAN IS AWAKE.";
-
-
-    bossCanvas=$("#bossCanvas");
-
-    bossCtx=bossCanvas.getContext("2d");
-
-    bossCanvas.width=960;
-
-    bossCanvas.height=540;
-
-
-    boss={
-
-        x:100,
-
-        y:390,
-
-        vx:0,
-
-        vy:0,
-
-        width:25,
-
-        height:42,
-
-        grounded:false,
-
-        invulnerable:0,
-
-        frame:0,
-
-        platforms:[
-
-            {x:0,y:485,w:960,h:55},
-
-            {x:120,y:400,w:170,h:18},
-
-            {x:360,y:330,w:150,h:18},
-
-            {x:580,y:410,w:170,h:18},
-
-            {x:780,y:300,w:120,h:18},
-
-            {x:430,y:220,w:140,h:18}
-
-        ],
-
-        key:{x:850,y:260,visible:false},
-
-        bossEye:{
-
-            x:700,
-
-            y:160,
-
-            vx:0,
-
-            vy:0,
-
-            health:5,
-
-            attackTimer:0,
-
-            stunned:0,
-
-            copies:false
-
-        },
-
-        projectiles:[],
-
-        icecream:null,
-
-        mirror:false,
-
-        weakPoint:false,
-
-        gate:false
-
-    };
-
-
-    bossRunning=true;
-
-    requestAnimationFrame(bossLoop);
-
+            message(
+                "KEY PICKED UP. DRAG IT TO THE DOOR."
+            );
+        }
+    );
 }
 
 
-function bossLoop(){
+if ($("#arcadeCanvas")) {
 
-    if(!bossRunning)return;
+    $("#arcadeCanvas").addEventListener(
+        "click",
+        (event) => {
+
+            if (
+                state.stage !== "arcade" ||
+                state.level !== 3 ||
+                doorOpen
+            ) {
+                return;
+            }
+
+
+            const rect =
+                canvas.getBoundingClientRect();
+
+
+            const x =
+                Math.floor(
+                    (event.clientX - rect.left) /
+                    TILE
+                );
+
+
+            const y =
+                Math.floor(
+                    (event.clientY - rect.top) /
+                    TILE
+                );
+
+
+            /*
+               Click/drag target = door.
+            */
+
+            if (
+                x === 14 &&
+                y === 7
+            ) {
+
+                if (
+                    keyArmed ||
+                    state.tools.key > 0
+                ) {
+
+                    doorOpen = true;
+
+                    keyArmed = false;
+
+                    if (
+                        state.tools.key > 0
+                    ) {
+                        state.tools.key--;
+                    }
+
+                    renderTools();
+
+                    message(
+                        "KEY INSERTED. DOOR OPEN."
+                    );
+
+                } else {
+
+                    message(
+                        "LOCKED. FIND THE KEY."
+                    );
+                }
+
+
+                drawMaze();
+            }
+        }
+    );
+}
+
+
+/* =========================================================
+   UNIVERSAL PC CONTROLS — WASD + ARROWS
+   ========================================================= */
+
+document.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (
+            state.stage !== "arcade"
+        ) {
+            return;
+        }
+
+
+        const direction = {
+
+            ArrowUp: [0, -1],
+            ArrowDown: [0, 1],
+            ArrowLeft: [-1, 0],
+            ArrowRight: [1, 0],
+
+            w: [0, -1],
+            W: [0, -1],
+
+            s: [0, 1],
+            S: [0, 1],
+
+            a: [-1, 0],
+            A: [-1, 0],
+
+            d: [1, 0],
+            D: [1, 0]
+
+        }[event.key];
+
+
+        if (direction) {
+
+            event.preventDefault();
+
+            movePlayer(
+                direction[0],
+                direction[1]
+            );
+        }
+    }
+);
+
+
+/* =========================================================
+   MOBILE CONTROLS
+   ========================================================= */
+
+$$("[data-dir]").forEach(
+    (button) => {
+
+        button.onclick = () => {
+
+            const direction = {
+
+                up: [0, -1],
+                down: [0, 1],
+                left: [-1, 0],
+                right: [1, 0]
+
+            }[button.dataset.dir];
+
+
+            if (direction) {
+
+                movePlayer(
+                    direction[0],
+                    direction[1]
+                );
+            }
+        };
+    }
+);
+
+
+/* =========================================================
+   BOSS — THE RED EYE
+   ========================================================= */
+
+let bossCanvas;
+let bossCtx;
+let boss;
+let bossRunning = false;
+
+
+function startBoss() {
+
+    show("#bossScreen");
+
+
+    state.level = 6;
+
+
+    state.boss = {
+
+        lives: 3,
+
+        health: 5,
+
+        phase: 1,
+
+        scanner: false,
+
+        mirror: false,
+
+        icecream: false,
+
+        defeated: false
+    };
+
+
+    if ($("#bossLives")) {
+        $("#bossLives").textContent = "3";
+    }
+
+
+    if ($("#bossHealth")) {
+        $("#bossHealth").textContent = "5";
+    }
+
+
+    if ($("#bossMessage")) {
+
+        $("#bossMessage").textContent =
+            "THE FINAL GUARDIAN IS AWAKE.";
+    }
+
+
+    bossCanvas =
+        $("#bossCanvas");
+
+
+    if (!bossCanvas) return;
+
+
+    bossCtx =
+        bossCanvas.getContext("2d");
+
+
+    bossCanvas.width = 960;
+    bossCanvas.height = 540;
+
+
+    boss = {
+
+        x: 100,
+        y: 390,
+
+        vx: 0,
+        vy: 0,
+
+        width: 25,
+        height: 42,
+
+        grounded: false,
+
+        invulnerable: 0,
+
+        platforms: [
+
+            {
+                x: 0,
+                y: 485,
+                w: 960,
+                h: 55
+            },
+
+            {
+                x: 120,
+                y: 400,
+                w: 170,
+                h: 18
+            },
+
+            {
+                x: 360,
+                y: 330,
+                w: 150,
+                h: 18
+            },
+
+            {
+                x: 580,
+                y: 410,
+                w: 170,
+                h: 18
+            },
+
+            {
+                x: 780,
+                y: 300,
+                w: 120,
+                h: 18
+            },
+
+            {
+                x: 430,
+                y: 220,
+                w: 140,
+                h: 18
+            }
+        ],
+
+
+        key: {
+
+            x: 850,
+            y: 260,
+
+            visible: false
+        },
+
+
+        gate: false,
+
+
+        eye: {
+
+            x: 700,
+            y: 160,
+
+            health: 5,
+
+            attackTimer: 0,
+
+            stunned: 0
+        },
+
+
+        projectiles: [],
+
+        shots: [],
+
+        icecream: null
+    };
+
+
+    bossRunning = true;
+
+    requestAnimationFrame(
+        bossLoop
+    );
+}
+
+
+function bossLoop() {
+
+    if (!bossRunning) {
+        return;
+    }
+
 
     updateBoss();
 
     drawBoss();
 
-    requestAnimationFrame(bossLoop);
 
+    requestAnimationFrame(
+        bossLoop
+    );
 }
 
 
-function updateBoss(){
+/* =========================================================
+   BOSS UPDATE
+   ========================================================= */
 
-    boss.frame++;
+function updateBoss() {
 
+    /*
+       Gravity.
+    */
 
-    /* PLAYER */
+    boss.vy += 0.65;
 
-    boss.vy+=0.65;
-
-    boss.x+=boss.vx;
-
-    boss.y+=boss.vy;
-
-    boss.vx*=0.82;
-
-
-    if(boss.x<0)boss.x=0;
-
-    if(boss.x>935)boss.x=935;
+    boss.x += boss.vx;
+    boss.y += boss.vy;
 
 
-    boss.grounded=false;
+    boss.vx *= 0.82;
 
 
-    boss.platforms.forEach(p=>{
+    /*
+       Screen boundaries.
+    */
 
-        if(
+    if (boss.x < 0) {
+        boss.x = 0;
+    }
 
-            boss.x+boss.width>p.x &&
 
-            boss.x<p.x+p.w &&
+    if (boss.x > 935) {
+        boss.x = 935;
+    }
 
-            boss.y+boss.height>=p.y &&
 
-            boss.y+boss.height<=p.y+25 &&
+    /*
+       Platforms.
+    */
 
-            boss.vy>=0
+    boss.grounded = false;
 
-        ){
 
-            boss.y=p.y-boss.height;
+    for (
+        const platform of boss.platforms
+    ) {
 
-            boss.vy=0;
+        if (
 
-            boss.grounded=true;
+            boss.x + boss.width >
+                platform.x &&
 
+            boss.x <
+                platform.x + platform.w &&
+
+            boss.y + boss.height >=
+                platform.y &&
+
+            boss.y + boss.height <=
+                platform.y + 25 &&
+
+            boss.vy >= 0
+
+        ) {
+
+            boss.y =
+                platform.y -
+                boss.height;
+
+            boss.vy = 0;
+
+            boss.grounded = true;
         }
-
-    });
-
-
-    /* EYE */
-
-    const eye=boss.bossEye;
+    }
 
 
-    if(eye.stunned>0){
+    const eye =
+        boss.eye;
+
+
+    /*
+       Eye moves independently.
+    */
+
+    if (
+        eye.stunned > 0
+    ) {
 
         eye.stunned--;
 
-    }else{
+    } else {
 
-        const targetX=boss.x+boss.width/2;
+        /*
+           Phase increases speed.
+        */
 
-        eye.x+=(targetX-eye.x)*0.012;
+        const speed =
+            state.boss.phase === 1
+                ? 0.012
+                : state.boss.phase === 2
+                    ? 0.020
+                    : 0.030;
+
+
+        eye.x +=
+            (
+                boss.x + 12 -
+                eye.x
+            ) * speed;
 
 
         eye.attackTimer++;
 
 
-        if(
-            eye.attackTimer>100
-        ){
+        const attackDelay =
+            state.boss.phase === 1
+                ? 115
+                : state.boss.phase === 2
+                    ? 90
+                    : 65;
 
-            eye.attackTimer=0;
+
+        if (
+            eye.attackTimer >
+            attackDelay
+        ) {
+
+            eye.attackTimer = 0;
 
             fireEyeProjectile();
-
         }
-
     }
 
 
-    /* PROJECTILES */
+    /*
+       Eye projectiles.
+    */
 
-    boss.projectiles.forEach(p=>{
+    boss.projectiles.forEach(
+        (projectile) => {
 
-        p.x+=p.vx;
+            projectile.x +=
+                projectile.vx;
 
-        p.y+=p.vy;
+            projectile.y +=
+                projectile.vy;
+        }
+    );
 
-    });
 
-
-    boss.projectiles=
+    boss.projectiles =
         boss.projectiles.filter(
-            p=>p.x>-50&&p.x<1010
+            (projectile) =>
+                projectile.x > -50 &&
+                projectile.x < 1010 &&
+                projectile.y > -50 &&
+                projectile.y < 590
         );
 
 
-    /* PROJECTILE COLLISION */
+    /*
+       Player hit.
+    */
 
-    if(
-        boss.invulnerable<=0
-    ){
+    if (
+        boss.invulnerable <= 0
+    ) {
 
-        boss.projectiles.forEach(p=>{
+        for (
+            const projectile
+            of boss.projectiles
+        ) {
 
-            if(
+            if (
 
-                p.x>boss.x &&
+                projectile.x >
+                    boss.x &&
 
-                p.x<boss.x+boss.width &&
+                projectile.x <
+                    boss.x +
+                    boss.width &&
 
-                p.y>boss.y &&
+                projectile.y >
+                    boss.y &&
 
-                p.y<boss.y+boss.height
+                projectile.y <
+                    boss.y +
+                    boss.height
 
-            ){
+            ) {
 
                 loseLife();
 
+                break;
             }
+        }
 
-        });
-
-    }else{
+    } else {
 
         boss.invulnerable--;
-
     }
 
 
-    /* ICE CREAM */
+    /*
+       Flip-flop projectiles.
+    */
 
-    if(
+    boss.shots.forEach(
+        (projectile) => {
+
+            projectile.x +=
+                projectile.vx;
+
+            projectile.y +=
+                projectile.vy;
+        }
+    );
+
+
+    boss.shots =
+        boss.shots.filter(
+            (projectile) =>
+                projectile.x > -30 &&
+                projectile.x < 990 &&
+                projectile.y > -30 &&
+                projectile.y < 570
+        );
+
+
+    /*
+       Weak-point collision.
+    */
+
+    for (
+        const projectile
+        of boss.shots
+    ) {
+
+        if (
+
+            Math.hypot(
+                projectile.x - eye.x,
+                projectile.y - eye.y
+            ) < 65 &&
+
+            eye.health > 0 &&
+
+            state.boss.scanner &&
+
+            eye.stunned <= 0
+
+        ) {
+
+            eye.health--;
+
+            $("#bossHealth").textContent =
+                eye.health;
+
+
+            eye.stunned = 50;
+
+            projectile.hit = true;
+
+
+            bossMessage(
+                "FLIP-FLOP HIT! THE EYE SCREAMS."
+            );
+
+
+            /*
+               New boss phase.
+            */
+
+            if (
+                eye.health <= 3
+            ) {
+
+                state.boss.phase = 2;
+            }
+
+
+            if (
+                eye.health <= 1
+            ) {
+
+                state.boss.phase = 3;
+            }
+
+
+            /*
+               Boss defeated.
+            */
+
+            if (
+                eye.health <= 0
+            ) {
+
+                boss.key.visible = true;
+
+                bossMessage(
+                    "THE EYE IS WEAK. THE KEY HAS APPEARED."
+                );
+            }
+        }
+    }
+
+
+    boss.shots =
+        boss.shots.filter(
+            (projectile) =>
+                !projectile.hit
+        );
+
+
+    /*
+       Ice cream distracts Eye.
+    */
+
+    if (
         boss.icecream &&
-        boss.icecream.time>0
-    ){
+        boss.icecream.time > 0
+    ) {
 
         boss.icecream.time--;
 
-        eye.x+=
-            (boss.icecream.x-eye.x)*0.04;
 
+        eye.x +=
+            (
+                boss.icecream.x -
+                eye.x
+            ) * 0.035;
+
+    } else if (
+        boss.icecream
+    ) {
+
+        boss.icecream = null;
     }
 
 
-    /* KEY */
+    /*
+       Pick up key.
+    */
 
-    if(
-        Math.abs(boss.x-boss.key.x)<35 &&
-        Math.abs(boss.y-boss.key.y)<45
-    ){
+    if (
 
-        boss.key.visible=false;
+        boss.key.visible &&
 
-        boss.gate=true;
+        Math.abs(
+            boss.x -
+            boss.key.x
+        ) < 35 &&
+
+        Math.abs(
+            boss.y -
+            boss.key.y
+        ) < 55
+
+    ) {
+
+        boss.key.visible = false;
+
+        boss.gate = true;
+
 
         bossMessage(
             "KEY FOUND. REACH THE FINAL GATE."
         );
-
     }
 
 
-    /* GATE */
+    /*
+       Exit.
+    */
 
-    if(
+    if (
         boss.gate &&
-        boss.x>900 &&
-        boss.y>420
-    ){
+        boss.x > 900 &&
+        boss.y > 420
+    ) {
 
         bossDefeated();
-
     }
-
-
-    /* BOSS PHASES */
-
-    if(eye.health<=3){
-
-        state.boss.phase=2;
-
-    }
-
-    if(eye.health<=1){
-
-        state.boss.phase=3;
-
-    }
-
 }
 
 
 /* =========================================================
-   BOSS PROJECTILES
+   EYE ATTACK
    ========================================================= */
 
-function fireEyeProjectile(){
+function fireEyeProjectile() {
 
-    const eye=boss.bossEye;
+    const eye =
+        boss.eye;
 
-    const dx=
-        boss.x-eye.x;
 
-    const dy=
-        boss.y-eye.y;
+    const dx =
+        boss.x -
+        eye.x;
 
-    const distance=
-        Math.sqrt(dx*dx+dy*dy)||1;
+
+    const dy =
+        boss.y -
+        eye.y;
+
+
+    const distance =
+        Math.hypot(dx, dy) || 1;
+
+
+    const projectileSpeed =
+        state.boss.phase === 3
+            ? 5
+            : state.boss.phase === 2
+                ? 4.2
+                : 3.5;
 
 
     boss.projectiles.push({
 
-        x:eye.x,
+        x: eye.x,
 
-        y:eye.y,
+        y: eye.y,
 
-        vx:(dx/distance)*4,
+        vx:
+            dx / distance *
+            projectileSpeed,
 
-        vy:(dy/distance)*4
-
+        vy:
+            dy / distance *
+            projectileSpeed
     });
-
 }
 
 
@@ -1316,635 +1893,766 @@ function fireEyeProjectile(){
    BOSS LIFE
    ========================================================= */
 
-function loseLife(){
+function loseLife() {
 
-    boss.invulnerable=100;
+    boss.invulnerable = 100;
 
     boss.lives--;
 
-    $("#bossLives").textContent=
+
+    $("#bossLives").textContent =
         boss.lives;
 
 
-    boss.x=100;
+    boss.x = 100;
+    boss.y = 390;
 
-    boss.y=390;
-
-    boss.vy=0;
+    boss.vy = 0;
 
 
-    if(boss.lives<=0){
+    if (
+        boss.lives <= 0
+    ) {
 
-        boss.lives=3;
+        /*
+           Make it forgiving.
 
-        $("#bossLives").textContent="3";
+           She doesn't lose the entire boss fight.
+        */
+
+        boss.lives = 3;
+
+        $("#bossLives").textContent =
+            "3";
+
 
         bossMessage(
             "THE EYE RESET YOU. TRY AGAIN."
         );
 
-    }else{
+    } else {
 
         bossMessage(
             "HIT. KEEP GOING."
         );
-
     }
-
 }
+
+
+/* =========================================================
+   BOSS MOVEMENT
+   ========================================================= */
+
+function bossLeft() {
+
+    if (!boss) return;
+
+    boss.vx = -4;
+}
+
+
+function bossRight() {
+
+    if (!boss) return;
+
+    boss.vx = 4;
+}
+
+
+function bossJump() {
+
+    if (
+        boss &&
+        boss.grounded
+    ) {
+
+        boss.vy = -12;
+    }
+}
+
+
+/* =========================================================
+   BOSS BUTTONS
+   ========================================================= */
+
+$$("[data-boss-key]").forEach(
+    (button) => {
+
+        button.onclick = () => {
+
+            const key =
+                button.dataset.bossKey;
+
+
+            if (
+                key === "left"
+            ) {
+                bossLeft();
+            }
+
+
+            if (
+                key === "right"
+            ) {
+                bossRight();
+            }
+
+
+            if (
+                key === "jump"
+            ) {
+                bossJump();
+            }
+        };
+    }
+);
+
+
+/* =========================================================
+   BOSS KEYBOARD
+   ========================================================= */
+
+document.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (
+            state.stage !==
+            "bossScreen"
+        ) {
+            return;
+        }
+
+
+        if (
+            event.key === "ArrowLeft" ||
+            event.key === "a" ||
+            event.key === "A"
+        ) {
+
+            bossLeft();
+        }
+
+
+        if (
+            event.key === "ArrowRight" ||
+            event.key === "d" ||
+            event.key === "D"
+        ) {
+
+            bossRight();
+        }
+
+
+        if (
+            event.key === "ArrowUp" ||
+            event.key === "w" ||
+            event.key === "W" ||
+            event.key === " "
+        ) {
+
+            event.preventDefault();
+
+            bossJump();
+        }
+    }
+);
 
 
 /* =========================================================
    BOSS TOOLS
    ========================================================= */
 
-$$("[data-boss-tool]").forEach(button=>{
+$$("[data-boss-tool]").forEach(
+    (button) => {
 
-    button.onclick=()=>{
+        button.onclick = () => {
 
-        useBossTool(
-            button.dataset.bossTool
-        );
+            useBossTool(
+                button.dataset.bossTool
+            );
+        };
+    }
+);
 
-    };
 
-});
+function useBossTool(tool) {
 
+    /*
+       SCANNER
+    */
 
-function useBossTool(tool){
+    if (
+        tool === "scanner"
+    ) {
 
-    if(tool==="scanner"){
+        state.boss.scanner =
+            true;
 
-        state.boss.scanner=true;
-
-        boss.bossEye.weakPoint=true;
 
         bossMessage(
             "SCANNER: WEAK POINT REVEALED."
         );
 
+
+        return;
     }
 
 
-    if(tool==="flipflop"){
+    /*
+       FLIP-FLOP
+    */
 
-        if(!state.boss.scanner){
+    if (
+        tool === "flipflop"
+    ) {
+
+        if (
+            !state.boss.scanner
+        ) {
 
             bossMessage(
                 "SCAN THE EYE FIRST."
             );
 
             return;
-
         }
 
 
-        if(
-            Math.abs(
-                boss.x-boss.bossEye.x
-            )<180
-        ){
-
-            boss.bossEye.health--;
-
-            $("#bossHealth").textContent=
-                boss.bossEye.health;
-
-            boss.bossEye.stunned=60;
-
-            bossMessage(
-                "FLIP-FLOP HIT! THE EYE SCREAMS."
-            );
+        const dx =
+            boss.eye.x -
+            (boss.x + 12);
 
 
-            if(boss.bossEye.health<=0){
+        const dy =
+            boss.eye.y -
+            (boss.y + 20);
 
-                boss.key.visible=true;
 
-                bossMessage(
-                    "THE EYE IS WEAK. THE KEY HAS APPEARED."
-                );
+        const distance =
+            Math.hypot(dx, dy) || 1;
 
-            }
 
-        }else{
+        boss.shots.push({
 
-            bossMessage(
-                "GET CLOSER TO THE EYE."
-            );
+            x:
+                boss.x + 12,
 
-        }
+            y:
+                boss.y + 20,
 
+            vx:
+                dx / distance * 9,
+
+            vy:
+                dy / distance * 9
+        });
+
+
+        bossMessage(
+            "THROW!"
+        );
+
+
+        return;
     }
 
 
-    if(tool==="icecream"){
+    /*
+       ICE CREAM
+    */
 
-        state.boss.icecream=true;
+    if (
+        tool === "icecream"
+    ) {
 
-        boss.icecream={
+        boss.icecream = {
 
-            x:boss.x,
+            x: boss.x,
 
-            y:boss.y,
+            y: boss.y,
 
-            time:300
-
+            time: 300
         };
+
+
+        state.boss.icecream =
+            true;
+
 
         bossMessage(
             "ICE CREAM! THE EYE IS DISTRACTED."
         );
 
+
+        return;
     }
 
 
-    if(tool==="mirror"){
+    /*
+       MIRROR
+    */
 
-        state.boss.mirror=true;
+    if (
+        tool === "mirror"
+    ) {
 
-        boss.bossEye.copies=true;
+        state.boss.mirror =
+            true;
+
 
         bossMessage(
             "MIRROR ACTIVE. THE REAL EYE IS REVEALED."
         );
 
+
+        return;
     }
 
 
-    if(tool==="key"){
+    /*
+       KEY
+    */
 
-        if(boss.key.visible){
+    if (
+        tool === "key"
+    ) {
 
-            boss.gate=true;
+        if (
+            boss.key.visible
+        ) {
+
+            boss.gate = true;
+
 
             bossMessage(
-                "THE KEY IS READY. FIND THE FINAL GATE."
+                "KEY READY. FIND THE FINAL GATE."
             );
 
-        }else{
+        } else {
 
             bossMessage(
                 "THE KEY HAS NOT APPEARED YET."
             );
-
         }
-
     }
-
 }
 
 
 /* =========================================================
-   BOSS MESSAGE
+   GIRL CHARACTER
+   Blonde hair + little hat
    ========================================================= */
 
-function bossMessage(text){
+function drawGirl(context) {
 
-    $("#bossMessage").textContent=text;
-
-}
-
-
-/* =========================================================
-   BOSS CONTROLS
-   ========================================================= */
-
-function bossLeft(){
-
-    boss.vx=-4;
-
-}
-
-function bossRight(){
-
-    boss.vx=4;
-
-}
-
-function bossJump(){
-
-    if(boss.grounded){
-
-        boss.vy=-12;
-
-    }
-
-}
+    const x = boss.x;
+    const y = boss.y;
 
 
-$$("[data-boss-key]").forEach(button=>{
+    /*
+       Shadow.
+    */
 
-    button.onclick=()=>{
+    context.fillStyle =
+        "#0008";
 
-        const k=button.dataset.bossKey;
+    context.beginPath();
 
-        if(k==="left")bossLeft();
-
-        if(k==="right")bossRight();
-
-        if(k==="jump")bossJump();
-
-    };
-
-});
-
-
-document.addEventListener("keydown",e=>{
-
-    if(state.stage!=="bossScreen")return;
-
-    if(e.key==="ArrowLeft"||e.key==="a"){
-
-        bossLeft();
-
-    }
-
-    if(e.key==="ArrowRight"||e.key==="d"){
-
-        bossRight();
-
-    }
-
-    if(
-        e.key==="ArrowUp"||
-        e.key==="w"||
-        e.key===" "
-    ){
-
-        bossJump();
-
-    }
-
-});
-
-
-/* =========================================================
-   DRAW THE LITTLE GIRL
-   ========================================================= */
-
-function drawGirl(c){
-
-    const x=boss.x;
-
-    const y=boss.y;
-
-
-    /* shadow */
-
-    c.fillStyle="#0008";
-
-    c.beginPath();
-
-    c.ellipse(
-        x+13,
-        y+43,
+    context.ellipse(
+        x + 13,
+        y + 43,
         17,
         4,
         0,
         0,
-        Math.PI*2
+        Math.PI * 2
     );
 
-    c.fill();
+    context.fill();
 
 
-    /* legs */
+    /*
+       Legs.
+    */
 
-    c.fillStyle="#222";
+    context.fillStyle =
+        "#222";
 
-    c.fillRect(
-        x+6,
-        y+30,
+    context.fillRect(
+        x + 6,
+        y + 30,
         6,
         12
     );
 
-    c.fillRect(
-        x+16,
-        y+30,
+    context.fillRect(
+        x + 16,
+        y + 30,
         6,
         12
     );
 
 
-    /* shoes */
+    /*
+       Shoes.
+    */
 
-    c.fillStyle="#111";
+    context.fillStyle =
+        "#111";
 
-    c.fillRect(
-        x+3,
-        y+40,
+    context.fillRect(
+        x + 3,
+        y + 40,
         10,
         5
     );
 
-    c.fillRect(
-        x+16,
-        y+40,
+    context.fillRect(
+        x + 16,
+        y + 40,
         10,
         5
     );
 
 
-    /* dress */
+    /*
+       Dress.
+    */
 
-    c.fillStyle="#b9b9c7";
+    context.fillStyle =
+        "#b9b9c7";
 
-    c.beginPath();
+    context.beginPath();
 
-    c.moveTo(x+5,y+19);
+    context.moveTo(
+        x + 5,
+        y + 19
+    );
 
-    c.lineTo(x+23,y+19);
+    context.lineTo(
+        x + 23,
+        y + 19
+    );
 
-    c.lineTo(x+28,y+36);
+    context.lineTo(
+        x + 28,
+        y + 36
+    );
 
-    c.lineTo(x+2,y+36);
+    context.lineTo(
+        x + 2,
+        y + 36
+    );
 
-    c.closePath();
+    context.closePath();
 
-    c.fill();
+    context.fill();
 
 
-    /* arms */
+    /*
+       Arms.
+    */
 
-    c.fillStyle="#f0c6a0";
+    context.fillStyle =
+        "#f0c6a0";
 
-    c.fillRect(
+    context.fillRect(
         x,
-        y+20,
+        y + 20,
         6,
         13
     );
 
-    c.fillRect(
-        x+23,
-        y+20,
+    context.fillRect(
+        x + 23,
+        y + 20,
         6,
         13
     );
 
 
-    /* neck */
+    /*
+       Neck.
+    */
 
-    c.fillRect(
-        x+11,
-        y+14,
+    context.fillRect(
+        x + 11,
+        y + 14,
         8,
         8
     );
 
 
-    /* hair */
+    /*
+       Blonde hair.
+    */
 
-    c.fillStyle="#f0c94f";
+    context.fillStyle =
+        "#f0c94f";
 
-    c.fillRect(
-        x+4,
-        y+2,
+    context.fillRect(
+        x + 4,
+        y + 2,
         23,
         17
     );
 
-    c.fillRect(
-        x+1,
-        y+8,
+    context.fillRect(
+        x + 1,
+        y + 8,
         7,
         19
     );
 
-    c.fillRect(
-        x+24,
-        y+8,
+    context.fillRect(
+        x + 24,
+        y + 8,
         7,
         19
     );
 
 
-    /* face */
+    /*
+       Face.
+    */
 
-    c.fillStyle="#f0c6a0";
+    context.fillStyle =
+        "#f0c6a0";
 
-    c.fillRect(
-        x+8,
-        y+7,
+    context.fillRect(
+        x + 8,
+        y + 7,
         16,
         14
     );
 
 
-    /* eyes */
+    /*
+       Eyes.
+    */
 
-    c.fillStyle="#111";
+    context.fillStyle =
+        "#111";
 
-    c.fillRect(
-        x+11,
-        y+13,
+    context.fillRect(
+        x + 11,
+        y + 13,
         2,
         2
     );
 
-    c.fillRect(
-        x+19,
-        y+13,
+    context.fillRect(
+        x + 19,
+        y + 13,
         2,
         2
     );
 
 
-    /* hat */
+    /*
+       Little hat.
+    */
 
-    c.fillStyle="#b42a38";
+    context.fillStyle =
+        "#b42a38";
 
-    c.fillRect(
-        x+4,
+    context.fillRect(
+        x + 4,
         y,
         24,
         6
     );
 
-    c.fillRect(
-        x+9,
-        y-5,
+    context.fillRect(
+        x + 9,
+        y - 5,
         13,
         6
     );
-
 }
 
 
 /* =========================================================
-   DRAW THE GIANT RED EYE
+   RED EYE
    ========================================================= */
 
-function drawBossEye(c){
+function drawBossEye(context) {
 
-    const eye=boss.bossEye;
-
-    const x=eye.x;
-
-    const y=eye.y;
+    const eye =
+        boss.eye;
 
 
-    /* aura */
-
-    c.shadowBlur=35;
-
-    c.shadowColor="#f00000";
+    const x =
+        eye.x;
 
 
-    /* outer eye */
+    const y =
+        eye.y;
 
-    c.fillStyle="#eee";
 
-    c.beginPath();
+    /*
+       Glow.
+    */
 
-    c.ellipse(
+    context.shadowBlur =
+        35;
+
+    context.shadowColor =
+        "#f00000";
+
+
+    /*
+       White eye.
+    */
+
+    context.fillStyle =
+        "#eee";
+
+    context.beginPath();
+
+    context.ellipse(
         x,
         y,
         125,
         70,
         0,
         0,
-        Math.PI*2
+        Math.PI * 2
     );
 
-    c.fill();
+    context.fill();
 
 
-    /* red iris */
+    /*
+       Red iris.
+    */
 
-    c.fillStyle="#c00000";
+    context.fillStyle =
+        "#c00000";
 
-    c.beginPath();
+    context.beginPath();
 
-    c.arc(
+    context.arc(
         x,
         y,
         52,
         0,
-        Math.PI*2
+        Math.PI * 2
     );
 
-    c.fill();
+    context.fill();
 
 
-    /* iris detail */
+    /*
+       Pupil.
+    */
 
-    c.strokeStyle="#600";
+    context.fillStyle =
+        "#050000";
 
-    c.lineWidth=7;
+    context.beginPath();
 
-    c.beginPath();
-
-    c.arc(
-        x,
-        y,
-        38,
-        0,
-        Math.PI*2
-    );
-
-    c.stroke();
-
-
-    /* pupil */
-
-    c.fillStyle="#050000";
-
-    c.beginPath();
-
-    c.arc(
+    context.arc(
         x,
         y,
         22,
         0,
-        Math.PI*2
+        Math.PI * 2
     );
 
-    c.fill();
+    context.fill();
 
 
-    c.shadowBlur=0;
+    context.shadowBlur = 0;
 
 
-    /* weak point */
+    /*
+       Scanner reveals weak point.
+    */
 
-    if(
+    if (
         state.boss.scanner &&
-        eye.health>0
-    ){
+        eye.health > 0
+    ) {
 
-        c.strokeStyle="#fff";
+        context.strokeStyle =
+            "#fff";
 
-        c.lineWidth=3;
+        context.lineWidth = 3;
 
-        c.beginPath();
+        context.beginPath();
 
-        c.arc(
+        context.arc(
             x,
-            y-2,
+            y,
             68,
             0,
-            Math.PI*2
+            Math.PI * 2
         );
 
-        c.stroke();
-
+        context.stroke();
     }
 
 
-    /* copies */
+    /*
+       Mirror effect.
+    */
 
-    if(
+    if (
         state.boss.mirror &&
-        state.boss.phase>=2
-    ){
+        state.boss.phase >= 2
+    ) {
 
-        c.globalAlpha=.18;
+        context.globalAlpha =
+            0.18;
 
-        c.fillStyle="#f00";
+        context.fillStyle =
+            "#f00";
 
-        c.beginPath();
 
-        c.arc(
-            x-190,
-            y+50,
+        context.beginPath();
+
+        context.arc(
+            x - 190,
+            y + 50,
             50,
             0,
-            Math.PI*2
+            Math.PI * 2
         );
 
-        c.fill();
+        context.fill();
 
-        c.beginPath();
 
-        c.arc(
-            x+190,
-            y+80,
+        context.beginPath();
+
+        context.arc(
+            x + 190,
+            y + 80,
             50,
             0,
-            Math.PI*2
+            Math.PI * 2
         );
 
-        c.fill();
+        context.fill();
 
-        c.globalAlpha=1;
 
+        context.globalAlpha = 1;
     }
-
 }
 
 
 /* =========================================================
-   DRAW BOSS LEVEL
+   DRAW BOSS
    ========================================================= */
 
-function drawBoss(){
+function drawBoss() {
 
-    const c=bossCtx;
+    const context =
+        bossCtx;
 
-    c.clearRect(
+
+    context.clearRect(
         0,
         0,
         960,
@@ -1952,11 +2660,14 @@ function drawBoss(){
     );
 
 
-    /* sky */
+    /*
+       Background.
+    */
 
-    c.fillStyle="#080008";
+    context.fillStyle =
+        "#080008";
 
-    c.fillRect(
+    context.fillRect(
         0,
         0,
         960,
@@ -1964,180 +2675,170 @@ function drawBoss(){
     );
 
 
-    /* distant red glow */
+    /*
+       Platforms.
+    */
 
-    const gradient=
-        c.createRadialGradient(
-            700,
-            170,
-            20,
-            700,
-            170,
-            400
-        );
+    boss.platforms.forEach(
+        (platform) => {
 
-    gradient.addColorStop(
-        0,
-        "rgba(150,0,0,.28)"
+            context.fillStyle =
+                "#24242d";
+
+            context.fillRect(
+                platform.x,
+                platform.y,
+                platform.w,
+                platform.h
+            );
+
+
+            context.fillStyle =
+                "#555";
+
+            context.fillRect(
+                platform.x,
+                platform.y,
+                platform.w,
+                3
+            );
+        }
     );
 
-    gradient.addColorStop(
-        1,
-        "rgba(0,0,0,0)"
-    );
 
-    c.fillStyle=gradient;
+    /*
+       Final gate.
+    */
 
-    c.fillRect(
-        0,
-        0,
-        960,
-        540
-    );
+    if (boss.gate) {
 
+        context.fillStyle =
+            "#777";
 
-    /* platforms */
-
-    boss.platforms.forEach(p=>{
-
-        c.fillStyle="#24242d";
-
-        c.fillRect(
-            p.x,
-            p.y,
-            p.w,
-            p.h
-        );
-
-        c.fillStyle="#555";
-
-        c.fillRect(
-            p.x,
-            p.y,
-            p.w,
-            3
-        );
-
-    });
-
-
-    /* final gate */
-
-    if(boss.gate){
-
-        c.fillStyle="#777";
-
-        c.fillRect(
+        context.fillRect(
             910,
             390,
             35,
             95
         );
 
-        c.fillStyle="#f00";
 
-        c.fillRect(
+        context.fillStyle =
+            "#f00";
+
+        context.fillRect(
             920,
             430,
             12,
             12
         );
-
     }
 
 
-    /* key */
+    /*
+       Key.
+    */
 
-    if(boss.key.visible){
+    if (
+        boss.key.visible
+    ) {
 
-        c.font="30px serif";
+        context.font =
+            "30px serif";
 
-        c.fillText(
+        context.fillText(
             "🔑",
             boss.key.x,
             boss.key.y
         );
-
     }
 
 
-    /* ice cream */
+    /*
+       Ice cream.
+    */
 
-    if(
+    if (
         boss.icecream &&
-        boss.icecream.time>0
-    ){
+        boss.icecream.time > 0
+    ) {
 
-        c.font="30px serif";
+        context.font =
+            "30px serif";
 
-        c.fillText(
+        context.fillText(
             "🍦",
             boss.icecream.x,
             boss.icecream.y
         );
-
     }
 
 
-    /* projectiles */
+    /*
+       Eye projectiles.
+    */
 
-    boss.projectiles.forEach(p=>{
+    boss.projectiles.forEach(
+        (projectile) => {
 
-        c.fillStyle="#f00";
+            context.fillStyle =
+                "#f00";
 
-        c.shadowBlur=15;
+            context.beginPath();
 
-        c.shadowColor="#f00";
+            context.arc(
+                projectile.x,
+                projectile.y,
+                8,
+                0,
+                Math.PI * 2
+            );
 
-        c.beginPath();
-
-        c.arc(
-            p.x,
-            p.y,
-            8,
-            0,
-            Math.PI*2
-        );
-
-        c.fill();
-
-        c.shadowBlur=0;
-
-    });
-
-
-    drawBossEye(c);
-
-    drawGirl(c);
-
-
-    /* HUD phase */
-
-    c.fillStyle="#777";
-
-    c.font="12px monospace";
-
-    c.fillText(
-        "PHASE "+state.boss.phase,
-        15,
-        25
+            context.fill();
+        }
     );
 
 
-    if(
-        state.boss.mirror
-    ){
+    /*
+       Flip-flop projectiles.
+    */
 
-        c.fillStyle="#ddd";
+    boss.shots.forEach(
+        (projectile) => {
 
-        c.fillText(
-            "MIRROR: REAL EYE REVEALED",
-            15,
-            43
-        );
+            context.font =
+                "24px serif";
 
-    }
+            context.fillText(
+                "🩴",
+                projectile.x,
+                projectile.y
+            );
+        }
+    );
 
+
+    drawBossEye(context);
+
+    drawGirl(context);
+
+
+    /*
+       Phase indicator.
+    */
+
+    context.fillStyle =
+        "#777";
+
+    context.font =
+        "12px monospace";
+
+    context.fillText(
+        "PHASE " +
+        state.boss.phase,
+        15,
+        25
+    );
 }
 
 
@@ -2145,100 +2846,154 @@ function drawBoss(){
    BOSS DEFEATED
    ========================================================= */
 
-function bossDefeated(){
+function bossMessage(text) {
 
-    if(state.boss.defeated)return;
+    if ($("#bossMessage")) {
 
-    state.boss.defeated=true;
-
-    bossRunning=false;
-
-    $("#bossOverlayText").textContent=
-        "BOSS DEFEATED";
-
-    $("#bossOverlay").classList.remove("hidden");
-
+        $("#bossMessage").textContent =
+            text;
+    }
 }
 
 
-$("#bossContinue").onclick=()=>{
+function bossDefeated() {
 
-    $("#bossOverlay").classList.add("hidden");
+    if (
+        state.boss.defeated
+    ) {
+        return;
+    }
 
-    show("#mazeScreen");
 
-    startMazeGame();
+    state.boss.defeated =
+        true;
 
-};
+
+    bossRunning = false;
+
+
+    if ($("#bossOverlayText")) {
+
+        $("#bossOverlayText").textContent =
+            "BOSS DEFEATED";
+    }
+
+
+    if ($("#bossOverlay")) {
+
+        $("#bossOverlay")
+            .classList
+            .remove("hidden");
+    }
+}
+
+
+if ($("#bossContinue")) {
+
+    $("#bossContinue").onclick = () => {
+
+        $("#bossOverlay")
+            ?.classList
+            .add("hidden");
+
+
+        show("#mazeScreen");
+
+        startMazeGame();
+    };
+}
 
 
 /* =========================================================
-   MAZE AFTER BOSS
+   VANISHING MAZE
    ========================================================= */
 
 let mazeCtx;
-
 let mazePlayer;
 
-const mazeMap=[
 
-"11111111111",
+const mazeMap = [
 
-"10000000001",
+    "11111111111",
 
-"10111111101",
+    "10000000001",
 
-"10100000101",
+    "10111111101",
 
-"10101110101",
+    "10100000101",
 
-"10100000101",
+    "10101110101",
 
-"10111110101",
+    "10100000101",
 
-"10000000101",
+    "10111110101",
 
-"10111111101",
+    "10000000101",
 
-"10000000001",
+    "10111111101",
 
-"11111111111"
+    "10000000001",
 
+    "11111111111"
 ];
 
 
-function startMazeGame(){
+function startMazeGame() {
 
-    mazeCtx=$("#mazeCanvas").getContext("2d");
+    const mazeCanvas =
+        $("#mazeCanvas");
 
-    mazeCtx.canvas.width=440;
 
-    mazeCtx.canvas.height=440;
+    if (!mazeCanvas) {
+        return;
+    }
 
-    mazePlayer={
-        x:1,
-        y:1
+
+    mazeCtx =
+        mazeCanvas.getContext("2d");
+
+
+    mazeCtx.canvas.width =
+        440;
+
+    mazeCtx.canvas.height =
+        440;
+
+
+    mazePlayer = {
+
+        x: 1,
+        y: 1
     };
 
-    $("#mazeMessage").textContent=
+
+    $("#mazeMessage").textContent =
         "YOU THOUGHT THE EYE WAS THE END.";
 
-    $("#mazeContinue").classList.add("hidden");
+
+    $("#mazeContinue")
+        .classList
+        .add("hidden");
+
 
     drawAfterMaze();
-
 }
 
 
-function drawAfterMaze(){
+function drawAfterMaze() {
 
-    const c=mazeCtx;
+    const context =
+        mazeCtx;
 
-    const size=40;
 
-    c.fillStyle="#000";
+    const size = 40;
 
-    c.fillRect(
+
+    context.fillStyle =
+        "#000";
+
+
+    context.fillRect(
         0,
         0,
         440,
@@ -2246,313 +3001,440 @@ function drawAfterMaze(){
     );
 
 
-    for(
-        let y=0;
-        y<mazeMap.length;
+    for (
+        let y = 0;
+        y < 11;
         y++
-    ){
+    ) {
 
-        for(
-            let x=0;
-            x<11;
+        for (
+            let x = 0;
+            x < 11;
             x++
-        ){
+        ) {
 
-            if(
-                mazeMap[y][x]==="1"
-            ){
+            if (
+                mazeMap[y][x] === "1"
+            ) {
 
-                c.fillStyle="#20202a";
+                context.fillStyle =
+                    "#20202a";
 
-                c.fillRect(
-                    x*size,
-                    y*size,
+                context.fillRect(
+                    x * size,
+                    y * size,
                     size,
                     size
                 );
-
             }
-
         }
-
     }
 
 
-    c.fillStyle="#fff";
+    /*
+       Player.
+    */
 
-    c.fillRect(
-        mazePlayer.x*size+10,
-        mazePlayer.y*size+10,
+    context.fillStyle =
+        "#fff";
+
+    context.fillRect(
+        mazePlayer.x * size + 10,
+        mazePlayer.y * size + 10,
         20,
         20
     );
 
 
-    c.fillStyle="#900";
+    /*
+       Exit.
+    */
 
-    c.fillRect(
-        9*size+10,
-        9*size+10,
+    context.fillStyle =
+        "#900";
+
+    context.fillRect(
+        9 * size + 10,
+        9 * size + 10,
         20,
         20
     );
-
 }
 
 
-function moveAfterMaze(dx,dy){
+function moveAfterMaze(dx, dy) {
 
-    const x=mazePlayer.x+dx;
+    const x =
+        mazePlayer.x + dx;
 
-    const y=mazePlayer.y+dy;
+    const y =
+        mazePlayer.y + dy;
 
 
-    if(
+    if (
         mazeMap[y] &&
-        mazeMap[y][x]==="0"
-    ){
+        mazeMap[y][x] === "0"
+    ) {
 
-        mazePlayer.x=x;
-
-        mazePlayer.y=y;
+        mazePlayer.x = x;
+        mazePlayer.y = y;
 
         drawAfterMaze();
-
     }
 
 
-    if(
-        mazePlayer.x===9 &&
-        mazePlayer.y===9
-    ){
+    if (
+        mazePlayer.x === 9 &&
+        mazePlayer.y === 9
+    ) {
 
-        $("#mazeMessage").textContent=
+        $("#mazeMessage").textContent =
             "EXIT FOUND.";
 
-        $("#mazeContinue").classList.remove(
-            "hidden"
-        );
 
+        $("#mazeContinue")
+            .classList
+            .remove("hidden");
     }
-
 }
 
 
-document.addEventListener("keydown",e=>{
+document.addEventListener(
+    "keydown",
+    (event) => {
 
-    if(state.stage!=="mazeScreen")return;
-
-    const d={
-
-        ArrowUp:[0,-1],
-
-        ArrowDown:[0,1],
-
-        ArrowLeft:[-1,0],
-
-        ArrowRight:[1,0]
-
-    }[e.key];
+        if (
+            state.stage !==
+            "mazeScreen"
+        ) {
+            return;
+        }
 
 
-    if(d){
+        const direction = {
 
-        moveAfterMaze(
-            d[0],
-            d[1]
-        );
+            ArrowUp: [0, -1],
+            ArrowDown: [0, 1],
+            ArrowLeft: [-1, 0],
+            ArrowRight: [1, 0],
 
+            w: [0, -1],
+            W: [0, -1],
+
+            s: [0, 1],
+            S: [0, 1],
+
+            a: [-1, 0],
+            A: [-1, 0],
+
+            d: [1, 0],
+            D: [1, 0]
+
+        }[event.key];
+
+
+        if (direction) {
+
+            event.preventDefault();
+
+            moveAfterMaze(
+                direction[0],
+                direction[1]
+            );
+        }
     }
+);
 
-});
 
+if ($("#mazeContinue")) {
 
-$("#mazeContinue").onclick=()=>{
+    $("#mazeContinue").onclick =
+        () => {
 
-    show("#blackBoxScreen");
-
-};
+            show(
+                "#blackBoxScreen"
+            );
+        };
+}
 
 
 /* =========================================================
    BLACK BOX
    ========================================================= */
 
-let switches=[0,0,0,0];
-
-let dials=[0,0,0];
-
-let symbol=null;
-
-
-$$("[data-switch]").forEach(button=>{
-
-    button.onclick=()=>{
-
-        const i=
-            Number(button.dataset.switch);
-
-        switches[i]^=1;
-
-        button.classList.toggle(
-            "active"
-        );
-
-    };
-
-});
+let switches = [
+    0,
+    0,
+    0,
+    0
+];
 
 
-$$("[data-dial]").forEach(button=>{
-
-    button.onclick=()=>{
-
-        const i=
-            Number(button.dataset.dial);
-
-        dials[i]=
-            (dials[i]+1)%4;
-
-        button.textContent=
-            ["◉","◎","●","○"][dials[i]];
-
-    };
-
-});
+let dials = [
+    0,
+    0,
+    0
+];
 
 
-$$("[data-symbol]").forEach(button=>{
-
-    button.onclick=()=>{
-
-        symbol=
-            button.dataset.symbol;
-
-        $$("[data-symbol]").forEach(
-            x=>x.classList.remove("active")
-        );
-
-        button.classList.add("active");
-
-    };
-
-});
+let selectedSymbol = null;
 
 
-$("#blackButton").onclick=()=>{
+/*
+   Switches.
+*/
 
-    if(
+$$("[data-switch]").forEach(
+    (button) => {
 
-        switches.join("")==="1010" &&
+        button.onclick = () => {
 
-        dials.join("")==="230" &&
+            const index =
+                Number(
+                    button.dataset.switch
+                );
 
-        symbol==="eye"
 
-    ){
+            switches[index] ^= 1;
 
-        $("#blackBoxMessage").textContent=
-            "CONFIGURATION ACCEPTED.";
 
-        setTimeout(
-            ()=>show("#dontPressScreen"),
-            1200
-        );
-
-    }else{
-
-        $("#blackBoxMessage").textContent=
-            "NOTHING HAPPENS.";
-
+            button.classList.toggle(
+                "active"
+            );
+        };
     }
+);
 
-};
+
+/*
+   Dials.
+*/
+
+$$("[data-dial]").forEach(
+    (button) => {
+
+        button.onclick = () => {
+
+            const index =
+                Number(
+                    button.dataset.dial
+                );
+
+
+            dials[index] =
+                (dials[index] + 1) % 4;
+
+
+            const symbols = [
+                "◉",
+                "◎",
+                "●",
+                "○"
+            ];
+
+
+            button.textContent =
+                symbols[dials[index]];
+        };
+    }
+);
+
+
+/*
+   Symbols.
+*/
+
+$$("[data-symbol]").forEach(
+    (button) => {
+
+        button.onclick = () => {
+
+            selectedSymbol =
+                button.dataset.symbol;
+
+
+            $$("[data-symbol]")
+                .forEach(
+                    (item) =>
+                        item.classList.remove(
+                            "active"
+                        )
+                );
+
+
+            button.classList.add(
+                "active"
+            );
+        };
+    }
+);
+
+
+/*
+   Black Box activation.
+
+   The intended solution remains:
+   switches = 1010
+   dials = 230
+   symbol = eye
+*/
+
+if ($("#blackButton")) {
+
+    $("#blackButton").onclick = () => {
+
+        if (
+
+            switches.join("") ===
+                "1010" &&
+
+            dials.join("") ===
+                "230" &&
+
+            selectedSymbol ===
+                "eye"
+
+        ) {
+
+            $("#blackBoxMessage")
+                .textContent =
+                "CONFIGURATION ACCEPTED.";
+
+
+            setTimeout(
+                () =>
+                    show(
+                        "#dontPressScreen"
+                    ),
+                900
+            );
+
+        } else {
+
+            $("#blackBoxMessage")
+                .textContent =
+                "NOTHING HAPPENS.";
+        }
+    };
+}
 
 
 /* =========================================================
    DON'T PRESS
    ========================================================= */
 
-let pressCount=0;
-
-$("#dontPressButton").onclick=()=>{
-
-    pressCount++;
-
-    const lines=[
-
-        "I TOLD YOU NOT TO PRESS IT.",
-
-        "WHY DID YOU PRESS IT?",
-
-        "STOP.",
-
-        "...",
-
-        "THERE IS NO ARCHIVE HERE."
-
-    ];
-
-    $("#dontPressText").textContent=
-        lines[
-            Math.min(
-                pressCount-1,
-                lines.length-1
-            )
-        ];
+let pressCount = 0;
 
 
-    if(pressCount>=5){
+if ($("#dontPressButton")) {
 
-        setTimeout(
-            ()=>show("#questionScreen"),
-            1000
-        );
+    $("#dontPressButton").onclick =
+        () => {
 
-    }
+            pressCount++;
 
-};
+
+            const lines = [
+
+                "I TOLD YOU NOT TO PRESS IT.",
+
+                "WHY DID YOU PRESS IT?",
+
+                "STOP.",
+
+                "...",
+
+                "THERE IS NO ARCHIVE HERE."
+
+            ];
+
+
+            if ($("#dontPressText")) {
+
+                $("#dontPressText")
+                    .textContent =
+                    lines[
+                        Math.min(
+                            pressCount - 1,
+                            4
+                        )
+                    ];
+            }
+
+
+            if (
+                pressCount >= 5
+            ) {
+
+                setTimeout(
+                    () =>
+                        show(
+                            "#questionScreen"
+                        ),
+                    900
+                );
+            }
+        };
+}
 
 
 /* =========================================================
    QUESTION
    ========================================================= */
 
-$("#questionYes").onclick=()=>{
+if ($("#questionYes")) {
 
-    show("#easterEggScreen");
+    $("#questionYes").onclick =
+        () =>
+            show(
+                "#easterEggScreen"
+            );
+}
 
-};
 
+if ($("#questionNo")) {
 
-$("#questionNo").onclick=()=>{
+    $("#questionNo").onclick =
+        () => {
 
-    $("#questionScreen p").textContent=
-        "THAT IS NOT TRUE.";
+            if (
+                $("#questionScreen p")
+            ) {
 
-};
+                $("#questionScreen p")
+                    .textContent =
+                    "THAT IS NOT TRUE.";
+            }
+        };
+}
 
 
 /* =========================================================
    EASTER EGG
    ========================================================= */
 
-$("#eggContinue").onclick=()=>{
+if ($("#eggContinue")) {
 
-    show("#noArchiveScreen");
+    $("#eggContinue").onclick =
+        () => {
 
-    eyeScene();
+            show(
+                "#noArchiveScreen"
+            );
 
-};
+            eyeScene();
+        };
+}
 
 
 /* =========================================================
-   EYE SCENE
+   THE EYE — HIDDEN SEQUENCE
    ========================================================= */
 
-let eyeIndex=0;
+let eyeIndex = 0;
 
-const eyeLines=[
+
+const eyeLines = [
 
     "YOU FOUND ME.",
 
@@ -2565,312 +3447,92 @@ const eyeLines=[
 ];
 
 
-function eyeScene(){
+function eyeScene() {
 
-    eyeIndex=0;
+    eyeIndex = 0;
 
-    $("#eyeContinue").classList.add(
-        "hidden"
-    );
+
+    $("#eyeContinue")
+        ?.classList
+        .add("hidden");
+
 
     nextEyeLine();
-
 }
 
 
-function nextEyeLine(){
+function nextEyeLine() {
 
-    if(
-        eyeIndex>=eyeLines.length
-    ){
+    if (
+        eyeIndex >=
+        eyeLines.length
+    ) {
 
-        $("#eyeContinue").classList.remove(
-            "hidden"
-        );
+        $("#eyeContinue")
+            ?.classList
+            .remove("hidden");
 
         return;
-
     }
 
 
-    $("#eyeText").textContent=
-        eyeLines[eyeIndex];
+    const text =
+        eyeLines[eyeIndex++];
 
-    speak(
-        eyeLines[eyeIndex]
-    );
 
-    eyeIndex++;
+    if ($("#eyeText")) {
+
+        $("#eyeText")
+            .textContent =
+            text;
+    }
+
+
+    speak(text);
+
 
     setTimeout(
         nextEyeLine,
         2200
     );
-
 }
 
 
-$("#eyeContinue").onclick=()=>{
+if ($("#eyeContinue")) {
 
-    show("#nameScreen");
-
-};
+    $("#eyeContinue").onclick =
+        () =>
+            show(
+                "#nameScreen"
+            );
+}
 
 
 /* =========================================================
    VOICE
    ========================================================= */
 
-$("#voiceToggle").onclick=()=>{
+if ($("#voiceToggle")) {
 
-    state.voice=!state.voice;
+    $("#voiceToggle").onclick =
+        () => {
 
-    $("#voiceToggle").textContent=
-        state.voice
-            ? "VOICE ON"
-            : "VOICE OFF";
-
-};
+            state.voice =
+                !state.voice;
 
 
-function speak(text){
+            $("#voiceToggle")
+                .textContent =
+                state.voice
+                    ? "VOICE ON"
+                    : "VOICE OFF";
+        };
+}
 
-    if(
+
+function speak(text) {
+
+    if (
         !state.voice ||
         !("speechSynthesis" in window)
-    )return;
-
-    speechSynthesis.cancel();
-
-    const speech=
-        new SpeechSynthesisUtterance(text);
-
-    speech.rate=.8;
-
-    speech.pitch=.5;
-
-    speech.volume=.8;
-
-    speechSynthesis.speak(
-        speech
-    );
-
-}
-
-
-/* =========================================================
-   NAME
-   ========================================================= */
-
-$("#nameSubmit").onclick=()=>{
-
-    const name=
-        $("#agentName").value.trim();
-
-
-    if(name){
-
-        state.agent=name;
-
-        localStorage.setItem(
-            "agentName",
-            name
-        );
-
-    }
-
-
-    show("#eyeScreen");
-
-    startFinalEye();
-
-};
-
-
-/* =========================================================
-   FINAL EYE
-   ========================================================= */
-
-let dialogueIndex=0;
-
-const dialogue=[
-
-    "HELLO, "+(
-        state.agent || "INVESTIGATOR"
-    )+".",
-
-    "YOU CAME ALL THIS WAY.",
-
-    "YOU DEFEATED MY GUARDIAN.",
-
-    "YOU OPENED THE ARCHIVE.",
-
-    "BUT YOU STILL DON'T KNOW WHAT YOU FOUND."
-
-];
-
-
-function startFinalEye(){
-
-    dialogueIndex=0;
-
-    $("#eyeChoices").classList.add(
-        "hidden"
-    );
-
-    finalDialogue();
-
-}
-
-
-function finalDialogue(){
-
-    if(
-        dialogueIndex>=dialogue.length
-    ){
-
-        $("#eyeChoices").classList.remove(
-            "hidden"
-        );
-
-        return;
-
-    }
-
-
-    let text=dialogue[dialogueIndex];
-
-    if(dialogueIndex===0){
-
-        text=
-            "HELLO, "+
-            (state.agent||"INVESTIGATOR")+
-            ".";
-
-    }
-
-
-    $("#eyeDialogue").textContent=
-        text;
-
-    speak(text);
-
-    dialogueIndex++;
-
-    setTimeout(
-        finalDialogue,
-        2600
-    );
-
-}
-
-
-$$("[data-choice]").forEach(button=>{
-
-    button.onclick=()=>{
-
-        if(
-            button.dataset.choice==="free"
-        ){
-
-            $("#eyeDialogue").textContent=
-                "YOU OPENED THE WRONG DOOR.";
-
-        }else{
-
-            $("#eyeDialogue").textContent=
-                "YOU CANNOT LEAVE.";
-
-        }
-
-
-        setTimeout(
-            startMemory,
-            2500
-        );
-
-    };
-
-});
-
-
-/* =========================================================
-   MEMORY
-   ========================================================= */
-
-function startMemory(){
-
-    show("#memoryScreen");
-
-    const sequence=
-        "17 03 01";
-
-    $("#memorySequence").textContent=
-        sequence;
-
-    $("#memoryMessage").textContent=
-        "REMEMBER THE DATE.";
-
-}
-
-
-$("#memorySubmit").onclick=()=>{
-
-    const answer=
-        $("#memoryInput").value
-        .replace(/\D/g,"");
-
-
-    if(
-        answer==="170301" ||
-        answer==="17032001"
-    ){
-
-        $("#memoryMessage").textContent=
-            "MEMORY VERIFIED.";
-
-        setTimeout(
-            showEnding,
-            1400
-        );
-
-    }else{
-
-        $("#memoryMessage").textContent=
-            "MEMORY CORRUPTED.";
-
-    }
-
-};
-
-
-/* =========================================================
-   ENDING
-   ========================================================= */
-
-function showEnding(){
-
-    show("#endingScreen");
-
-    $("#endingText").textContent=
-        "THE ARCHIVE IS RESTORED. "+
-        "BUT THE EYE WAS NEVER CONTAINED INSIDE IT. "+
-        "IT WAS WATCHING FROM THE BEGINNING.";
-
-}
-
-
-$("#endingContinue").onclick=()=>{
-
-    $("#endingText").textContent=
-        "FINAL FILE: BLACK IRIS. "+
-        "STATUS: OPEN.";
-
-};
-
-
-/* =========================================================
-   INITIAL STATE
-   ========================================================= */
-
-renderTools();
+    ) {
